@@ -37,7 +37,7 @@ export default function HomePage() {
           muted
           loop
           playsInline
-          className="absolute inset-0 w-full h-full object-cover opacity-10"
+          className="absolute inset-0 w-full h-full object-cover opacity-85"
         >
           <source src="/BG.mp4" type="video/mp4" />
         </video>
@@ -69,8 +69,8 @@ export default function HomePage() {
           >
             <h2 className="text-2xl font-semibold mb-2">Section {i + 1}</h2>
             <p className="text-gray-300">
-              This could be your services, courses, or about sections. Each fades
-              in as it enters view, just like on MidJourney’s homepage.
+              These sections are for services, courses, book, and about sections. Each fades
+              in as it enters view.
             </p>
           </motion.div>
         ))}
