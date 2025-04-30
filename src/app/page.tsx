@@ -37,7 +37,7 @@ export default function HomePage() {
           muted
           loop
           playsInline
-          className="absolute inset-0 w-full h-full object-cover opacity-30"
+          className="absolute inset-0 w-full h-full object-cover opacity-10"
         >
           <source src="/BG.mp4" type="video/mp4" />
         </video>
