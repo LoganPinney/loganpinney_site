@@ -2,7 +2,8 @@
 
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useRef } from 'react'
-import { UserPlus, LogIn, Compass, Info, Briefcase, Mail } from 'lucide-react'
+import { UserPlus, LogIn, Compass, Info, Briefcase, Mail, type LucideIcon } from 'lucide-react'
+
 
 export default function HomePage() {
   const rootRef = useRef<HTMLDivElement>(null)
@@ -115,8 +116,15 @@ export default function HomePage() {
   )
 }
 
-/* ──────────────────────────────────────────────────── */
-function Section({ id, Icon, title, children }: { id: string; Icon: any; title: string; children: React.ReactNode }) {
+/*──────────────────────────────────────────────────────────*/
+interface SectionProps {
+  id: string
+  Icon: LucideIcon
+  title: string
+  children: React.ReactNode
+}
+
+function Section({ id, Icon, title, children }: SectionProps) {
   return (
     <section id={id} className="max-w-3xl mx-auto px-6 py-24">
       <hr className="border-gray-700/40 mb-8" />
