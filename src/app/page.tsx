@@ -2,60 +2,50 @@
 
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useRef } from 'react'
-import { UserPlus, LogIn, Compass } from 'lucide-react'
+import { UserPlus, LogIn, Compass, Info, Briefcase, Mail } from 'lucide-react'
 
 export default function HomePage() {
   const rootRef = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({ target: rootRef, offset: ['start start', 'end end'] })
 
-  /* ───────────────────────────────── HERO animations */
+  /* ───────────────────────────────── Animations */
   const heroOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0])
-  const heroScale = useTransform(scrollYProgress, [0, 0.2], [1, 0.95])
   const navOpacity = useTransform(scrollYProgress, [0.15, 0.25], [0, 1])
 
-  /* ───────────────────────────────── Button data */
+  /* ───────────────────────────────── Primary CTAs */
   const primaryActions = [
-    {
-      label: 'Sign Up',
-      href: '#signup',
-      Icon: UserPlus,
-      badge: 'bg-emerald-600',
-    },
+    { label: 'Sign Up', href: '#signup', Icon: UserPlus, badge: 'bg-emerald-600' },
     { label: 'Log In', href: '#login', Icon: LogIn, badge: 'bg-amber-500' },
-    { label: 'Explore', href: '#mentor', Icon: Compass, badge: 'bg-fuchsia-700' },
+    { label: 'Explore', href: '#about', Icon: Compass, badge: 'bg-fuchsia-700' },
+  ]
+
+  /* ───────────────────────────────── One‑page nav */
+  const navLinks = [
+    { label: 'About', href: '#about' },
+    { label: 'Careers', href: '#careers' },
+    { label: 'Contact', href: '#contact' },
   ]
 
   return (
-    <main
-      ref={rootRef}
-      className="relative min-h-screen w-full bg-black text-white overflow-x-hidden snap-y snap-mandatory"
-    >
+    <main ref={rootRef} className="relative min-h-screen w-full bg-black text-white overflow-x-hidden">
       {/* ───────── Sticky Nav */}
       <motion.nav
         style={{ opacity: navOpacity }}
-        className="fixed top-0 left-0 inset-x-0 z-40 flex justify-center py-4 backdrop-blur-lg bg-black/40"
+        className="fixed top-0 inset-x-0 z-40 flex justify-center py-4 backdrop-blur-lg bg-black/40"
       >
         <ul className="flex gap-8 font-semibold text-sm uppercase tracking-wider">
-          <li>
-            <a href="#mentor" className="hover:text-gray-300 transition">
-              Mentor
-            </a>
-          </li>
-          <li>
-            <a href="#developer" className="hover:text-gray-300 transition">
-              Developer
-            </a>
-          </li>
-          <li>
-            <a href="#worldbuilder" className="hover:text-gray-300 transition">
-              Worldbuilder
-            </a>
-          </li>
+          {navLinks.map(({ label, href }) => (
+            <li key={label}>
+              <a href={href} className="hover:text-gray-300 transition">
+                {label}
+              </a>
+            </li>
+          ))}
         </ul>
       </motion.nav>
 
       {/* ───────── HERO */}
-      <section className="snap-start h-screen relative flex flex-col items-center justify-center">
+      <section className="h-screen relative flex flex-col items-center justify-center">
         {/* Background video */}
         <video
           autoPlay
@@ -69,14 +59,6 @@ export default function HomePage() {
         </video>
         {/* Contrast overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/30 to-black/80" />
-
-        {/* Name */}
-        <motion.h1
-          style={{ opacity: heroOpacity, scale: heroScale }}
-          className="relative z-10 text-center text-6xl lg:text-8xl font-extrabold tracking-tight"
-        >
-          LOGAN&nbsp;PINNEY
-        </motion.h1>
 
         {/* Action buttons */}
         <motion.div style={{ opacity: heroOpacity }} className="relative z-10 mt-12">
@@ -97,17 +79,55 @@ export default function HomePage() {
       </section>
 
       {/* ───────── CONTENT SECTIONS */}
-      <section id="mentor" className="snap-start h-screen flex items-center justify-center bg-[#111]">
-        <h2 className="text-4xl font-bold">1&nbsp;:&nbsp;1 Mentorship</h2>
-      </section>
+      <Section id="about" Icon={Info} title="About">
+        <p>
+          I’m Logan&nbsp;Pinney—game developer, world‑builder and mentor. I help artists and studios
+          harness Unreal Engine to craft immersive real‑time experiences. This site is a living hub
+          for my projects, tutorials and contract work.
+        </p>
+      </Section>
 
-      <section id="developer" className="snap-start h-screen flex items-center justify-center bg-[#181818]">
-        <h2 className="text-4xl font-bold">Contract Development</h2>
-      </section>
+      <Section id="careers" Icon={Briefcase} title="Careers">
+        <p>
+          I’m currently expanding the team on a handful of short‑term, remote contracts. If you’re
+          a sharp technical artist or a Rust / Web3 engineer, drop your reel or GitHub. Let’s build
+          cool things without the corporate baggage.
+        </p>
+      </Section>
 
-      <section id="worldbuilder" className="snap-start h-screen flex items-center justify-center bg-[#1e1e1e]">
-        <h2 className="text-4xl font-bold">World&nbsp;Building&nbsp;&amp;&nbsp;Curriculum</h2>
-      </section>
+      <Section id="contact" Icon={Mail} title="Contact">
+        <p>
+          For mentorship, dev inquiries or press, reach out at{' '}
+          <a href="mailto:hello@loganpinney.com" className="underline hover:text-gray-300">
+            hello@loganpinney.com
+          </a>
+          . You can also find me in the #support channel of my Discord server.
+        </p>
+      </Section>
+
+      {/* ───────── FOOTER */}
+      <footer className="mt-24 pb-8 text-center text-xs text-gray-400 space-x-6">
+        <a href="/terms" className="hover:text-gray-300">
+          Terms of Service
+        </a>
+        <a href="/privacy" className="hover:text-gray-300">
+          Privacy Policy
+        </a>
+      </footer>
     </main>
+  )
+}
+
+/* ──────────────────────────────────────────────────── */
+function Section({ id, Icon, title, children }: { id: string; Icon: any; title: string; children: React.ReactNode }) {
+  return (
+    <section id={id} className="max-w-3xl mx-auto px-6 py-24">
+      <hr className="border-gray-700/40 mb-8" />
+      <h2 className="flex items-center gap-3 text-2xl md:text-3xl font-semibold mb-6">
+        <Icon size={20} className="text-indigo-400" />
+        {title}
+      </h2>
+      <div className="space-y-6 text-gray-300 leading-relaxed text-sm md:text-base">{children}</div>
+    </section>
   )
 }
