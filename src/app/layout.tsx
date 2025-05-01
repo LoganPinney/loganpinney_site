@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   description:
     'Courses, mentorship, and contract development in Unreal Engine',
     icons: [
-      { rel: 'icon', url: '/lp.svg', type: 'image/svg+xml' }, // main
+      { rel: 'icon', url: '/LP_Logo_SVG.svg', type: 'image/svg+xml' }, // main
       { rel: 'shortcut icon', url: '/favicon.ico' },          // fallback for Safari
           ],
     openGraph: {
