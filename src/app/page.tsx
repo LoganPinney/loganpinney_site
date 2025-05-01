@@ -37,10 +37,15 @@ export default function HomePage() {
           loop
           playsInline
           className="absolute inset-0 w-full h-full object-cover pointer-events-none"
-          poster="/bg-fallback.jpg"
+          poster="/BG_Backup_01.jpg"
         >
-          <source src="/BG.mp4" type="video/mp4" />
+           {/* mobile first – fires when viewport ≤ 640 px */}
+          <source src="/BG_mobile.mp4" type="video/mp4" media="(max-width: 640px)" />
+
+            {/* default / desktop */}
+          <source src="/BG_Desktop.mp4" type="video/mp4" />
         </video>
+       
         {/* Contrast overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/30 to-black/80" />
 
