@@ -10,7 +10,6 @@ export default function HomePage() {
 
   /* ───────────────────────────────── Animations */
   const heroOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0])
-  const navOpacity = useTransform(scrollYProgress, [0.15, 0.25], [0, 1])
 
   /* ───────────────────────────────── Primary CTAs */
   const primaryActions = [
@@ -19,33 +18,17 @@ export default function HomePage() {
     { label: 'Explore', href: '#about', Icon: Compass, badge: 'bg-fuchsia-700' },
   ]
 
-  /* ───────────────────────────────── One‑page nav */
-  const navLinks = [
+  /* ───────────────────────────────── Section links */
+  const sectionLinks = [
     { label: 'About', href: '#about' },
     { label: 'Careers', href: '#careers' },
     { label: 'Contact', href: '#contact' },
   ]
 
   return (
-    <main ref={rootRef} className="relative min-h-screen w-full bg-black text-white overflow-x-hidden">
-      {/* ───────── Sticky Nav */}
-      <motion.nav
-        style={{ opacity: navOpacity }}
-        className="fixed top-0 inset-x-0 z-40 flex justify-center py-4 backdrop-blur-lg bg-black/40"
-      >
-        <ul className="flex gap-8 font-semibold text-sm uppercase tracking-wider">
-          {navLinks.map(({ label, href }) => (
-            <li key={label}>
-              <a href={href} className="hover:text-gray-300 transition">
-                {label}
-              </a>
-            </li>
-          ))}
-        </ul>
-      </motion.nav>
-
+    <main ref={rootRef} className="relative min-h-screen w-full bg-black text-white overflow-x-hidden scroll-smooth">
       {/* ───────── HERO */}
-      <section className="h-screen relative flex flex-col items-center justify-center">
+      <section className="h-screen relative flex flex-col items-center justify-center text-center px-6">
         {/* Background video */}
         <video
           autoPlay
@@ -60,8 +43,11 @@ export default function HomePage() {
         {/* Contrast overlay */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/30 to-black/80" />
 
-        {/* Action buttons */}
-        <motion.div style={{ opacity: heroOpacity }} className="relative z-10 mt-12">
+        <motion.div
+          style={{ opacity: heroOpacity }}
+          className="relative z-10 flex flex-col items-center gap-8"
+        >
+          {/* CTA pills */}
           <div className="flex gap-px bg-white/5 backdrop-blur-md ring-1 ring-white/10 rounded-full shadow-lg overflow-hidden">
             {primaryActions.map(({ label, href, Icon, badge }) => (
               <a
@@ -75,13 +61,24 @@ export default function HomePage() {
               </a>
             ))}
           </div>
+
+          {/* Section nav */}
+          <ul className="flex gap-10 font-semibold text-xs sm:text-sm uppercase tracking-wider text-gray-300">
+            {sectionLinks.map(({ label, href }) => (
+              <li key={label}>
+                <a href={href} className="hover:text-white transition">
+                  {label}
+                </a>
+              </li>
+            ))}
+          </ul>
         </motion.div>
       </section>
 
       {/* ───────── CONTENT SECTIONS */}
       <Section id="about" Icon={Info} title="About">
         <p>
-          I’m Logan&nbsp;Pinney—game developer, world‑builder and mentor. I help artists and studios
+          I&apos;m Logan&nbsp;Pinney—game developer, world‑builder and mentor. I help artists and studios
           harness Unreal Engine to craft immersive real‑time experiences. This site is a living hub
           for my projects, tutorials and contract work.
         </p>
@@ -89,8 +86,8 @@ export default function HomePage() {
 
       <Section id="careers" Icon={Briefcase} title="Careers">
         <p>
-          I’m currently expanding the team on a handful of short‑term, remote contracts. If you’re
-          a sharp technical artist or a Rust / Web3 engineer, drop your reel or GitHub. Let’s build
+          I&apos;m currently expanding the team on a handful of short‑term, remote contracts. If you&apoos;re
+          a sharp technical artist or a Rust / Web3 engineer, drop your reel or GitHub. Let&apos;s build
           cool things without the corporate baggage.
         </p>
       </Section>
@@ -98,8 +95,8 @@ export default function HomePage() {
       <Section id="contact" Icon={Mail} title="Contact">
         <p>
           For mentorship, dev inquiries or press, reach out at{' '}
-          <a href="mailto:hello@loganpinney.com" className="underline hover:text-gray-300">
-            hello@loganpinney.com
+          <a href="mailto:info@loganpinney.com" className="underline hover:text-gray-300">
+            info@loganpinney.com
           </a>
           . You can also find me in the #support channel of my Discord server.
         </p>
