@@ -12,7 +12,11 @@ export const metadata: Metadata = {
   title: 'Logan Pinney – Unreal Engine Mentor & Creator',
   description:
     'Courses, mentorship, and contract development in Unreal Engine',
-  openGraph: {
+    icons: [
+      { rel: 'icon', url: '/lp.svg', type: 'image/svg+xml' }, // main
+      { rel: 'shortcut icon', url: '/favicon.ico' },          // fallback for Safari
+          ],
+    openGraph: {
     title: 'Logan Pinney',
     description:
       'Courses, mentorship, and contract development in Unreal Engine',
@@ -40,10 +44,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <head>
-        <link rel="icon" href="/favicon.ico" />
-      </head>
+    <html lang="en">       
       <body className={inter.className}>
         <Nav />
         <main className="min-h-screen px-4 sm:px-12 pt-6">{children}</main>
