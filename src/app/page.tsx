@@ -92,7 +92,7 @@ export default function HomePage() {
 
       <Section id="careers" Icon={Briefcase} title="Careers">
         <p>
-          I&apos;m currently expanding the team on a handful of short‑term, remote contracts. If you&apoos;re
+          I&apos;m currently expanding the team on a handful of short‑term, remote contracts. If you&apos;re
           a sharp technical artist or a Rust / Web3 engineer, drop your reel or GitHub. Let&apos;s build
           cool things without the corporate baggage.
         </p>
