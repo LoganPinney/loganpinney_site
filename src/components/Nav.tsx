@@ -18,7 +18,7 @@ export default function Nav() {
         <li>
           <Link href="#top" className="block">
             <Image
-              src="/lp_logo_SVG.svg" // place file in /public
+              src="/LP_Logo_SVG.svg" // place file in /public
               alt="Logan Pinney"
               width={28}
               height={28}
