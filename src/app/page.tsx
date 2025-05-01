@@ -46,7 +46,7 @@ export default function HomePage() {
 
         <motion.div
           style={{ opacity: heroOpacity }}
-          className="relative z-10 flex flex-col items-center gap-8 translate-y-[20%]"
+          className="relative z-10 flex flex-col items-center gap-8 translate-y-[200px]"
         >
           {/* CTA pills */}
           <div className="flex gap-px bg-white/5 backdrop-blur-md ring-1 ring-white/10 rounded-full shadow-lg overflow-hidden">
