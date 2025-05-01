@@ -47,7 +47,7 @@ export default function HomePage() {
         className="absolute inset-0 w-full h-full object-cover opacity-30"
       >
         <source src="/BG.mp4" type="video/mp4" /> 
-      // BG video name is BG.mp4 
+    
       </video>
 
       {/* Centered Name */}
