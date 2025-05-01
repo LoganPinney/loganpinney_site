@@ -1,27 +1,41 @@
 // src/components/Nav.tsx
-import Image from 'next/image'   // at the top
+'use client'
 
-{/* Section nav (inside the hero) */}
-<ul className="flex items-center gap-10 ...">
-  {/* LP icon as the first li */}
-  <li>
-    <a href="#top" className="block">
-      <Image
-        src="/lp_logo_SVG.svg"      // put file in /public
-        alt="Logan Pinney"
-        width={28}
-        height={28}
-        priority
-      />
-    </a>
-  </li>
+import Image from 'next/image'
+import Link from 'next/link'
 
-  {/* existing links */}
-  {sectionLinks.map(({ label, href }) => (
-    <li key={label}>
-      <a href={href} className="hover:text-white transition">
-        {label}
-      </a>
-    </li>
-  ))}
-</ul>
+const sectionLinks = [
+  { label: 'About', href: '#about' },
+  { label: 'Careers', href: '#careers' },
+  { label: 'Contact', href: '#contact' },
+] as const
+
+export default function Nav() {
+  return (
+    <nav className="bg-black/70 backdrop-blur-md text-white px-6 py-3 fixed top-0 inset-x-0 z-40">
+      <ul className="max-w-7xl mx-auto flex items-center gap-10 text-xs sm:text-sm font-semibold uppercase tracking-wider">
+        {/* LP icon */}
+        <li>
+          <Link href="#top" className="block">
+            <Image
+              src="/lp_logo_SVG.svg" // place file in /public
+              alt="Logan Pinney"
+              width={28}
+              height={28}
+              priority
+            />
+          </Link>
+        </li>
+
+        {/* section anchors */}
+        {sectionLinks.map(({ label, href }) => (
+          <li key={label}>
+            <Link href={href} className="hover:text-gray-300 transition">
+              {label}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  )
+}
