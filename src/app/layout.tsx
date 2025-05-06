@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     siteName: 'loganpinney.com',
     images: [
       {
-        url: '/og.jpg', // Put in public folder
+        url: '/BG.jpg', // Put in public folder
         width: 1200,
         height: 630,
         alt: 'Logan Pinney Portfolio Banner',
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     title: 'Logan Pinney',
     description:
       'Courses, mentorship, and contract development in Unreal Engine',
-    images: ['/og.jpg'],
+    images: ['/BG.jpg'],
   },
 }
 

@@ -83,11 +83,25 @@ export default function HomePage() {
 
       {/* ───────── CONTENT SECTIONS */}
       <Section id="about" Icon={Info} title="About">
-        <p>
-          I&apos;m Logan&nbsp;Pinney—game developer, world‑builder and mentor. I help artists and studios
-          harness Unreal Engine to craft immersive real‑time experiences. This site is a living hub
-          for my projects, tutorials and contract work.
-        </p>
+      <p>
+  <strong>Logan Pinney – Unreal Engine Instructor, Mentor, and World-Building Specialist</strong>
+</p>
+<p>
+  Logan Pinney is a professional Unreal Engine developer, educator, and mentor with deep expertise in <strong>game development, world building, cinematics, and 3D animation</strong>. Holding a <strong>Computer Science degree from Queen&apos;s University</strong>, Logan blends technical skill with creative storytelling to help students and studios master real-time workflows.
+</p>
+<p>
+  He currently serves as an <strong>Unreal Engine Authorized Instructor</strong> and <strong>mentor at CG Spectrum</strong>, where he teaches beginner to advanced courses in <strong>Unreal Engine 5, Unreal Editor for Fortnite (UEFN)</strong>, and real-time production pipelines. With a proven track record, Logan has guided thousands of students through <strong>industry-ready Unreal Engine training programs</strong>.
+</p>
+<p>
+  Logan is also the creator of the high-rated Coursera course <em>&quot;Unreal Engine Fundamentals&quot;</em>, designed for beginners to build a strong foundation in real-time 3D development. His <strong>YouTube channel</strong> offers accessible tutorials on <strong>Unreal Engine, UEFN, and game development tools</strong>, helping aspiring developers of all ages gain practical skills.
+</p>
+<p>
+  In addition to his teaching roles, Logan works as a <strong>KitBash3D Ambassador</strong>, where he contributes to the <strong>quality assurance</strong> of over 40 production-ready asset kits used in world-building for games, film, and virtual production.
+</p>
+<p>
+  Whether you&apos;re an indie dev, studio team, or solo creator looking to <strong>learn Unreal Engine</strong>, <strong>master world building</strong>, or <strong>level up your real-time 3D skills</strong>, Logan&apos;s mission is to empower and equip you with the tools to succeed.
+</p>
+
       </Section>
 
       <Section id="careers" Icon={Briefcase} title="Careers">
