@@ -16,7 +16,7 @@ export default function Nav() {
       <ul className="max-w-7xl mx-auto flex items-center gap-10 text-xs sm:text-sm font-semibold uppercase tracking-wider">
         {/* LP icon */}
         <li>
-          <Link href="#top" className="block">
+          <Link href="/" className="block">
             <Image
               src="/LP_Logo_SVG.svg" // place file in /public
               alt="Logan Pinney"
