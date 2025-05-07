@@ -3,6 +3,7 @@
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useRef } from 'react'
 import { UserPlus, LogIn, Compass, Info, Briefcase, Mail, type LucideIcon } from 'lucide-react'
+import SvgCarousel from './SvgCarousel';
 
 
 export default function HomePage() {
@@ -94,11 +95,10 @@ export default function HomePage() {
   </p>
   <p>
     He currently serves as an 
-    <strong><a href="https://www.unrealengine.com/en-US/training-academic-partners" target="_blank" rel="noopener noreferrer">Unreal Engine Authorized Instructor</a></strong> and 
-    <strong><a href="https://www.cgspectrum.com/courses/virtual-production#courses" target="_blank" rel="noopener noreferrer"> mentor at CG Spectrum</a></strong>, where he teaches beginner to advanced courses in 
-    <strong><a href="https://www.unrealengine.com/" target="_blank" rel="noopener noreferrer">Unreal Engine 5, Unreal Editor for Fortnite (UEFN)</a></strong>, and real-time production pipelines. 
-    With a proven track record, Logan has guided thousands of students through 
-    <strong>industry-ready Unreal Engine training programs</strong>.
+    <strong><a href="https://www.unrealengine.com/en-US/training-academic-partners" target="_blank" rel="noopener noreferrer">Unreal Engine Authorized Instructor</a></strong> and mentor at
+    <strong><a href="https://www.cgspectrum.com/courses/virtual-production#courses" target="_blank" rel="noopener noreferrer"> CG Spectrum</a></strong>, where he teaches beginner to advanced courses in 
+    <strong><a href="https://www.unrealengine.com/" target="_blank" rel="noopener noreferrer"> Unreal Engine 5, Unreal Editor for Fortnite (UEFN)</a></strong>, and real-time production pipelines. 
+    With a proven track record, Logan has guided thousands of students through industry-ready Unreal Engine training programs.
   </p>
   <p>
     Logan is also the creator of the high-rated Coursera course 
@@ -112,11 +112,7 @@ export default function HomePage() {
      quality assurance of over 40 production-ready asset kits used in world-building for games, film, and virtual production.
   </p>
   <p>
-    Whether you&apos;re an indie dev, studio team, or solo creator looking to 
-    <strong>learn Unreal Engine</strong>, 
-    <strong>master world building</strong>, or 
-    <strong> level up your real-time 3D skills</strong>, 
-    Logan&apos;s mission is to empower and equip you with the tools to succeed.
+    Whether you&apos;re an indie dev, studio team, or solo creator looking to learn Unreal Engine, master world building, or level up your real-time 3D skills, Logan&apos;s mission is to empower and equip you with the tools to succeed.
   </p>
 </Section>
 
@@ -133,11 +129,12 @@ export default function HomePage() {
           For mentorship, dev inquiries or press, reach out at{' '}
           <a href="mailto:info@loganpinney.com" className="underline hover:text-gray-300">
             info@loganpinney.com
-          </a>
-          . You can also find me in the #support channel of my Discord server.
+          </a>          
         </p>
       </Section>
 
+      <SvgCarousel />
+      
       {/* ───────── FOOTER */}
       <footer className="mt-24 pb-8 text-center text-xs text-gray-400 space-x-6">
         <a href="/terms" className="hover:text-gray-300">
