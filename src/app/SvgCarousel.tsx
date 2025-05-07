@@ -2,8 +2,11 @@
 'use client'
 
 import { useRef } from 'react'
-import SwiperCore, { Navigation, Pagination, Autoplay } from 'swiper'
+import Image from 'next/image'
 import { Swiper, SwiperSlide } from 'swiper/react'
+import { Navigation } from 'swiper/modules/navigation'
+import { Pagination } from 'swiper/modules/pagination'
+import { Autoplay } from 'swiper/modules/autoplay'
 import 'swiper/css'
 import 'swiper/css/navigation'
 import 'swiper/css/pagination'
@@ -17,9 +20,6 @@ const svgs = [
   '/svgs/Hollows_Logo.svg',
   '/svgs/School_of_Motion_Logo.svg',
 ]
-
-// Enable Swiper modules
-SwiperCore.use([Navigation, Pagination, Autoplay])
 
 export default function SvgCarousel() {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -36,6 +36,7 @@ export default function SvgCarousel() {
       <h2 className="text-2xl font-semibold text-center mb-8">Our Clients & Partners</h2>
 
       <Swiper
+        modules={[Navigation, Pagination, Autoplay]}
         spaceBetween={24}
         slidesPerView={3}
         navigation
@@ -49,7 +50,13 @@ export default function SvgCarousel() {
       >
         {svgs.map((src, idx) => (
           <SwiperSlide key={idx} className="flex justify-center">
-            <img src={src} alt={`logo-${idx}`} className="h-16 w-auto" />
+            <Image
+              src={src}
+              alt={`logo-${idx}`}
+              width={64}
+              height={64}
+              className="object-contain"
+            />
           </SwiperSlide>
         ))}
       </Swiper>
