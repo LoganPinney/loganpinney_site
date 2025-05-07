@@ -95,7 +95,7 @@ export default function HomePage() {
   <p>
     He currently serves as an 
     <strong><a href="https://www.unrealengine.com/en-US/training-academic-partners" target="_blank" rel="noopener noreferrer">Unreal Engine Authorized Instructor</a></strong> and 
-    <strong><a href="https://www.cgspectrum.com/courses/virtual-production#courses" target="_blank" rel="noopener noreferrer">mentor at CG Spectrum</a></strong>, where he teaches beginner to advanced courses in 
+    <strong><a href="https://www.cgspectrum.com/courses/virtual-production#courses" target="_blank" rel="noopener noreferrer"> mentor at CG Spectrum</a></strong>, where he teaches beginner to advanced courses in 
     <strong><a href="https://www.unrealengine.com/" target="_blank" rel="noopener noreferrer">Unreal Engine 5, Unreal Editor for Fortnite (UEFN)</a></strong>, and real-time production pipelines. 
     With a proven track record, Logan has guided thousands of students through 
     <strong>industry-ready Unreal Engine training programs</strong>.
@@ -104,21 +104,22 @@ export default function HomePage() {
     Logan is also the creator of the high-rated Coursera course 
     <em><a href="https://www.coursera.org/learn/unreal-engine-fundamentals?specialization=epic-games-game-design-professional-certificate" target="_blank" rel="noopener noreferrer">&quot;Unreal Engine Fundamentals&quot;</a></em>, designed for beginners to build a strong foundation in real-time 3D development. 
     His <strong><a href="https://www.youtube.com/channel/UCjmjChQVBFbgtTAYnJrp1JA" target="_blank" rel="noopener noreferrer">YouTube channel</a></strong> offers accessible tutorials on 
-    <strong>Unreal Engine, UEFN, and game development tools</strong>, helping aspiring developers of all ages gain practical skills.
+    <strong> Unreal Engine, UEFN, and game development tools</strong>, helping aspiring developers of all ages gain practical skills.
   </p>
   <p>
     In addition to his teaching roles, Logan works as a 
-    <strong><a href="https://kitbash3d.com/" target="_blank" rel="noopener noreferrer">KitBash3D Ambassador</a></strong>, where he has contributed to the 
-    <strong>quality assurance</strong> of over 40 production-ready asset kits used in world-building for games, film, and virtual production.
+    <strong><a href="https://kitbash3d.com/" target="_blank" rel="noopener noreferrer"> KitBash3D Ambassador</a></strong>, where he has contributed to the 
+     quality assurance of over 40 production-ready asset kits used in world-building for games, film, and virtual production.
   </p>
   <p>
     Whether you&apos;re an indie dev, studio team, or solo creator looking to 
     <strong>learn Unreal Engine</strong>, 
     <strong>master world building</strong>, or 
-    <strong>level up your real-time 3D skills</strong>, 
+    <strong> level up your real-time 3D skills</strong>, 
     Logan&apos;s mission is to empower and equip you with the tools to succeed.
   </p>
 </Section>
+
       <Section id="careers" Icon={Briefcase} title="Careers">
         <p>
           I&apos;m currently expanding the team on a handful of short‑term, remote contracts. If you&apos;re
