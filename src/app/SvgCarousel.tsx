@@ -31,7 +31,7 @@ export default function SvgCarousel() {
       style={{ opacity: fadeIn }}
       className="max-w-4xl mx-auto py-16 px-4"
     >
-      <h2 className="text-2xl font-semibold text-center mb-8">Our Clients & Partners</h2>
+      <h2 className="text-2xl font-semibold text-center mb-8">Clients</h2>
 
       <Swiper
         modules={[Navigation, Pagination, Autoplay]}
@@ -47,14 +47,17 @@ export default function SvgCarousel() {
         }}
       >
         {svgs.map((src, idx) => (
-          <SwiperSlide key={idx} className="flex justify-center">
-            <Image
-              src={src}
-              alt={`logo-${idx}`}
-              width={64}
-              height={64}
-              className="object-contain"
-            />
+          <SwiperSlide key={idx} className="flex items-center justify-center">
+            <div className="flex items-center justify-center h-24 w-full">
+              <Image
+                src={src}
+                alt={`logo-${idx}`}
+                width={96}
+                height={96}
+                className="object-contain max-h-16"
+                priority={false}
+              />
+            </div>
           </SwiperSlide>
         ))}
       </Swiper>
