@@ -1,4 +1,4 @@
-// next-sitemap.config.js
+// next-sitemap.config.ts
 module.exports = {
     siteUrl: 'https://loganpinney.com',   // ← your production URL
     generateRobotsTxt: true,              // ← creates robots.txt
