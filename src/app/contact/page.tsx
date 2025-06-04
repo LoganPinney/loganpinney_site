@@ -7,11 +7,11 @@ export default function ContactPage() {
         <p className="text-gray-600 text-center max-w-2xl mx-auto">
           Want to work together, collaborate, or ask a question? Fill out the form below or use the link to schedule a meeting.
         </p>
-  
+
         <div className="bg-gray-100 p-8 rounded-lg shadow-md">
           {/* TODO: Replace with your real email handling form (Tally, Formspree, Resend, etc.) */}
           <form
-            action="https://tally.so/r/mR21aj" 
+            action="https://tally.so/r/mR21aj"
             method="POST"
             className="space-y-6"
           >
@@ -27,7 +27,7 @@ export default function ContactPage() {
                 className="w-full p-3 rounded border border-gray-300 focus:outline-none focus:ring"
               />
             </div>
-  
+
             <div>
               <label className="block text-sm text-gray-600 mb-1" htmlFor="email">
                 Email
@@ -40,7 +40,7 @@ export default function ContactPage() {
                 className="w-full p-3 rounded border border-gray-300 focus:outline-none focus:ring"
               />
             </div>
-  
+
             <div>
               <label className="block text-sm text-gray-600 mb-1" htmlFor="message">
                 Message
@@ -53,7 +53,7 @@ export default function ContactPage() {
                 className="w-full p-3 rounded border border-gray-300 focus:outline-none focus:ring"
               ></textarea>
             </div>
-  
+
             <button
               type="submit"
               className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition text-sm"
@@ -61,12 +61,12 @@ export default function ContactPage() {
               Send Message
             </button>
           </form>
-  
+
           <p className="text-xs text-gray-500 mt-4 text-center">
             Your message will be sent securely. You’ll get a reply within 24–48 hours.
           </p>
         </div>
-  
+
         <div className="text-center mt-10 text-sm text-gray-500">
           <p>Prefer to book a call?</p>
           <a
@@ -80,4 +80,3 @@ export default function ContactPage() {
       </section>
     )
   }
-  
