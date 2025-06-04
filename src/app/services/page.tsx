@@ -8,7 +8,7 @@ export default function ServicesPage() {
           I offer personalized support for creative and technical projects. Whether you&apos;re building in Unreal, designing curriculum, or looking for
           consulting on world-building, I can help.
         </p>
-  
+
         <div className="space-y-8">
           <div className="border rounded-lg p-6 shadow hover:shadow-md transition">
             <h2 className="text-2xl font-semibold">🎓 1:1 Mentorship</h2>
@@ -16,14 +16,14 @@ export default function ServicesPage() {
               Custom-tailored guidance for students, creators, or professionals learning Unreal Engine, world building, or technical development. Flexible scheduling and project-based mentorship.
             </p>
           </div>
-  
+
           <div className="border rounded-lg p-6 shadow hover:shadow-md transition">
             <h2 className="text-2xl font-semibold">🧩 Curriculum Development</h2>
             <p className="text-gray-700 mt-2">
               I build and license curriculum for educational platforms, private institutions, and online learning environments. If you want white-label courses or custom learning paths — I can help you scale.
             </p>
           </div>
-  
+
           <div className="border rounded-lg p-6 shadow hover:shadow-md transition">
             <h2 className="text-2xl font-semibold">🛠️ Contract Development</h2>
             <p className="text-gray-700 mt-2">
@@ -31,7 +31,7 @@ export default function ServicesPage() {
             </p>
           </div>
         </div>
-  
+
         <div className="text-center mt-10">
           <a
             href="/contact"
@@ -43,4 +43,3 @@ export default function ServicesPage() {
       </section>
     )
   }
-  
