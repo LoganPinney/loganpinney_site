@@ -27,7 +27,7 @@ export default function ServicesPage() {
           <div className="border rounded-lg p-6 shadow hover:shadow-md transition">
             <h2 className="text-2xl font-semibold">🛠️ Contract Development</h2>
             <p className="text-gray-700 mt-2">
-              Available for 3–6 month contract work in Unreal Engine, game development, 3D animation, ormotion design integration. Includes high-end prototyping, design, optimization, and support.
+              Available for 3–6 month contract work in Unreal Engine, game development, 3D animation, or motion design integration. Includes high-end prototyping, design, optimization, and support.
             </p>
           </div>
         </div>
