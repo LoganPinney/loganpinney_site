@@ -1,170 +1,209 @@
-'use client'
-
-import { motion, useScroll, useTransform } from 'framer-motion'
-import { useRef } from 'react'
-import { UserPlus, LogIn, Compass, Info, Briefcase, Mail, type LucideIcon } from 'lucide-react'
-import SvgCarousel from './SvgCarousel';
-
+import Link from 'next/link'
+import Terminal from '@/components/Terminal'
 
 export default function HomePage() {
-  const rootRef = useRef<HTMLDivElement>(null)
-  const { scrollYProgress } = useScroll({ target: rootRef, offset: ['start start', 'end end'] })
-
-  /* ───────────────────────────────── Animations */
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0])
-
-  /* ───────────────────────────────── Primary CTAs */
-  const primaryActions = [
-    { label: 'Sign Up', href: '#signup', Icon: UserPlus, badge: 'bg-emerald-600' },
-    { label: 'Log In', href: '#login', Icon: LogIn, badge: 'bg-amber-500' },
-    { label: 'Explore', href: '#about', Icon: Compass, badge: 'bg-fuchsia-700' },
-  ]
-
-  /* ───────────────────────────────── Section links */
-  const sectionLinks = [
-    { label: 'About', href: '#about' },
-    { label: 'Careers', href: '#careers' },
-    { label: 'Contact', href: '#contact' },
-  ]
-
   return (
-    <main ref={rootRef} className="relative min-h-screen w-full bg-black text-white overflow-x-hidden scroll-smooth">
-      {/* ───────── HERO */}
-      <section className="h-screen relative flex flex-col items-center justify-center text-center px-6">
-        {/* Background video */}
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover pointer-events-none"
-          poster="/BG_Backup_01.jpg"
-        >
-           {/* mobile first – fires when viewport ≤ 640 px */}
-          <source src="/BG_mobile.mp4" type="video/mp4" media="(max-width: 640px)" />
+    <div className="max-w-5xl mx-auto px-6 sm:px-8">
+      {/* HERO */}
+      <section className="pt-20 pb-24">
+        <div className="flex items-center gap-2 mb-6">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--color-success)] opacity-60" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--color-success)]" />
+          </span>
+          <span className="font-mono text-[11px] uppercase tracking-widest text-[var(--color-success)]">
+            available for select contracts
+          </span>
+        </div>
 
-            {/* default / desktop */}
-          <source src="/BG_Desktop.mp4" type="video/mp4" />
-        </video>
-       
-        {/* Contrast overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/30 to-black/80" />
+        <h1 className="text-5xl sm:text-6xl font-medium tracking-tight text-white leading-[1.05] mb-4">
+          Logan Pinney
+        </h1>
 
-        <motion.div
-          style={{ opacity: heroOpacity }}
-          className="relative z-10 flex flex-col items-center gap-8 translate-y-[200px]"
-        >
-          {/* CTA pills */}
-          <div className="flex gap-px bg-white/5 backdrop-blur-md ring-1 ring-white/10 rounded-full shadow-lg overflow-hidden">
-            {primaryActions.map(({ label, href, Icon, badge }) => (
-              <a
-                key={label}
-                href={href}
-                className="flex items-center gap-2 px-5 py-2 text-sm font-medium hover:bg-white/10 transition whitespace-nowrap"
-              >
-                <span className={`inline-flex h-2.5 w-2.5 rounded-full ${badge}`}></span>
-                <Icon size={14} className="opacity-80" />
-                {label}
-              </a>
-            ))}
-          </div>
+        <p className="font-mono text-base text-neutral-400 mb-8">
+          Data Systems Architect{' '}
+          <span className="text-neutral-600">·</span>{' '}
+          <span className="text-[var(--color-accent)]">Riot Games</span>
+        </p>
 
-          {/* Section nav */}
-          <ul className="flex gap-10 font-semibold text-xs sm:text-sm uppercase tracking-wider text-gray-300">
-            {sectionLinks.map(({ label, href }) => (
-              <li key={label}>
-                <a href={href} className="hover:text-white transition">
-                  {label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </motion.div>
+        <p className="text-lg text-neutral-300 leading-relaxed max-w-2xl mb-10">
+          I design the systems that make complex operations actually work —
+          automation pipelines, integration architectures, and the governance
+          layers that keep them reliable at scale. Part engineer, part
+          strategist, full-stack problem solver.
+        </p>
+
+        <div className="flex flex-wrap gap-3">
+          <Link
+            href="/contact"
+            className="inline-flex items-center gap-2 bg-[var(--color-accent)] text-neutral-950 font-mono text-sm font-medium px-5 py-2.5 rounded hover:bg-[var(--color-accent-dim)] hover:text-white transition"
+          >
+            get in touch
+            <span aria-hidden>→</span>
+          </Link>
+          <Link
+            href="/work"
+            className="inline-flex items-center gap-2 border border-neutral-700 text-neutral-200 font-mono text-sm px-5 py-2.5 rounded hover:border-neutral-500 hover:bg-neutral-900 transition"
+          >
+            view my work
+          </Link>
+        </div>
+
+        <Terminal />
       </section>
 
-      {/* ───────── CONTENT SECTIONS */}
-      <Section id="about" Icon={Info} title="About">
-  <p>
-    <strong><a href="#" target="_blank" rel="noopener noreferrer">Logan Pinney – Unreal Engine Instructor, Mentor, and World-Building Specialist</a></strong>
-  </p>
-  <p>
-    Logan Pinney is a professional Unreal Engine developer, educator, and mentor with deep expertise in 
-    <strong> game development, world building, cinematics, and 3D animation</strong>. 
-    Holding a <strong><a href="https://www.cs.queensu.ca/" target="_blank" rel="noopener noreferrer">Computer Science degree from Queen&apos;s University</a></strong>, 
-    Logan blends technical skill with creative storytelling to help students and studios master real-time workflows.
-  </p>
-  <p>
-    He currently serves as an 
-    <strong><a href="https://www.unrealengine.com/en-US/training-academic-partners" target="_blank" rel="noopener noreferrer">Unreal Engine Authorized Instructor</a></strong> and mentor at
-    <strong><a href="https://www.cgspectrum.com/courses/virtual-production#courses" target="_blank" rel="noopener noreferrer"> CG Spectrum</a></strong>, where he teaches beginner to advanced courses in 
-    <strong><a href="https://www.unrealengine.com/" target="_blank" rel="noopener noreferrer"> Unreal Engine 5, Unreal Editor for Fortnite (UEFN)</a></strong>, and real-time production pipelines. 
-    With a proven track record, Logan has guided thousands of students through industry-ready Unreal Engine training programs.
-  </p>
-  <p>
-    Logan is also the creator of the high-rated Coursera course 
-    <em><a href="https://www.coursera.org/learn/unreal-engine-fundamentals?specialization=epic-games-game-design-professional-certificate" target="_blank" rel="noopener noreferrer">&quot;Unreal Engine Fundamentals&quot;</a></em>, designed for beginners to build a strong foundation in real-time 3D development. 
-    His <strong><a href="https://www.youtube.com/channel/UCjmjChQVBFbgtTAYnJrp1JA" target="_blank" rel="noopener noreferrer">YouTube channel</a></strong> offers accessible tutorials on 
-    <strong> Unreal Engine, UEFN, and game development tools</strong>, helping aspiring developers of all ages gain practical skills.
-  </p>
-  <p>
-    In addition to his teaching roles, Logan works as a 
-    <strong><a href="https://kitbash3d.com/" target="_blank" rel="noopener noreferrer"> KitBash3D Ambassador</a></strong>, where he has contributed to the 
-     quality assurance of over 40 production-ready asset kits used in world-building for games, film, and virtual production.
-  </p>
-  <p>
-    Whether you&apos;re an indie dev, studio team, or solo creator looking to learn Unreal Engine, master world building, or level up your real-time 3D skills, Logan&apos;s mission is to empower and equip you with the tools to succeed.
-  </p>
-</Section>
+      {/* SELECTED WORK */}
+      <section className="py-16 border-t border-neutral-900">
+        <div className="flex items-baseline justify-between mb-8">
+          <h2 className="font-mono text-xs uppercase tracking-widest text-[var(--color-accent)]">
+            {'// selected work'}
+          </h2>
+          <Link
+            href="/work"
+            className="font-mono text-xs text-neutral-500 hover:text-neutral-200 transition"
+          >
+            see all →
+          </Link>
+        </div>
 
-      <Section id="careers" Icon={Briefcase} title="Careers">
-        <p>
-          I&apos;m currently expanding the team on a handful of short‑term, remote contracts. If you&apos;re
-          a sharp technical artist or a Rust / Web3 engineer, drop your reel or GitHub. Let&apos;s build
-          cool things without the corporate baggage.
-        </p>
-      </Section>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <WorkCard
+            tag="riot games"
+            title="Data Platform Architecture"
+            body="Designing orchestration and tooling for operational data infrastructure at one of gaming's largest platforms."
+            period="2025 — present"
+          />
+          <WorkCard
+            tag="contract"
+            title="Event Ops Data Systems"
+            body="Architected automation for immigration compliance, RFP pipelines, staffing workflows, and budget coordination across global event operations."
+            period="2024 — 2025"
+          />
+          <WorkCard
+            tag="epic games · coursera"
+            title="Unreal Engine Fundamentals"
+            body="Designed and built the flagship Coursera course on real-time 3D development — part of Epic Games' certification program."
+            period="2022 — 2024"
+          />
+          <WorkCard
+            tag="cg spectrum"
+            title="Authorized Instructor"
+            body="Mentored thousands of students through industry-ready Unreal Engine training programs. Built curriculum, delivered live cohorts."
+            period="2021 — 2024"
+          />
+        </div>
+      </section>
 
-      <Section id="contact" Icon={Mail} title="Contact">
-        <p>
-          For mentorship, dev inquiries or press, reach out at{' '}
-          <a href="mailto:info@loganpinney.com" className="underline hover:text-gray-300">
-            info@loganpinney.com
-          </a>          
-        </p>
-      </Section>
+      {/* STACK */}
+      <section className="py-16 border-t border-neutral-900">
+        <h2 className="font-mono text-xs uppercase tracking-widest text-[var(--color-accent)] mb-8">
+          {'// stack'}
+        </h2>
 
-      <SvgCarousel />
-      
-      {/* ───────── FOOTER */}
-      <footer className="mt-24 pb-8 text-center text-xs text-gray-400 space-x-6">
-        <a href="/terms" className="hover:text-gray-300">
-          Terms of Service
-        </a>
-        <a href="/privacy" className="hover:text-gray-300">
-          Privacy Policy
-        </a>
-      </footer>
-    </main>
+        <div className="space-y-6">
+          <StackRow
+            label="platforms"
+            items={['Airtable', 'Workato', 'Google Workspace', 'BigQuery']}
+          />
+          <StackRow
+            label="languages"
+            items={['Python', 'JavaScript / TypeScript', 'SQL', 'Google Apps Script']}
+          />
+          <StackRow
+            label="integrations"
+            items={['REST APIs', 'Webhooks', 'OAuth flows', 'ETL orchestration']}
+          />
+          <StackRow
+            label="focus areas"
+            items={[
+              'workflow automation',
+              'systems integration',
+              'data governance',
+              'reliability & observability',
+            ]}
+            accent
+          />
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="py-20 border-t border-neutral-900">
+        <div className="max-w-2xl">
+          <h2 className="text-3xl sm:text-4xl font-medium text-white mb-4 tracking-tight">
+            Got a messy system that needs architecting?
+          </h2>
+          <p className="text-neutral-400 mb-8 leading-relaxed">
+            I take on a limited number of contracts where I can help design, rebuild,
+            or audit operational data systems. If that&apos;s what you need, let&apos;s talk.
+          </p>
+          <Link
+            href="/contact"
+            className="inline-flex items-center gap-2 bg-[var(--color-accent)] text-neutral-950 font-mono text-sm font-medium px-5 py-2.5 rounded hover:bg-[var(--color-accent-dim)] hover:text-white transition"
+          >
+            start a conversation
+            <span aria-hidden>→</span>
+          </Link>
+        </div>
+      </section>
+    </div>
   )
 }
 
-/*──────────────────────────────────────────────────────────*/
-interface SectionProps {
-  id: string
-  Icon: LucideIcon
+/* ---------- helpers ---------- */
+
+function WorkCard({
+  tag,
+  title,
+  body,
+  period,
+}: {
+  tag: string
   title: string
-  children: React.ReactNode
+  body: string
+  period: string
+}) {
+  return (
+    <article className="group bg-neutral-950 border border-neutral-800 rounded-md p-5 hover:border-neutral-700 transition">
+      <div className="flex items-center justify-between mb-3">
+        <span className="font-mono text-[10px] uppercase tracking-widest text-[var(--color-accent)]">
+          {tag}
+        </span>
+        <span className="font-mono text-[10px] text-neutral-600">{period}</span>
+      </div>
+      <h3 className="text-white font-medium mb-2">{title}</h3>
+      <p className="text-sm text-neutral-400 leading-relaxed">{body}</p>
+    </article>
+  )
 }
 
-function Section({ id, Icon, title, children }: SectionProps) {
+function StackRow({
+  label,
+  items,
+  accent = false,
+}: {
+  label: string
+  items: string[]
+  accent?: boolean
+}) {
   return (
-    <section id={id} className="max-w-3xl mx-auto px-6 py-24">
-      <hr className="border-gray-700/40 mb-8" />
-      <h2 className="flex items-center gap-3 text-2xl md:text-3xl font-semibold mb-6">
-        <Icon size={20} className="text-indigo-400" />
-        {title}
-      </h2>
-      <div className="space-y-6 text-gray-300 leading-relaxed text-sm md:text-base">{children}</div>
-    </section>
+    <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+      <div className="font-mono text-[11px] uppercase tracking-widest text-neutral-500 sm:w-32 shrink-0">
+        {label}
+      </div>
+      <div className="flex flex-wrap gap-2">
+        {items.map((item) => (
+          <span
+            key={item}
+            className={`font-mono text-xs px-2.5 py-1 rounded border ${
+              accent
+                ? 'text-[var(--color-accent)] border-[var(--color-accent)]/30 bg-[var(--color-accent)]/5'
+                : 'text-neutral-300 border-neutral-800 bg-neutral-950'
+            }`}
+          >
+            {item}
+          </span>
+        ))}
+      </div>
+    </div>
   )
 }
