@@ -9,7 +9,7 @@ type Line =
 
 const lines: Line[] = [
   { type: 'cmd', text: 'whoami' },
-  { type: 'out', text: 'data-systems-architect @ riot-games' },
+  { type: 'out', text: 'data-systems-architect' },
   { type: 'cmd', text: 'cat focus.txt' },
   { type: 'out', text: 'workflow automation · integrations · governance' },
   { type: 'cmd', text: 'echo $status' },

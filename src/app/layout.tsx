@@ -1,60 +1,75 @@
-// src/app/layout.tsx
-
 import './globals.css'
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
-import Nav from '@/components/Nav'
+import { Inter, JetBrains_Mono } from 'next/font/google'
+import CornerLogo from '@/components/CornerLogo'
 import Footer from '@/components/Footer'
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-sans',
+  display: 'swap',
+})
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  variable: '--font-mono',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
-  title: 'Logan Pinney – Unreal Engine Mentor & Creator',
+  metadataBase: new URL('https://loganpinney.com'),
+  title: {
+    default: 'Logan Pinney — Data Systems Architect',
+    template: '%s — Logan Pinney',
+  },
   description:
-    'Courses, mentorship, and contract development in Unreal Engine',
-    icons: [
-      { rel: 'icon', url: '/LP_Logo_SVG.svg', type: 'image/svg+xml' }, // main
-      { rel: 'shortcut icon', url: '/favicon.ico' },          // fallback for Safari
-          ],
-    openGraph: {
-    title: 'Logan Pinney',
+    'Data systems architect designing automation, integrations, and operational data infrastructure. Currently at Riot Games.',
+  keywords: [
+    'Logan Pinney',
+    'Data Systems Architect',
+    'Workflow Automation',
+    'Airtable',
+    'Workato',
+    'Data Integration',
+    'Riot Games',
+  ],
+  authors: [{ name: 'Logan Pinney' }],
+  creator: 'Logan Pinney',
+  icons: [
+    { rel: 'icon', url: '/favicon.ico' },
+    { rel: 'icon', url: '/LP_Logo_SVG.svg', type: 'image/svg+xml' },
+  ],
+  openGraph: {
+    title: 'Logan Pinney — Data Systems Architect',
     description:
-      'Courses, mentorship, and contract development in Unreal Engine',
+      'Data systems architect designing automation, integrations, and operational data infrastructure. Currently at Riot Games.',
     url: 'https://loganpinney.com',
     siteName: 'loganpinney.com',
-    images: [
-      {
-        url: '/BG.jpg', // Put in public folder
-        width: 1200,
-        height: 630,
-        alt: 'Logan Pinney Portfolio Banner',
-      },
-    ],
     locale: 'en_US',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Logan Pinney',
+    title: 'Logan Pinney — Data Systems Architect',
     description:
-      'Courses, mentorship, and contract development in Unreal Engine',
-    images: ['/BG.jpg'],
+      'Data systems architect designing automation, integrations, and operational data infrastructure.',
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   return (
-    <html lang="en">
-      <head>
-        <script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-7475424188654327"
-          crossOrigin="anonymous"
-        ></script>
-      </head>
-      <body className={inter.className}>
-        <Nav />
-        <main className="min-h-screen px-4 sm:px-12 pt-6">{children}</main>
+    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
+      <body className="bg-neutral-950 text-neutral-200 font-sans antialiased min-h-screen flex flex-col">
+        <CornerLogo />
+        <main className="flex-1">{children}</main>
         <Footer />
       </body>
     </html>
