@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 type Line =
   | { type: 'cmd'; text: string }
   | { type: 'out'; text: string }
-  | { type: 'blank' }
+
 
 const lines: Line[] = [
   { type: 'cmd', text: 'whoami' },
