@@ -16,7 +16,7 @@ export const siteConfig = {
     title: 'Data Systems Architect',
     currentLine: 'currently: part-time contract with Riot Games',
     tagline:
-    'Most operational mess is not a tooling problem. It is a structure problem. Bad schemas, weak handoffs, manual workarounds, unclear ownership, and fragile integrations pile up until the system becomes a liability. I fix that by designing the architecture underneath the workflow: data model, validation, orchestration, permissions, and failure handling.',
+    'Most operational mess is not a tooling problem. It is a structure problem. <br /><br />Bad schemas, weak handoffs, manual workarounds, unclear ownership, and fragile integrations pile up until the system becomes a liability. I fix that by designing the architecture underneath the workflow: data model, validation, orchestration, permissions, and failure handling.',
     location: 'Calgary, Alberta · remote-first',
     email: 'info@loganpinney.com',
     linkedin: 'https://www.linkedin.com/in/logan-pinney-6954a4195/',
