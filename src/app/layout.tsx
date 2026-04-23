@@ -3,6 +3,8 @@ import type { Metadata } from 'next'
 import { Inter, JetBrains_Mono } from 'next/font/google'
 import CornerLogo from '@/components/CornerLogo'
 import Footer from '@/components/Footer'
+import ThemeProvider from '@/components/ThemeProvider'
+import { siteConfig } from '@/config/site.config'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -19,8 +21,8 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL('https://loganpinney.com'),
   title: {
-    default: 'Logan Pinney — Data Systems Architect',
-    template: '%s — Logan Pinney',
+    default: `${siteConfig.identity.name} — ${siteConfig.identity.title}`,
+    template: `%s — ${siteConfig.identity.name}`,
   },
   description:
     'Data systems architect designing automation, integrations, and operational data infrastructure.',
@@ -32,14 +34,14 @@ export const metadata: Metadata = {
     'Workato',
     'Data Integration',
   ],
-  authors: [{ name: 'Logan Pinney' }],
-  creator: 'Logan Pinney',
+  authors: [{ name: siteConfig.identity.name }],
+  creator: siteConfig.identity.name,
   icons: [
     { rel: 'icon', url: '/favicon.ico' },
     { rel: 'icon', url: '/LP_Logo_SVG.svg', type: 'image/svg+xml' },
   ],
   openGraph: {
-    title: 'Logan Pinney — Data Systems Architect',
+    title: `${siteConfig.identity.name} — ${siteConfig.identity.title}`,
     description:
       'Data systems architect designing automation, integrations, and operational data infrastructure.',
     url: 'https://loganpinney.com',
@@ -49,14 +51,11 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Logan Pinney — Data Systems Architect',
+    title: `${siteConfig.identity.name} — ${siteConfig.identity.title}`,
     description:
       'Data systems architect designing automation, integrations, and operational data infrastructure.',
   },
-  robots: {
-    index: true,
-    follow: true,
-  },
+  robots: { index: true, follow: true },
 }
 
 export default function RootLayout({
@@ -66,7 +65,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
-      <body className="bg-neutral-950 text-neutral-200 font-sans antialiased min-h-screen flex flex-col">
+      <head>
+        <ThemeProvider />
+      </head>
+      <body className="font-sans antialiased min-h-screen flex flex-col">
         <CornerLogo />
         <main className="flex-1">{children}</main>
         <Footer />

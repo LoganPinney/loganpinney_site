@@ -1,89 +1,103 @@
 import type { Metadata } from 'next'
+import { siteConfig } from '@/config/site.config'
 
 export const metadata: Metadata = {
   title: 'Privacy Policy',
-  description: 'Privacy policy for loganpinney.com',
+  description: 'Privacy policy for loganpinney.com.',
 }
+
+const glow = siteConfig.effects.glowText ? 'glow-text' : ''
 
 export default function PrivacyPage() {
   return (
-    <div className="max-w-3xl mx-auto px-6 sm:px-8 py-16">
-      <div className="font-mono text-xs uppercase tracking-widest text-[var(--color-accent)] mb-4">
-        {'// legal'}
-      </div>
-      <h1 className="text-4xl font-medium tracking-tight text-white mb-2">
-        Privacy Policy
-      </h1>
-      <p className="font-mono text-xs text-neutral-500 mb-10">
-        Last updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
-      </p>
+    <div className="max-w-3xl mx-auto px-6 sm:px-8 py-20">
+      <header className="mb-12">
+        <p
+          className={`font-mono text-xs uppercase tracking-widest mb-4 ${glow}`}
+          style={{ color: 'var(--accent)' }}
+        >
+          {'// legal'}
+        </p>
+        <h1 className="text-4xl font-medium tracking-tight text-white mb-3">
+          Privacy Policy
+        </h1>
+        <p className="font-mono text-xs" style={{ color: 'var(--text-faint)' }}>
+          Last updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+        </p>
+      </header>
 
-      <div className="space-y-8 text-neutral-300 leading-relaxed">
+      <div className="space-y-6 leading-relaxed" style={{ color: '#ccc' }}>
         <section>
-          <h2 className="text-xl font-medium text-white mb-3">The short version</h2>
+          <h2 className="text-xl font-medium text-white mb-2">Overview</h2>
           <p>
-            I don&apos;t sell your data. I don&apos;t run invasive tracking. If you email
-            me, I read it and only use that information to reply.
+            This privacy policy describes how loganpinney.com (the &quot;Site&quot;)
+            handles information about visitors. The Site is intentionally minimal —
+            there is no analytics tracking, no advertising, and no newsletter.
           </p>
         </section>
 
         <section>
-          <h2 className="text-xl font-medium text-white mb-3">What I collect</h2>
-          <ul className="space-y-3">
-            <li className="flex gap-3">
-              <span className="text-[var(--color-accent)] font-mono shrink-0 mt-1">▸</span>
-              <span>
-                <span className="text-white font-medium">Contact form submissions:</span>{' '}
-                Your name, email, and message — used only to reply to you.
-              </span>
+          <h2 className="text-xl font-medium text-white mb-2">Information Collected</h2>
+          <p>
+            If you submit the contact form, the name, email address, and message you
+            provide are sent via Formspree to my email inbox. This information is used
+            solely to respond to your message.
+          </p>
+          <p className="mt-3">
+            Standard server logs (maintained by the hosting provider) may include IP
+            addresses and request metadata for security and operational purposes.
+          </p>
+        </section>
+
+        <section>
+          <h2 className="text-xl font-medium text-white mb-2">Third-Party Services</h2>
+          <p>The Site uses the following third-party services:</p>
+          <ul className="mt-3 space-y-1.5 text-sm" style={{ color: 'var(--text-dim)' }}>
+            <li className="flex gap-2">
+              <span style={{ color: 'var(--accent)' }} aria-hidden>›</span>
+              <span><strong>Vercel</strong> — hosting and edge delivery</span>
             </li>
-            <li className="flex gap-3">
-              <span className="text-[var(--color-accent)] font-mono shrink-0 mt-1">▸</span>
-              <span>
-                <span className="text-white font-medium">Analytics:</span>{' '}
-                Basic, privacy-respecting analytics to understand traffic patterns.
-                No personal profiles, no cross-site tracking.
-              </span>
+            <li className="flex gap-2">
+              <span style={{ color: 'var(--accent)' }} aria-hidden>›</span>
+              <span><strong>Formspree</strong> — contact form handling</span>
             </li>
-            <li className="flex gap-3">
-              <span className="text-[var(--color-accent)] font-mono shrink-0 mt-1">▸</span>
-              <span>
-                <span className="text-white font-medium">Server logs:</span>{' '}
-                Standard request logs retained briefly for security and debugging.
-              </span>
+            <li className="flex gap-2">
+              <span style={{ color: 'var(--accent)' }} aria-hidden>›</span>
+              <span><strong>Google Fonts</strong> — font delivery (self-hosted via Next.js)</span>
             </li>
           </ul>
         </section>
 
         <section>
-          <h2 className="text-xl font-medium text-white mb-3">Third-party services</h2>
+          <h2 className="text-xl font-medium text-white mb-2">Cookies</h2>
           <p>
-            This site uses a small number of trusted services — hosting (Vercel),
-            form delivery (Formspree), and font hosting (Google Fonts). Each has
-            its own privacy policy.
+            The Site does not set any tracking cookies. Your browser may receive
+            technical cookies from Vercel or Formspree as part of their standard
+            operation.
           </p>
         </section>
 
         <section>
-          <h2 className="text-xl font-medium text-white mb-3">Your rights</h2>
+          <h2 className="text-xl font-medium text-white mb-2">Your Rights</h2>
           <p>
-            You can request that I delete any information you&apos;ve sent me at any
-            time. Email{' '}
+            You can request deletion of any personal information you&apos;ve sent via
+            the contact form by emailing{' '}
             <a
-              href="mailto:info@loganpinney.com"
-              className="text-[var(--color-accent)] hover:underline"
+              href={`mailto:${siteConfig.identity.email}`}
+              className="underline hover:no-underline"
+              style={{ color: 'var(--accent)' }}
             >
-              info@loganpinney.com
-            </a>{' '}
-            and I&apos;ll handle it promptly.
+              {siteConfig.identity.email}
+            </a>
+            .
           </p>
         </section>
 
         <section>
-          <h2 className="text-xl font-medium text-white mb-3">Changes</h2>
+          <h2 className="text-xl font-medium text-white mb-2">Changes</h2>
           <p>
-            If this policy changes materially, I&apos;ll update the &ldquo;last updated&rdquo;
-            date at the top.
+            This policy may be updated from time to time. The &quot;Last updated&quot;
+            date at the top reflects the most recent revision.
           </p>
         </section>
       </div>

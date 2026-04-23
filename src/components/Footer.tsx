@@ -1,44 +1,80 @@
 import Link from 'next/link'
+import { siteConfig } from '@/config/site.config'
 
 export default function Footer() {
+  const year = new Date().getFullYear()
+
   return (
-    <footer className="border-t border-neutral-900 mt-24">
-      <div className="max-w-5xl mx-auto px-6 sm:px-8 py-10 flex flex-col gap-6">
-        {/* primary nav row */}
-        <nav className="flex flex-wrap gap-6 font-mono text-xs uppercase tracking-wider">
-          <Link href="/" className="text-neutral-400 hover:text-white transition">
-            home
-          </Link>
-          <Link href="/work" className="text-neutral-400 hover:text-white transition">
-            work
-          </Link>
-          <Link href="/about" className="text-neutral-400 hover:text-white transition">
-            about
-          </Link>
-          <Link href="/contact" className="text-neutral-400 hover:text-white transition">
-            contact
-          </Link>
+    <footer
+      className="mt-24 py-10 px-6 sm:px-8"
+      style={{ borderTop: '1px solid var(--border)' }}
+    >
+      <div className="max-w-5xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+        {/* left: nav */}
+        <nav className="flex flex-wrap gap-5 font-mono text-xs">
+          {siteConfig.nav.map((item) => (
+            <FooterLink key={item.href} href={item.href}>
+              {item.label}
+            </FooterLink>
+          ))}
+          <FooterLink href={siteConfig.identity.linkedin} external>
+            linkedin ↗
+          </FooterLink>
+          <FooterLink href={`mailto:${siteConfig.identity.email}`}>
+            email
+          </FooterLink>
         </nav>
 
-        {/* legal + contact row */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 text-xs font-mono text-neutral-600 pt-6 border-t border-neutral-900">
-          <div>© {new Date().getFullYear()} Logan Pinney</div>
-          <div className="flex flex-wrap gap-6">
-            <Link href="/legal/terms" className="hover:text-neutral-300 transition">
+        {/* right: copy + legal */}
+        <div className="flex flex-col sm:items-end gap-2">
+          <div className="font-mono text-[10px]" style={{ color: 'var(--text-faint)' }}>
+            © {year} {siteConfig.identity.name}. all rights reserved.
+          </div>
+          <div className="flex gap-4 font-mono text-[10px]">
+            <FooterLink href="/legal/terms" small>
               terms
-            </Link>
-            <Link href="/legal/privacy" className="hover:text-neutral-300 transition">
+            </FooterLink>
+            <FooterLink href="/legal/privacy" small>
               privacy
-            </Link>
-            <a
-              href="mailto:info@loganpinney.com"
-              className="hover:text-neutral-300 transition"
-            >
-              info@loganpinney.com
-            </a>
+            </FooterLink>
           </div>
         </div>
       </div>
     </footer>
+  )
+}
+
+function FooterLink({
+  href,
+  children,
+  external = false,
+  small = false,
+}: {
+  href: string
+  children: React.ReactNode
+  external?: boolean
+  small?: boolean
+}) {
+  const size = small ? 'text-[10px]' : 'text-xs'
+  const common = `font-mono ${size} transition hover:text-[color:var(--accent)]`
+
+  if (external) {
+    return (
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={common}
+        style={{ color: 'var(--text-dim)' }}
+      >
+        {children}
+      </a>
+    )
+  }
+
+  return (
+    <Link href={href} className={common} style={{ color: 'var(--text-dim)' }}>
+      {children}
+    </Link>
   )
 }
