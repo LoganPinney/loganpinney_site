@@ -56,7 +56,7 @@ export default function HomePage() {
         </p>
 
         <p
-          className="text-lg leading-relaxed max-w-2xl mb-10"
+          className="text-lg leading-relaxed max-w-2xl mb-10 whitespace-pre-line"
           style={{ color: '#ccc' }}
         >
           {siteConfig.identity.tagline}
