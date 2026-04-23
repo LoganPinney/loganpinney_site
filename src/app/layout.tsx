@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     template: '%s — Logan Pinney',
   },
   description:
-    'Data systems architect designing automation, integrations, and operational data infrastructure. Currently at Riot Games.',
+    'Data systems architect designing automation, integrations, and operational data infrastructure.',
   keywords: [
     'Logan Pinney',
     'Data Systems Architect',
@@ -31,7 +31,6 @@ export const metadata: Metadata = {
     'Airtable',
     'Workato',
     'Data Integration',
-    'Riot Games',
   ],
   authors: [{ name: 'Logan Pinney' }],
   creator: 'Logan Pinney',
@@ -42,7 +41,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Logan Pinney — Data Systems Architect',
     description:
-      'Data systems architect designing automation, integrations, and operational data infrastructure. Currently at Riot Games.',
+      'Data systems architect designing automation, integrations, and operational data infrastructure.',
     url: 'https://loganpinney.com',
     siteName: 'loganpinney.com',
     locale: 'en_US',

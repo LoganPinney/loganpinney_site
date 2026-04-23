@@ -20,10 +20,12 @@ export default function HomePage() {
           Logan Pinney
         </h1>
 
-        <p className="font-mono text-base text-neutral-400 mb-8">
-          Data Systems Architect{' '}
-          <span className="text-neutral-600">·</span>{' '}
-          <span className="text-[var(--color-accent)]">Riot Games</span>
+        <p className="font-mono text-base text-[var(--color-accent)] mb-3">
+          Data Systems Architect
+        </p>
+
+        <p className="font-mono text-xs text-neutral-500 mb-8">
+          currently: part-time contract with Riot Games
         </p>
 
         <p className="text-lg text-neutral-300 leading-relaxed max-w-2xl mb-10">
@@ -68,16 +70,10 @@ export default function HomePage() {
 
         <div className="grid gap-4 sm:grid-cols-2">
           <WorkCard
-            tag="riot games"
-            title="Data Platform Architecture"
-            body="Designing orchestration and tooling for operational data infrastructure at one of gaming's largest platforms."
-            period="2025 — present"
-          />
-          <WorkCard
             tag="contract"
-            title="Event Ops Data Systems"
-            body="Architected automation for immigration compliance, RFP pipelines, staffing workflows, and budget coordination across global event operations."
-            period="2024 — 2025"
+            title="Data Systems & Automation"
+            body="Architecting automation and integration systems across Airtable, Workato, and Google Workspace — immigration compliance, RFP pipelines, staffing data, and budget coordination. Currently extending this work into a part-time contract with Riot Games."
+            period="2024 — present"
           />
           <WorkCard
             tag="epic games · coursera"
@@ -90,6 +86,12 @@ export default function HomePage() {
             title="Authorized Instructor"
             body="Mentored thousands of students through industry-ready Unreal Engine training programs. Built curriculum, delivered live cohorts."
             period="2021 — 2024"
+          />
+          <WorkCard
+            tag="kitbash3d"
+            title="Ambassador & QA"
+            body="QA on 40+ production-ready asset kits used in world-building for games, film, and virtual production."
+            period="2022 — 2024"
           />
         </div>
       </section>

@@ -2,13 +2,8 @@
 User-agent: *
 Allow: /
 
-# *
-User-agent: *
-Disallow: /private/
-
 # Host
 Host: https://loganpinney.com
 
 # Sitemaps
 Sitemap: https://loganpinney.com/sitemap.xml
-Sitemap: https://loganpinney.com/my-custom-sitemap-1.xml

@@ -4,7 +4,7 @@ import Link from 'next/link'
 export const metadata: Metadata = {
   title: 'About',
   description:
-    "About Logan Pinney — Data Systems Architect at Riot Games, previously Unreal Engine Authorized Instructor. Queen's University Computer Science.",
+    "About Logan Pinney — Data Systems Architect. Automation, integration, and operational data infrastructure. Queen's University Computer Science.",
 }
 
 export default function AboutPage() {
@@ -25,13 +25,12 @@ export default function AboutPage() {
         </p>
 
         <p>
-          I&apos;m currently at{' '}
-          <span className="text-[var(--color-accent)]">Riot Games</span>, where I
-          focus on platform and tooling for data orchestration. Before that, I
-          spent several years architecting automation infrastructure for global
-          event operations — immigration compliance pipelines, RFP workflows,
-          staffing data, budget coordination — the kind of work where a single
-          schema decision can ripple through a dozen teams.
+          Most of my recent work has been architecting automation infrastructure
+          for global event operations — immigration compliance pipelines, RFP
+          workflows, staffing data, budget coordination — the kind of work where
+          a single schema decision can ripple through a dozen teams. I&apos;m
+          currently extending that practice into a part-time contract with{' '}
+          <span className="text-[var(--color-accent)]">Riot Games</span>.
         </p>
 
         <p>
@@ -50,7 +49,7 @@ export default function AboutPage() {
           </a>{' '}
           course, and mentored thousands of students through CG Spectrum&apos;s
           virtual production programs. That background still shows up in my data
-          work — I&apos;m comfortable in systems thinking, 3D pipelines, and the
+          work — I&apos;m comfortable in systems thinking, pipelines, and the
           messy middle where technical and creative tooling meet.
         </p>
 
@@ -72,8 +71,8 @@ export default function AboutPage() {
 
         <div className="space-y-4">
           <CredRow
-            label="current"
-            value="Data Systems Architect, Riot Games"
+            label="focus"
+            value="Data Systems & Automation Architecture"
           />
           <CredRow
             label="education"

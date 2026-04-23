@@ -6,10 +6,9 @@ type Line =
   | { type: 'cmd'; text: string }
   | { type: 'out'; text: string }
 
-
 const lines: Line[] = [
   { type: 'cmd', text: 'whoami' },
-  { type: 'out', text: 'data-systems-architect' },
+  { type: 'out', text: 'data-systems-architect @ contract' },
   { type: 'cmd', text: 'cat focus.txt' },
   { type: 'out', text: 'workflow automation · integrations · governance' },
   { type: 'cmd', text: 'echo $status' },

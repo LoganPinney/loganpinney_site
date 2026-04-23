@@ -4,7 +4,7 @@ import Link from 'next/link'
 export const metadata: Metadata = {
   title: 'Work',
   description:
-    'Selected data systems and automation work by Logan Pinney — Riot Games, event operations, Epic Games, and Coursera.',
+    'Selected data systems and automation work by Logan Pinney — event operations, Epic Games, Coursera, and more.',
 }
 
 export default function WorkPage() {
@@ -25,22 +25,10 @@ export default function WorkPage() {
 
       <div className="space-y-16">
         <Project
-          tag="riot games"
-          period="2025 — present"
-          title="Data Platform Architecture"
-          summary="Orchestration and tooling infrastructure supporting operational data systems at one of the largest games companies in the world."
-          responsibilities={[
-            'Platform & tooling for data orchestration',
-            'Infrastructure for scalable data workflows',
-            'Integration between internal systems and third-party services',
-          ]}
-        />
-
-        <Project
-          tag="contract · event operations"
-          period="2024 — 2025"
-          title="Event Ops Data Systems"
-          summary="Architected the automation and data infrastructure for a global event operation spanning immigration compliance, logistics, and finance coordination."
+          tag="contract · data systems"
+          period="2024 — present"
+          title="Data Systems & Automation Architecture"
+          summary="Architecting the automation and data infrastructure for global event operations — immigration compliance, logistics, finance, and staffing. Currently extending this practice into a part-time contract with Riot Games."
           responsibilities={[
             'Workflow architecture: end-to-end ops flows across Airtable, Google Sheets, and Workato',
             'Systems integration: APIs, webhooks, transformation logic, retry & alerting frameworks',
@@ -78,6 +66,18 @@ export default function WorkPage() {
             'Live cohort instruction for beginner through advanced Unreal Engine courses',
             'Curriculum contribution and review',
             'One-on-one mentorship and portfolio review',
+          ]}
+        />
+
+        <Project
+          tag="kitbash3d"
+          period="2022 — 2024"
+          title="Ambassador & QA"
+          summary="Quality assurance on production-ready asset kits used for world-building in games, film, and virtual production."
+          responsibilities={[
+            'QA reviewed 40+ commercial asset kits',
+            'Validated shader, material, and pipeline behavior across Unreal Engine versions',
+            'Represented the KitBash3D community as an ambassador',
           ]}
         />
       </div>
