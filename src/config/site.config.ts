@@ -14,10 +14,12 @@ export const siteConfig = {
   identity: {
     name: 'Logan Pinney',
     title: 'Data Systems Architect',
-    currentLine: 'currently: part-time contract with Riot Games',
+    currentLine: 'currently: contract with Riot Games',
     tagline: `Most operational mess is not a tooling problem. It is a structure problem.
 
-Bad schemas, weak handoffs, manual workarounds, unclear ownership, and fragile integrations pile up until the system becomes a liability. I fix that by designing the architecture underneath the workflow: data model, validation, orchestration, permissions, and failure handling.`,
+Bad schemas, weak handoffs, and brittle automations turn workflows into liabilities.
+
+I rebuild the structure underneath: data models, validation, orchestration, permissions, and failure handling so systems run reliably at scale.`,
     location: 'Calgary, Alberta · remote-first',
     email: 'info@loganpinney.com',
     linkedin: 'https://www.linkedin.com/in/logan-pinney-6954a4195/',
@@ -71,7 +73,7 @@ Bad schemas, weak handoffs, manual workarounds, unclear ownership, and fragile i
     {
       tag: 'contract',
       title: 'Data Systems & Automation',
-      body: 'Architecting automation and integration systems across Airtable, Workato, and Google Workspace — immigration compliance, RFP pipelines, staffing data, and budget coordination. Currently extending this work into a part-time contract with Riot Games.',
+      body: 'Architecting automation and integration systems across Airtable, Workato, and Google Workspace.Replaced manual workflows across immigration, staffing, and operations — reducing coordination overhead and eliminating failure-prone processes. Currently continuing this work in a contract with Riot Games.',
       period: '2025 — present',
     },
     {
@@ -109,9 +111,9 @@ Bad schemas, weak handoffs, manual workarounds, unclear ownership, and fragile i
 
   // ─── Terminal (hero animated block) ────────────────────────
   terminal: [
-    { cmd: 'whoami', out: 'data-systems-architect @ contract' },
+    { cmd: 'whoami', out: 'operator rebuilding broken systems' },
     { cmd: 'cat focus.txt', out: 'workflow automation · integrations · governance' },
-    { cmd: 'echo $status', out: 'open to select contract work' },
+    { cmd: 'echo $status', out: 'select contracts · high-impact only' },
   ],
 
   // ─── Status banner ─────────────────────────────────────────
