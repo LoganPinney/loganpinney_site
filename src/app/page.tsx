@@ -73,7 +73,7 @@ export default function HomePage() {
             href="/work"
             className="btn-ghost inline-flex items-center gap-2 font-mono text-sm px-5 py-2.5 rounded"
           >
-            view work
+            view work <span aria-hidden>→</span>
           </Link>
         </div>
 
