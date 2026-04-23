@@ -12,8 +12,8 @@ const glow = siteConfig.effects.glowText ? 'glow-text' : ''
 
 const projects = [
   {
-    tag: 'contract',
-    period: '2024 — present',
+    tag: 'contract · riot games',
+    period: '2025 — present',
     title: 'Data Systems & Automation',
     context:
       'Designing and building the operational backbone for events, talent operations, and multi-team coordination.',
@@ -31,14 +31,14 @@ const projects = [
   {
     tag: 'epic games · coursera',
     period: '2022 — 2024',
-    title: 'Unreal Engine Fundamentals',
+    title: 'Unreal Engine Mentor & Educator',
     context:
-      "Flagship Coursera course on real-time 3D development — part of Epic Games' Unreal Authorized Instructor program.",
+      "Before moving deeper into systems architecture, I spent years building technical education infrastructure in real-time 3D.",
     work: [
-      'Designed full course curriculum and learning outcomes',
+      'Designed full course curriculum and learning outcomes for Coursera’s Unreal Engine Fundamentals course',
       'Built hands-on project-based modules for beginners',
-      'Produced video lectures, demos, and assessments',
-      'Ongoing curriculum updates as the engine evolved',
+      'Produced video lectures, demos, and assessments viewed by 15,000+ students',
+      'Creating production-facing training that had to be clear, repeatable, and usable',
     ],
     stack: ['Unreal Engine', 'Blueprints', 'C++ basics', 'Course design'],
   },
@@ -52,16 +52,16 @@ const projects = [
       'Delivered live cohort-based instruction',
       'Built and iterated on curriculum across skill levels',
       '1:1 mentorship and portfolio review',
-      'Student-to-industry transition coaching',
+      'Gold level Authorized Instructor for 3+ years',
     ],
     stack: ['Unreal Engine', 'Real-time 3D', 'Curriculum design', 'Mentorship'],
   },
   {
     tag: 'kitbash3d',
-    period: '2022 — 2024',
+    period: '2022 — present',
     title: 'Brand Ambassador & QA',
     context:
-      'Quality assurance and community presence for 40+ production-ready asset kits used in games, film, and virtual production.',
+      'Quality assurance and community presence for 60+ production-ready asset kits used in games, film, and virtual production.',
     work: [
       'QA on real-time optimized asset kits',
       'Community demos and technical walkthroughs',

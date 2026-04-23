@@ -126,11 +126,10 @@ export default function HomePage() {
       <section className="py-20" style={{ borderTop: '1px solid var(--border)' }}>
         <div className="max-w-2xl">
           <h2 className="text-3xl sm:text-4xl font-medium text-white mb-4 tracking-tight">
-            Got a messy system that needs architecting?
+            If your team is drowning in spreadsheets, manual workarounds, or brittle automations, I can help fix the structure underneath it.
           </h2>
           <p className="mb-8 leading-relaxed" style={{ color: 'var(--text-dim)' }}>
-            I take on a limited number of contracts where I can help design, rebuild,
-            or audit operational data systems. If that&apos;s what you need, let&apos;s talk.
+            I take on a limited number of contracts where the problem is operationally important and the scope is real.
           </p>
           <Link
             href="/contact"
