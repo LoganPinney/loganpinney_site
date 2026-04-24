@@ -54,7 +54,7 @@ html[data-scanlines="true"] body::before {
     var(--accent-glow) 3px,
     var(--accent-glow) 4px
   );
-  opacity: 0.04;
+  opacity: 0.025;
   mix-blend-mode: screen;
 }
 
@@ -78,7 +78,7 @@ html[data-scanlines="true"] body::before {
 
 /* Glow text (applied selectively via .glow-text class) */
 .glow-text {
-  text-shadow: 0 0 8px var(--accent-glow);
+  text-shadow: 0 0 5px var(--accent-glow);
 }
 
 /* Glow button — cyberpunk outline style */
@@ -111,7 +111,7 @@ html[data-scanlines="true"] body::before {
 }
 .card-glow:hover {
   border-color: var(--accent) !important;
-  box-shadow: 0 0 20px color-mix(in srgb, var(--accent) 10%, transparent);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--accent) 8%, transparent);
 }
 
 /* Accent tag */

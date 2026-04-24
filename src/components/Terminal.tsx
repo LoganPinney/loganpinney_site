@@ -25,7 +25,7 @@ export default function Terminal() {
     const line = script[idx]
 
     if (charIdx < line.text.length) {
-      const delay = line.type === 'cmd' ? 45 : 18
+      const delay = line.type === 'cmd' ? 35 : 12 //type speed calm = 35: 12 faster = 45: 18
       const t = setTimeout(() => {
         setCurrent(line.text.slice(0, charIdx + 1))
         setCharIdx((c) => c + 1)
@@ -47,7 +47,7 @@ export default function Terminal() {
 
   return (
     <div
-      className="mt-12 max-w-xl rounded-md overflow-hidden"
+      className="mt-12 max-w-xl rounded-md overflow-hidden opacity-85"
       style={{
         background: 'var(--bg-card)',
         border: '1px solid var(--border)',

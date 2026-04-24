@@ -80,7 +80,75 @@ export default function HomePage() {
         </div>
 
         <Terminal />
-      </section>
+       </section>
+
+      {/* FEATURED CASE STUDY */}
+<section className="py-16" style={{ borderTop: '1px solid var(--border)' }}>
+  <div className="mb-8">
+    <h2
+      className={`font-mono text-xs uppercase tracking-widest mb-4 ${glowText}`}
+      style={{ color: 'var(--accent)' }}
+    >
+      {'// featured case study'}
+    </h2>
+
+    <div
+      className="rounded-md p-6 sm:p-8 transition-all duration-200 hover:-translate-y-1"
+      style={{
+        background: 'var(--bg-card)',
+        border: '1px solid var(--border)',
+      }}
+    >
+      <div className="mb-4 flex flex-wrap gap-2">
+        {[
+          '400–1,200 participants per event',
+          'manual setup reduced',
+          'validated workflow',
+          'audit-ready logs',
+        ].map((item) => (
+          <span
+            key={item}
+            className="rounded border px-2.5 py-1 font-mono text-[11px]"
+            style={{
+              borderColor: 'color-mix(in srgb, var(--accent) 30%, transparent)',
+              color: 'var(--accent)',
+            }}
+          >
+            {item}
+          </span>
+        ))}
+      </div>
+
+      <h3 className="mb-3 text-2xl font-medium tracking-tight text-white">
+        Event Staffing Automation
+      </h3>
+
+      <p className="mb-5 max-w-3xl leading-relaxed" style={{ color: '#ccc' }}>
+        Rebuilt manual staffing and event operations workflows into a validated
+        automation pipeline using Google Sheets, Apps Script, Workato, Airtable,
+        and delivery logging.
+      </p>
+
+      <p className="mb-6 max-w-3xl text-sm leading-relaxed" style={{ color: 'var(--text-dim)' }}>
+        The workflow supports event operations involving hundreds of participants
+        per event, reducing coordination overhead by replacing fragile manual
+        steps with structured data, queue states, validation, and recoverable sync
+        paths.
+      </p>
+
+      <span
+        className="inline-flex cursor-not-allowed items-center gap-2 rounded border px-4 py-2 font-mono text-xs opacity-80"
+        style={{
+          borderColor: 'var(--accent)',
+          color: 'var(--accent)',
+        }}
+      >
+        workflow montage coming soon <span aria-hidden>→</span>
+      </span>
+    </div>
+  </div>
+</section>
+
 
       {/* SELECTED WORK */}
       <section className="py-16" style={{ borderTop: '1px solid var(--border)' }}>
