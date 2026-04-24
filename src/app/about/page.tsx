@@ -99,12 +99,10 @@ export default function AboutPage() {
           </p>
 
           <p>
-            Before this, I designed and taught complex technical systems. I built
-            part of Epic Games’ flagship Unreal Engine Game Design Certificate
-            course and mentored thousands of developers on Unreal Engine
-            fundamentals. That work was never about games. It was about
-            understanding how systems fail when real people use them and how to
-            teach them to others in a simple way.
+           Earlier in my career, I worked in clinical respiratory and anesthesia environments where process, 
+           handoff, documentation, and failure handling mattered in real time. 
+           That experience still shapes how I design operational systems: clear ownership, clean escalation paths, 
+           and no hidden failure states.
           </p>
 
           <p>

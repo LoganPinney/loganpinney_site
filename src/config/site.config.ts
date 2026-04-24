@@ -121,7 +121,8 @@ I rebuild the structure underneath: data models, validation, orchestration, perm
   terminal: [
     { cmd: 'whoami', out: 'operator rebuilding broken systems' },
     { cmd: 'cat focus.txt', out: 'workflow automation · integrations · governance' },
-    { cmd: 'echo $status', out: 'select contracts · high-impact only' },
+    { cmd: 'cat outcomes.txt', out: 'validated workflows · audit trails · fewer manual handoffs' },
+    { cmd: 'echo $status', out: 'selective contract availability' },
   ],
 
   // ─── Status banner ─────────────────────────────────────────
