@@ -32,17 +32,19 @@ export default function HomePage() {
           </span>
         </div>
 
-        <h1 className="text-5xl sm:text-6xl font-medium tracking-tight leading-[1.05] mb-4 text-white">
+      <Link href="/about" className="group inline-block">
+        <h1 className="text-5xl sm:text-6xl font-medium tracking-tight leading-[1.05] mb-4 text-white transition-colors duration-200 group-hover:text-[var(--accent)]">
           {siteConfig.identity.name}
           {blinkCursor && (
-            <span
-              className={`cursor-blink ${glowText}`}
-              style={{ color: 'var(--accent)' }}
-            >
-              _
+              <span
+                className={`cursor-blink ${glowText} transition-colors duration-200 group-hover:text-[var(--accent)]`}
+                style={{ color: 'var(--accent)' }}
+              >
+              _ 
             </span>
-          )}
-        </h1>
+            )}
+          </h1>
+      </Link>
 
         <p
           className={`font-mono text-base mb-3 ${glowText}`}
