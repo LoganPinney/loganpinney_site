@@ -126,7 +126,7 @@ I rebuild the structure underneath: data models, validation, orchestration, perm
 
   // ─── Status banner ─────────────────────────────────────────
   status: {
-    label: 'selective contract avalability',
+    label: 'selective contract availability',
     color: 'accent', // 'accent' | 'success' | 'text'
   },
 } as const
