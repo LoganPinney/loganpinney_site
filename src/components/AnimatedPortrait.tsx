@@ -6,6 +6,9 @@ type Props = {
   src?: string
   alt?: string
   className?: string
+  /** Rotating radar wedge overlay. Off by default — looked too busy at
+   *  desktop size. Flip to true for smaller/mobile-only uses if desired. */
+  showSweep?: boolean
 }
 
 /**
@@ -22,6 +25,7 @@ export default function AnimatedPortrait({
   src = '/about/portrait.png',
   alt = 'Logan Pinney',
   className = '',
+  showSweep = false,
 }: Props) {
   return (
     <div
@@ -48,32 +52,35 @@ export default function AnimatedPortrait({
       />
 
       {/* Radar sweep — clipped to a centered circle so the wedge feels
-          like it’s rotating inside the green scope from the photo. */}
-      <svg
-        className="pointer-events-none absolute inset-0 h-full w-full"
-        viewBox="0 0 100 100"
-        aria-hidden="true"
-      >
-        <defs>
-          <linearGradient id="portrait-sweep" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stopColor="#22c55e" stopOpacity="0" />
-            <stop offset="100%" stopColor="#22c55e" stopOpacity="0.55" />
-          </linearGradient>
-          <clipPath id="portrait-scope">
-            <circle cx="50" cy="50" r="49" />
-          </clipPath>
-        </defs>
-        <g clipPath="url(#portrait-scope)">
-          <g className="portrait-radar-sweep">
-            {/* 90° wedge from center, top-right quadrant */}
-            <path
-              d="M 50 50 L 50 0 A 50 50 0 0 1 100 50 Z"
-              fill="url(#portrait-sweep)"
-              style={{ mixBlendMode: 'screen' }}
-            />
+          like it’s rotating inside the green scope from the photo.
+          Disabled by default (prop), looked too busy at desktop scale. */}
+      {showSweep && (
+        <svg
+          className="pointer-events-none absolute inset-0 h-full w-full"
+          viewBox="0 0 100 100"
+          aria-hidden="true"
+        >
+          <defs>
+            <linearGradient id="portrait-sweep" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stopColor="#22c55e" stopOpacity="0" />
+              <stop offset="100%" stopColor="#22c55e" stopOpacity="0.55" />
+            </linearGradient>
+            <clipPath id="portrait-scope">
+              <circle cx="50" cy="50" r="49" />
+            </clipPath>
+          </defs>
+          <g clipPath="url(#portrait-scope)">
+            <g className="portrait-radar-sweep">
+              {/* 90° wedge from center, top-right quadrant */}
+              <path
+                d="M 50 50 L 50 0 A 50 50 0 0 1 100 50 Z"
+                fill="url(#portrait-sweep)"
+                style={{ mixBlendMode: 'screen' }}
+              />
+            </g>
           </g>
-        </g>
-      </svg>
+        </svg>
+      )}
 
       {/* REC indicator dot */}
       <div
