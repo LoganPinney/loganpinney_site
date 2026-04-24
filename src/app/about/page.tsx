@@ -38,19 +38,19 @@ const credentials = [
   {
     role: 'Unreal Authorized Instructor, Epic Games',
     detail:
-      "Built and launched Epic Games' flagship Unreal Engine Coursera program.",
+      "Authour of Epic Games' flagship Unreal Engine Coursera certifcate program.",
   },
   {
-    role: 'Lead Instructor, CG Spectrum',
+    role: 'Instructor & Content Creation, CG Spectrum',
     detail: 'Mentored thousands of developers across production workflows.',
   },
   {
     role: 'Ambassador and QA, KitBash3D',
-    detail: 'QA on 40 plus production asset kits for games and film.',
+    detail: 'QA on 50 plus 3D model production asset kits used for games and film.',
   },
   {
     role: "B.Sc. Computer Science, Queen's University",
-    detail: '',
+    detail: 'Specialty: Biomedical Computing',
   },
 ]
 
@@ -96,8 +96,7 @@ export default function AboutPage() {
 
         <p>
           Today I apply that same thinking to operations. Events, compliance,
-          staffing, and data infrastructure. Current work includes rebuilding
-          automation pipelines and operational workflows for Riot Games.
+          staffing, and data infrastructure. Rebuilding automation pipelines and operational workflows to reduce man hours and friction.
         </p>
       </section>
 
