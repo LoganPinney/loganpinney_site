@@ -73,7 +73,7 @@ I rebuild the structure underneath: data models, validation, orchestration, perm
     {
       tag: 'contract',
       title: 'Data Systems & Automation',
-      body: 'Architecting automation and integration systems across Airtable, Workato, and Google Workspace.Replaced manual workflows across immigration, staffing, and operations — reducing coordination overhead and eliminating failure-prone processes. Currently continuing this work in a contract with Riot Games.',
+      body: 'Architecting automation and integration systems across Airtable, Workato, and Google Workspace. Replaced manual workflows across immigration, staffing, and operations — reducing coordination overhead and eliminating failure-prone processes. Currently continuing this work in a contract with Riot Games.',
       period: '2025 — present',
     },
     {

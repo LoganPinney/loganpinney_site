@@ -127,9 +127,12 @@ export default function HomePage() {
         <div className="max-w-2xl">
           <h2 className="text-3xl sm:text-4xl font-medium text-white mb-4 tracking-tight">
             If your operations rely on spreadsheets, manual workarounds, or fragile automations, the system is already failing. 
-           <span className="block">
+           <span className="block mt-2">
             I fix the structure underneath it.
           </span>
+          <span className="block mt-2">
+            Built to hold under real-world pressure.
+         </span>
           </h2>
           <p className="mb-8 leading-relaxed" style={{ color: 'var(--text-dim)' }}>
            I take on a limited number of contracts where the problems are real and the system matters.
