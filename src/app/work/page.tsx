@@ -39,18 +39,18 @@ const projects = [
       'Produced video lectures, demos, and assessments viewed by 15,000+ students',
       'Creating production-facing training that had to be clear, repeatable, and usable',
     ],
-    stack: ['Unreal Engine', 'Blueprints', 'C++ basics', 'Course design'],
+    stack: ['Unreal Engine', 'Blueprints', 'World-Building', 'Course design'],
   },
   {
     tag: 'cg spectrum',
     period: 'delivered',
-    title: 'Authorized Unreal Instructor',
+    title: 'Unreal Engine Authorizied Instructor, Gold Tier',
     context:
       'Mentored thousands of students through industry-ready Unreal Engine training programs.',
     work: [
-      'Delivered live cohort-based instruction',
-      'Built and iterated on curriculum across skill levels',
-      '1:1 mentorship and portfolio review',
+      'Delivered live cohort-based instruction & dozens of hours in asyncrouns learning content',
+      'Built and iterated on curriculum; Introduction to Unreal Engine, Animation, World-building',
+      '1:1 - 1:3 mentorship',
       'Gold level Authorized Instructor for 3+ years',
     ],
     stack: ['Unreal Engine', 'Real-time 3D', 'Curriculum design', 'Mentorship'],
