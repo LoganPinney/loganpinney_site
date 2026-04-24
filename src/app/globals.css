@@ -121,3 +121,62 @@ html[data-scanlines="true"] body::before {
   background: color-mix(in srgb, var(--accent) 4%, transparent);
   text-shadow: 0 0 4px var(--accent-glow);
 }
+/* Fade-in on mount */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+ 
+.fade-in {
+  animation: fade-in 0.5s ease-out forwards;
+}
+ 
+/* --- Animated portrait (About page) --- */
+@keyframes portrait-radar-spin {
+  to { transform: rotate(360deg); }
+}
+ 
+@keyframes portrait-flicker {
+  0%, 94%, 100% { opacity: 1; }
+  95%           { opacity: 0.94; }
+  96%           { opacity: 1; }
+  97%           { opacity: 0.88; }
+  98%           { opacity: 1; }
+}
+ 
+@keyframes portrait-dot-pulse {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50%      { opacity: 1;   transform: scale(1.4); }
+}
+ 
+.portrait-radar-sweep {
+  transform-origin: 50% 50%;
+  animation: portrait-radar-spin 6s linear infinite;
+}
+ 
+.portrait-flicker {
+  animation: portrait-flicker 7s ease-in-out infinite;
+}
+ 
+.portrait-scanlines {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0) 0,
+    rgba(0, 0, 0, 0) 2px,
+    rgba(0, 0, 0, 0.22) 3px,
+    rgba(0, 0, 0, 0.22) 3px
+  );
+  mix-blend-mode: multiply;
+}
+ 
+.portrait-dot {
+  animation: portrait-dot-pulse 1.6s ease-in-out infinite;
+}
+ 
+@media (prefers-reduced-motion: reduce) {
+  .portrait-radar-sweep,
+  .portrait-flicker,
+  .portrait-dot {
+    animation: none;
+  }
+}
