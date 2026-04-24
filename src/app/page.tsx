@@ -127,7 +127,7 @@ export default function HomePage() {
         <div className="max-w-2xl">
           <h2 className="text-3xl sm:text-4xl font-medium text-white mb-4 tracking-tight">
             If your operations rely on spreadsheets, manual workarounds, or fragile automations, the system is already failing. 
-           <span className="block mt-2">
+           <span className="block mt-4">
             I fix the structure underneath it.
           </span>
           <span className="block mt-2">
