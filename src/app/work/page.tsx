@@ -13,24 +13,23 @@ const glow = siteConfig.effects.glowText ? 'glow-text' : ''
 const projects = [
   {
     tag: 'contract · riot games',
-    period: '2025 — present',
+    period: 'ongoing',
     title: 'Data Systems & Automation',
     context:
       'Designing and building the operational backbone for events, talent operations, and multi-team coordination.',
     work: [
       'Immigration & compliance tracking across contractors and talent',
       'RFP pipelines and vendor coordination workflows',
-      'Staffing / player data collection with fillable forms and validation',
+      'Staffing / player data collection & automation with fillable forms and validation',
       'Budget tracking, room blocks, ticketing flows',
-      'Custom URL generation and distribution systems',
-    ],
+          ],
     stack: ['Airtable', 'Workato', 'Google Apps Script', 'Google Workspace', 'Webhooks'],
     note:
       'Currently extending this practice into a part-time contract with Riot Games.',
   },
   {
     tag: 'epic games · coursera',
-    period: '2022 — 2024',
+    period: 'shipped',
     title: 'Unreal Engine Mentor & Educator',
     context:
       "Before moving deeper into systems architecture, I spent years building technical education infrastructure in real-time 3D.",
@@ -44,7 +43,7 @@ const projects = [
   },
   {
     tag: 'cg spectrum',
-    period: '2021 — 2024',
+    period: 'delivered',
     title: 'Authorized Unreal Instructor',
     context:
       'Mentored thousands of students through industry-ready Unreal Engine training programs.',
@@ -58,14 +57,15 @@ const projects = [
   },
   {
     tag: 'kitbash3d',
-    period: '2022 — present',
+    period: 'ongoing',
     title: 'Brand Ambassador & QA',
     context:
-      'Quality assurance and community presence for 60+ production-ready asset kits used in games, film, and virtual production.',
+      'Quality assurance and community presence for production-ready asset kits used in games, film, and virtual production.',
     work: [
       'QA on real-time optimized asset kits',
       'Community demos and technical walkthroughs',
       'Feedback loop with production team on kit improvements',
+      '50+ production-ready asset kits reviewed',
     ],
     stack: ['Unreal Engine', 'Real-time 3D', 'Asset QA'],
   },
