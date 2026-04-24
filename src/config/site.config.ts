@@ -29,11 +29,11 @@ I rebuild the structure underneath: data models, validation, orchestration, perm
   // Swap the accent once here — it flows everywhere.
   theme: {
     // Primary accent — used for links, buttons, labels, highlights
-    accent: '#00FF00',
+    accent: '#00E676',
     // Dimmed variant for hover/dim states (usually ~70-80% of accent)
-    accentDim: '#00CC00',
+    accentDim: '#00B85C',
     // Glow shadow color (usually accent at ~30-40% opacity)
-    accentGlow: 'rgba(0, 255, 0, 0.35)',
+    accentGlow: 'rgba(0, 230, 118, 0.22)',
 
     // Success color (used for "available" status)
     success: '#00FF00',
