@@ -2,15 +2,15 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { siteConfig } from '@/config/site.config'
 import AnimatedPortrait from '@/components/AnimatedPortrait'
- 
+
 export const metadata: Metadata = {
   title: 'About',
   description:
     'Logan Pinney — data systems architect. Background, credentials, and how I approach building reliable operational systems.',
 }
- 
+
 const glow = siteConfig.effects.glowText ? 'glow-text' : ''
- 
+
 const principles = [
   {
     t: 'Systems over scripts',
@@ -29,7 +29,7 @@ const principles = [
     d: 'If it fails at 2am, it is a bad system.',
   },
 ]
- 
+
 const credentials = [
   {
     role: 'Data Systems Architect',
@@ -39,7 +39,7 @@ const credentials = [
   {
     role: 'Unreal Authorized Instructor, Epic Games',
     detail:
-      "Authour of Epic Games' flagship Unreal Engine Coursera certifcate program.",
+      "Author of Epic Games' flagship Unreal Engine Coursera certificate program.",
   },
   {
     role: 'Instructor & Content Creation, CG Spectrum',
@@ -54,56 +54,69 @@ const credentials = [
     detail: 'Specialty: Biomedical Computing',
   },
 ]
- 
+
 export default function AboutPage() {
   return (
     <div className="max-w-5xl mx-auto px-6 sm:px-8 py-20">
-      <header className="mb-16 grid gap-10 md:grid-cols-[1fr_260px] md:items-end">
-        <div>
-          <p
-            className={`font-mono text-xs uppercase tracking-widest mb-4 ${glow}`}
-            style={{ color: 'var(--accent)' }}
-          >
-            {'// about'}
-          </p>
-          <h1 className="text-4xl sm:text-5xl font-medium tracking-tight text-white mb-6">
-            About
-          </h1>
-        </div>
-        <AnimatedPortrait className="md:max-w-[260px]" />
+      <header className="mb-12">
+        <p
+          className={`font-mono text-xs uppercase tracking-widest mb-4 ${glow}`}
+          style={{ color: 'var(--accent)' }}
+        >
+          {'// about'}
+        </p>
+
+        <h1 className="text-4xl sm:text-5xl font-medium tracking-tight text-white">
+          About
+        </h1>
       </header>
- 
+
       {/* Bio */}
       <section
-        className="mb-20 max-w-3xl space-y-5 text-lg leading-relaxed"
+        className="mb-20 max-w-4xl text-lg leading-relaxed"
         style={{ color: '#ccc' }}
       >
-        <p>I rebuild operational systems that break under real world pressure.</p>
- 
-        <p>
-          Most teams do not have a tooling problem. They have a structure problem.
-          Bad schemas, unclear ownership, and fragile automations turn workflows
-          into liabilities.
-        </p>
- 
-        <p>
-          I fix that at the foundation. Data models, orchestration, validation,
-          permissions, and failure handling. Systems that run reliably at scale.
-        </p>
- 
-        <p>
-          Before this, I designed and taught complex technical systems.
-          I built part of Epic Games’ flagship Unreal Engine Game Design Certificate course and mentored thousands
-          of developers on Unreal Engine fundamentals. That work was never about games. It was about understanding
-          how systems fail when real people use them and how to teach them to others in a simple way.
-        </p>
- 
-        <p>
-          Today I apply that same thinking to operations. Events, compliance,
-          staffing, and data infrastructure. Rebuilding automation pipelines and operational workflows to reduce man hours and friction.
-        </p>
+        <div className="hidden md:block float-right w-[260px] ml-12 mb-8">
+          <AnimatedPortrait className="max-w-[260px]" />
+        </div>
+
+        <div className="md:hidden mb-10">
+          <AnimatedPortrait className="max-w-[260px] mx-auto" />
+        </div>
+
+        <div className="space-y-5">
+          <p>I rebuild operational systems that break under real world pressure.</p>
+
+          <p>
+            Most teams do not have a tooling problem. They have a structure problem.
+            Bad schemas, unclear ownership, and fragile automations turn workflows
+            into liabilities.
+          </p>
+
+          <p>
+            I fix that at the foundation. Data models, orchestration, validation,
+            permissions, and failure handling. Systems that run reliably at scale.
+          </p>
+
+          <p>
+            Before this, I designed and taught complex technical systems. I built
+            part of Epic Games’ flagship Unreal Engine Game Design Certificate
+            course and mentored thousands of developers on Unreal Engine
+            fundamentals. That work was never about games. It was about
+            understanding how systems fail when real people use them and how to
+            teach them to others in a simple way.
+          </p>
+
+          <p>
+            Today I apply that same thinking to operations. Events, compliance,
+            staffing, and data infrastructure. Rebuilding automation pipelines and
+            operational workflows to reduce man hours and friction.
+          </p>
+        </div>
+
+        <div className="clear-both" />
       </section>
- 
+
       {/* Credentials */}
       <section className="mb-20">
         <h2
@@ -112,7 +125,7 @@ export default function AboutPage() {
         >
           {'// credentials'}
         </h2>
- 
+
         <div className="space-y-5">
           {credentials.map((c) => (
             <div
@@ -133,7 +146,7 @@ export default function AboutPage() {
           ))}
         </div>
       </section>
- 
+
       {/* Principles */}
       <section className="mb-20">
         <h2
@@ -142,24 +155,24 @@ export default function AboutPage() {
         >
           {'// principles'}
         </h2>
- 
+
         <div className="grid gap-4 sm:grid-cols-2">
           {principles.map((p) => (
             <div
               key={p.t}
               className="
-                  rounded-md p-6 cursor-default
-                  transition-all duration-200 ease-out
-                  border
-                  hover:-translate-y-1 hover:shadow-md
-                  hover:border-[var(--accent)]
-                  hover:bg-[rgba(255,255,255,0.02)]
-                 "
-           style={{
-              background: 'var(--bg-card)',
-              borderColor: 'var(--border)',
-                 }}
-                >
+                rounded-md p-6 cursor-default
+                transition-all duration-200 ease-out
+                border
+                hover:-translate-y-1 hover:shadow-md
+                hover:border-[var(--accent)]
+                hover:bg-[rgba(255,255,255,0.02)]
+              "
+              style={{
+                background: 'var(--bg-card)',
+                borderColor: 'var(--border)',
+              }}
+            >
               <h3 className="text-white font-medium mb-2">{p.t}</h3>
               <p
                 className="text-sm leading-relaxed"
@@ -171,7 +184,7 @@ export default function AboutPage() {
           ))}
         </div>
       </section>
- 
+
       {/* CTA */}
       <section className="pt-10" style={{ borderTop: '1px solid var(--border)' }}>
         <Link
