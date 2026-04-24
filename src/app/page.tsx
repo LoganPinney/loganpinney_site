@@ -127,7 +127,7 @@ export default function HomePage() {
         <div className="max-w-2xl">
           <h2 className="text-3xl sm:text-4xl font-medium text-white mb-4 tracking-tight">
             If your operations rely on spreadsheets, manual workarounds, or fragile automations, the system is already failing. 
-           <span className="block mt-4">
+           <span className="block mt-8">
             I fix the structure underneath it.
           </span>
           <span className="block mt-2">
@@ -156,11 +156,15 @@ function WorkCard({
   title,
   body,
   period,
+  href,
+  cta,
 }: {
   tag: string
   title: string
   body: string
   period: string
+  href: string
+  cta: string
 }) {
   const useHover = siteConfig.effects.cardHoverGlow
   return (
@@ -185,7 +189,15 @@ function WorkCard({
       <h3 className="text-white font-medium mb-2">{title}</h3>
       <p className="text-sm leading-relaxed" style={{ color: 'var(--text-dim)' }}>
         {body}
-      </p>
+      </p>      
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mt-5 inline-flex w-fit items-center gap-2 rounded border border-green-500 px-3 py-1.5 text-xs font-mono text-green-500 transition-all duration-200 hover:bg-green-500 hover:text-black hover:shadow-[0_0_14px_rgba(0,255,0,0.4)]"
+      >
+      {cta}
+      </a>
     </article>
   )
 }

@@ -71,28 +71,36 @@ I rebuild the structure underneath: data models, validation, orchestration, perm
   // ─── Selected work (homepage cards) ────────────────────────
   selectedWork: [
     {
-      tag: 'contract',
+      tag: 'riot games · contract',
       title: 'Data Systems & Automation',
-      body: 'Architecting automation and integration systems across Airtable, Workato, and Google Workspace. Replaced manual workflows across immigration, staffing, and operations — reducing coordination overhead and eliminating failure-prone processes. Currently continuing this work in a contract with Riot Games.',
-      period: '2025 — present',
+      body: 'Architecting automation and integration systems across Airtable, Workato, and Google Workspace. Replaced manual workflows across immigration, staffing, and operations — reducing coordination overhead and eliminating failure-prone processes.',
+      period: '2026 — present',
+      href: 'https://www.riotgames.com/en',
+      cta: 'company site →',
     },
     {
       tag: 'epic games · coursera',
       title: 'Unreal Engine Fundamentals',
-      body: "Designed and built the flagship Coursera course on real-time 3D development — part of Epic Games' certification program.",
+      body: "Designed and built the flagship Coursera course, Unreal Engine Fundamentals as part of Epic Games' certification program.",
       period: '2023 — 2024',
+      href: 'https://www.coursera.org/learn/unreal-engine-fundamentals?specialization=epic-games-game-design-professional-certificate',
+      cta: 'course →',
     },
     {
       tag: 'cg spectrum',
       title: 'Authorized Instructor',
-      body: 'Mentored thousands of students through industry-ready Unreal Engine training programs. Built curriculum, delivered live cohorts.',
+      body: 'Mentored students through industry-ready Unreal Engine training programs. Built multiple curriculum, delivered live and async training.',
       period: '2022 — 2025',
+      href: 'https://www.cgspectrum.com/courses/realtime-3d-specialization',
+      cta: 'course →',
     },
     {
       tag: 'kitbash3d',
       title: 'Ambassador & QA',
-      body: 'QA on 60+ production-ready asset kits used in world-building for games, film, and virtual production.',
-      period: '2022 — present',
+      body: 'QA on 50+ production-ready asset kits used in world-building for games, film, and virtual production.',
+      period: '2023 — present',
+      href: 'https://kitbash3d.com/collections',
+    cta: 'asset collection →',
     },
   ],
 
@@ -118,7 +126,7 @@ I rebuild the structure underneath: data models, validation, orchestration, perm
 
   // ─── Status banner ─────────────────────────────────────────
   status: {
-    label: 'I fix broken operational systems.',
+    label: 'selective contract avalability',
     color: 'accent', // 'accent' | 'success' | 'text'
   },
 } as const
