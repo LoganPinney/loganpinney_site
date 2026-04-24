@@ -37,7 +37,7 @@ export default function HomePage() {
           {siteConfig.identity.name}
           {blinkCursor && (
               <span
-                className={`cursor-blink ${glowText} transition-colors duration-200 group-hover:text-[var(--accent)]`}
+                className={`cursor-blink ${glowText} transition-colors duration-200 group-hover:text-[var(--accent-dim)]`}
                 style={{ color: 'var(--accent)' }}
               >
               _ 
