@@ -33,7 +33,7 @@ export default function HomePage() {
         </div>
 
       <Link href="/about" className="group inline-block">
-        <h1 className="text-5xl sm:text-6xl font-medium tracking-tight leading-[1.05] mb-4 text-white transition-colors duration-200 group-hover:text-[var(--accent)]">
+        <h1 className="text-5xl sm:text-6xl font-medium tracking-tight leading-[1.05] mb-4 text-white transition-colors duration-200 group-hover:text-[var(--accent-dim)]">
           {siteConfig.identity.name}
           {blinkCursor && (
               <span
