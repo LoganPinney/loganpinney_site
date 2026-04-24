@@ -13,50 +13,43 @@ const glow = siteConfig.effects.glowText ? 'glow-text' : ''
 const principles = [
   {
     t: 'Systems over scripts',
-    d: 'A one-off script fixes a problem once. A system makes the problem stop existing. I design for the second one.',
+    d: 'If it needs to be fixed twice, it was not designed properly.',
   },
   {
-    t: 'Boring when it should be',
-    d: 'Operational infrastructure should be predictable. Interesting architecture almost always means fragile architecture.',
+    t: 'Boring wins',
+    d: 'Reliable systems beat clever ones. Every time.',
   },
   {
-    t: 'Governance is a feature',
-    d: 'Data without access controls, audit logs, and ownership decays fast. I build those in from day one.',
+    t: 'Governance is not optional',
+    d: 'Without ownership, access, and audit, systems decay.',
   },
   {
-    t: 'Useful beats clever',
-    d: 'The goal is always the operator who has to run the thing at 2am, not my ego about the implementation.',
+    t: 'Built for operators',
+    d: 'If it fails at 2am, it is a bad system.',
   },
 ]
 
 const credentials = [
   {
-    period: '2024 — present',
-    role: 'Data Systems Architect · Independent',
+    role: 'Data Systems Architect',
     detail:
-      'Building automation and integration systems for events, talent ops, and compliance workflows. Part-time contract with Riot Games.',
+      'Operational automation, integrations, and governance systems. Current contract with Riot Games.',
   },
   {
-    period: '2022 — 2024',
-    role: 'Unreal Authorized Instructor · Epic Games',
+    role: 'Unreal Authorized Instructor, Epic Games',
     detail:
-      "Built Epic Games' flagship Coursera course on Unreal Engine fundamentals.",
+      "Built and launched Epic Games' flagship Unreal Engine Coursera program.",
   },
   {
-    period: '2021 — 2024',
-    role: 'Lead Instructor · CG Spectrum',
-    detail:
-      'Mentored thousands of students through Unreal Engine training programs.',
+    role: 'Lead Instructor, CG Spectrum',
+    detail: 'Mentored thousands of developers across production workflows.',
   },
   {
-    period: '2022 — 2024',
-    role: 'Ambassador & QA · KitBash3D',
-    detail:
-      'QA on 40+ production-ready asset kits for games, film, and virtual production.',
+    role: 'Ambassador and QA, KitBash3D',
+    detail: 'QA on 40 plus production asset kits for games and film.',
   },
   {
-    period: '—',
-    role: 'B.Sc. Computer Science · Queen\'s University',
+    role: "B.Sc. Computer Science, Queen's University",
     detail: '',
   },
 ]
@@ -77,25 +70,34 @@ export default function AboutPage() {
       </header>
 
       {/* Bio */}
-      <section className="mb-20 max-w-3xl space-y-5 text-lg leading-relaxed" style={{ color: '#ccc' }}>
+      <section
+        className="mb-20 max-w-3xl space-y-5 text-lg leading-relaxed"
+        style={{ color: '#ccc' }}
+      >
+        <p>I rebuild operational systems that break under real world pressure.</p>
+
         <p>
-          I&apos;m Logan — a data systems architect based in Calgary. I design, build,
-          and rebuild the operational systems that teams and companies depend on every
-          day. Automation pipelines, integration architectures, the governance layers
-          that keep data clean, auditable, and reliable at scale.
+          Most teams do not have a tooling problem. They have a structure problem.
+          Bad schemas, unclear ownership, and fragile automations turn workflows
+          into liabilities.
         </p>
+
         <p>
-          My background is unusual for the work I do now. I spent years as an Unreal
-          Authorized Instructor with Epic Games, built their flagship Coursera course
-          on real-time 3D, and mentored thousands of students through CG Spectrum.
-          That work taught me how complex systems actually fail — and how to design
-          curriculum, tooling, and pipelines that are genuinely useful under pressure.
+          I fix that at the foundation. Data models, orchestration, validation,
+          permissions, and failure handling. Systems that run reliably at scale.
         </p>
+
         <p>
-          These days, I&apos;m applying that same systems thinking to operational data
-          infrastructure. I&apos;m currently doing a part-time contract with Riot Games,
-          continuing work I&apos;ve been doing independently across events, compliance,
-          talent ops, and automation.
+          Before this, I designed and taught complex technical systems.
+          I built part of Epic Games’ flagship Unreal Engine Game Design Certificate course and mentored thousands
+          of developers on Unreal Engine fundamentals. That work was never about games. It was about understanding
+          how systems fail when real people use them and how to teach them to others in a simple way.
+        </p>
+
+        <p>
+          Today I apply that same thinking to operations. Events, compliance,
+          staffing, and data infrastructure. Current work includes rebuilding
+          automation pipelines and operational workflows for Riot Games.
         </p>
       </section>
 
@@ -107,27 +109,23 @@ export default function AboutPage() {
         >
           {'// credentials'}
         </h2>
+
         <div className="space-y-5">
           {credentials.map((c) => (
             <div
               key={c.role}
-              className="flex flex-col sm:flex-row sm:gap-8"
+              className="pb-5"
               style={{ borderBottom: '1px solid var(--border)' }}
             >
-              <div
-                className="font-mono text-xs sm:w-40 sm:shrink-0 mb-1 sm:mb-0 pt-1"
-                style={{ color: 'var(--text-faint)' }}
-              >
-                {c.period}
-              </div>
-              <div className="pb-5">
-                <div className="text-white font-medium mb-1">{c.role}</div>
-                {c.detail && (
-                  <div className="text-sm leading-relaxed" style={{ color: 'var(--text-dim)' }}>
-                    {c.detail}
-                  </div>
-                )}
-              </div>
+              <div className="text-white font-medium mb-1">{c.role}</div>
+              {c.detail && (
+                <div
+                  className="text-sm leading-relaxed"
+                  style={{ color: 'var(--text-dim)' }}
+                >
+                  {c.detail}
+                </div>
+              )}
             </div>
           ))}
         </div>
@@ -141,6 +139,7 @@ export default function AboutPage() {
         >
           {'// principles'}
         </h2>
+
         <div className="grid gap-4 sm:grid-cols-2">
           {principles.map((p) => (
             <div
@@ -152,7 +151,10 @@ export default function AboutPage() {
               }}
             >
               <h3 className="text-white font-medium mb-2">{p.t}</h3>
-              <p className="text-sm leading-relaxed" style={{ color: 'var(--text-dim)' }}>
+              <p
+                className="text-sm leading-relaxed"
+                style={{ color: 'var(--text-dim)' }}
+              >
                 {p.d}
               </p>
             </div>
