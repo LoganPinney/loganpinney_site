@@ -142,21 +142,20 @@ export default function AboutPage() {
         <div className="grid gap-4 sm:grid-cols-2">
           {principles.map((p) => (
             <div
-  key={p.t}
-  className="rounded-md p-6 transition-all duration-200 ease-out hover:-translate-y-1 hover:shadow-md cursor-default"
-  style={{
-    background: 'var(--bg-card)',
-    border: '1px solid var(--border)',
-  }}
-  onMouseEnter={(e) => {
-    e.currentTarget.style.borderColor = 'var(--accent)'
-    e.currentTarget.style.background = 'rgba(255,255,255,0.02)'
-  }}
-  onMouseLeave={(e) => {
-    e.currentTarget.style.borderColor = 'var(--border)'
-    e.currentTarget.style.background = 'var(--bg-card)'
-  }}
->
+              key={p.t}
+              className="
+                  rounded-md p-6 cursor-default
+                  transition-all duration-200 ease-out
+                  border
+                  hover:-translate-y-1 hover:shadow-md
+                  hover:border-[var(--accent)]
+                  hover:bg-[rgba(255,255,255,0.02)]
+                 "
+           style={{
+              background: 'var(--bg-card)',
+              borderColor: 'var(--border)',
+                 }}
+                >
               <h3 className="text-white font-medium mb-2">{p.t}</h3>
               <p
                 className="text-sm leading-relaxed"
