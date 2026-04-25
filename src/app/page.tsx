@@ -78,8 +78,7 @@ export default function HomePage() {
             view work <span aria-hidden>→</span>
           </Link>
         </div>
-
-        <Terminal />
+        
        </section>
 
       {/* FEATURED CASE STUDY */}
@@ -190,6 +189,7 @@ export default function HomePage() {
           <StackRow label="integrations" items={siteConfig.stack.integrations} />
           <StackRow label="focus" items={siteConfig.stack.focus} accent />
         </div>
+        <Terminal />
       </section>
 
       {/* CTA */}
