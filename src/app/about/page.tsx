@@ -99,10 +99,10 @@ export default function AboutPage() {
           </p>
 
           <p>
-           Earlier in my career, I worked in clinical respiratory and anesthesia environments where process, 
-           handoff, documentation, and failure handling mattered in real time. 
-           That experience still shapes how I design operational systems: clear ownership, clean escalation paths, 
-           and no hidden failure states.
+            Earlier in my career, I worked in clinical respiratory and anesthesia environments where process,
+            handoff, documentation, and failure handling mattered in real time.
+            That experience still shapes how I design operational systems: clear ownership, clean escalation paths,
+            and no hidden failure states.
           </p>
 
           <p>
@@ -124,12 +124,22 @@ export default function AboutPage() {
           {'// credentials'}
         </h2>
 
-        <div className="space-y-5">
+        <div className="grid gap-4">
           {credentials.map((c) => (
             <div
               key={c.role}
-              className="pb-5"
-              style={{ borderBottom: '1px solid var(--border)' }}
+              className="
+                rounded-md p-5
+                transition-all duration-200 ease-out
+                border
+                hover:-translate-y-1 hover:shadow-md
+                hover:border-[var(--accent)]
+                hover:bg-[rgba(255,255,255,0.02)]
+              "
+              style={{
+                background: 'var(--bg-card)',
+                borderColor: 'var(--border)',
+              }}
             >
               <div className="text-white font-medium mb-1">{c.role}</div>
               {c.detail && (
