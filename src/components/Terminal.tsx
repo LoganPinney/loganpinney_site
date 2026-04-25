@@ -291,7 +291,7 @@ if (command.startsWith('open ')) {
     }
 
     switch (command) {
-      case 'help':
+      case 'h':
   addLines([
     { type: 'output', text: 'available commands:' },
     { type: 'output', text: 'whoami' },
@@ -304,6 +304,22 @@ if (command.startsWith('open ')) {
     { type: 'output', text: 'open <file>' },
     { type: 'output', text: 'riddle' },
     { type: 'output', text: 'clear' },
+  ]);
+  break;
+  
+  case 'help':
+  addLines([
+    { type: 'output', text: 'available commands:' },
+    { type: 'output', text: 'whoami — identify operator' },
+    { type: 'output', text: 'focus — current work focus' },
+    { type: 'output', text: 'status — availability state' },
+    { type: 'output', text: 'ls — list public files' },
+    { type: 'output', text: 'ls -a — list all visible files' },
+    { type: 'output', text: 'ls /lab — inspect restricted lab path' },
+    { type: 'output', text: 'cat <file> — read file' },
+    { type: 'output', text: 'open <file> — open linked file route' },
+    { type: 'output', text: 'riddle — request access challenge' },
+    { type: 'output', text: 'clear — clear terminal' },
   ]);
   break;
 
