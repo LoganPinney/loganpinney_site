@@ -32,19 +32,19 @@ export default function HomePage() {
           </span>
         </div>
 
-      <Link href="/about" className="group inline-block">
-        <h1 className="text-5xl sm:text-6xl font-medium tracking-tight leading-[1.05] mb-4 text-white transition-colors duration-200 group-hover:text-[var(--accent-dim)]">
-          {siteConfig.identity.name}
-          {blinkCursor && (
+        <Link href="/about" className="group inline-block">
+          <h1 className="text-5xl sm:text-6xl font-medium tracking-tight leading-[1.05] mb-4 text-white transition-colors duration-200 group-hover:text-[var(--accent-dim)]">
+            {siteConfig.identity.name}
+            {blinkCursor && (
               <span
                 className={`cursor-blink ${glowText} transition-colors duration-200 group-hover:text-[var(--accent-dim)]`}
                 style={{ color: 'var(--accent)' }}
               >
-              _ 
-            </span>
+                _
+              </span>
             )}
           </h1>
-      </Link>
+        </Link>
 
         <p
           className={`font-mono text-base mb-3 ${glowText}`}
@@ -78,77 +78,70 @@ export default function HomePage() {
             view work <span aria-hidden>→</span>
           </Link>
         </div>
-        
-       </section>
+      </section>
 
       {/* FEATURED CASE STUDY */}
+      <section className="py-16" style={{ borderTop: '1px solid var(--border)' }}>
+        <div className="mb-8">
+          <h2
+            className={`font-mono text-xs uppercase tracking-widest mb-8 ${glowText}`}
+            style={{ color: 'var(--accent)' }}
+          >
+            {'// featured case study'}
+          </h2>
 
-<section className="py-16" style={{ borderTop: '1px solid var(--border)' }}>
-  <div className="mb-8">
-    <h2
-  className={`font-mono text-xs uppercase tracking-widest mb-8 ${glowText}`}
-  style={{ color: 'var(--accent)' }}
->
-  {'// featured case study'}
-</h2>
-
-    <div
-      className={`${siteConfig.effects.cardHoverGlow ? 'card-glow' : ''} rounded-md p-6 sm:p-8`}
-      style={{
-        background: 'var(--bg-card)',
-        border: '1px solid var(--border)',
-      }}
-    >
-      <div className="mb-4 flex flex-wrap gap-2">
-        {[
-          '400–1,200 participants per event',
-          'manual setup reduced',
-          'validated workflow',
-          'audit-ready logs',
-        ].map((item) => (
-          <span
-            key={item}
-            className="rounded border px-2.5 py-1 font-mono text-[11px]"
+          <div
+            className="rounded-md p-6 sm:p-8 transition-colors duration-200"
             style={{
-              borderColor: 'color-mix(in srgb, var(--accent) 30%, transparent)',
-              color: 'var(--accent)',
+              background: 'var(--bg-card)',
+              border: '1px solid var(--border)',
             }}
           >
-            {item}
-          </span>
-        ))}
-      </div>
+            <div className="mb-4 flex flex-wrap gap-2">
+              {[
+                '400–1,200 participants per event',
+                'manual setup reduced',
+                'validated workflow',
+                'audit-ready logs',
+              ].map((item) => (
+                <span
+                  key={item}
+                  className="rounded border px-2.5 py-1 font-mono text-[11px]"
+                  style={{
+                    borderColor: 'color-mix(in srgb, var(--accent) 30%, transparent)',
+                    color: 'var(--accent)',
+                  }}
+                >
+                  {item}
+                </span>
+              ))}
+            </div>
 
-      <h3 className="mb-3 text-2xl font-medium tracking-tight text-white">
-        Event Staffing Automation
-      </h3>
+            <h3 className="mb-3 text-2xl font-medium tracking-tight text-white">
+              Event Staffing Automation
+            </h3>
 
-      <p className="mb-5 max-w-3xl leading-relaxed" style={{ color: '#ccc' }}>
-        Rebuilt manual staffing and event operations workflows into a validated
-        automation pipeline using Google Sheets, Apps Script, Workato, Airtable,
-        and delivery logging.
-      </p>
+            <p className="mb-5 max-w-3xl leading-relaxed" style={{ color: '#ccc' }}>
+              Rebuilt manual staffing and event operations workflows into a validated
+              automation pipeline using Google Sheets, Apps Script, Workato, Airtable,
+              and delivery logging.
+            </p>
 
-      <p className="mb-6 max-w-3xl text-sm leading-relaxed" style={{ color: 'var(--text-dim)' }}>
-        The workflow supports event operations involving hundreds of participants
-        per event, reducing coordination overhead by replacing fragile manual
-        steps with structured data, queue states, validation, and recoverable sync
-        paths.
-      </p>
+            <p className="mb-6 max-w-3xl text-sm leading-relaxed" style={{ color: 'var(--text-dim)' }}>
+              The workflow supports event operations involving hundreds of participants
+              per event, reducing coordination overhead by replacing fragile manual
+              steps with structured data, queue states, validation, and recoverable sync
+              paths.
+            </p>
 
-      <span
-        className="inline-flex cursor-not-allowed items-center gap-2 rounded border px-4 py-2 font-mono text-xs opacity-80"
-        style={{
-          borderColor: 'var(--accent)',
-          color: 'var(--accent)',
-        }}
-      >
-        architecture walkthrough available upon request <span aria-hidden>→</span>
-      </span>
-    </div>
-  </div>
-</section>
-
+            <span
+              className="btn-glow inline-flex cursor-not-allowed items-center gap-2 rounded px-4 py-2 font-mono text-xs opacity-80"
+            >
+              architecture walkthrough available upon request <span aria-hidden>→</span>
+            </span>
+          </div>
+        </div>
+      </section>
 
       {/* SELECTED WORK */}
       <section className="py-16" style={{ borderTop: '1px solid var(--border)' }}>
@@ -161,7 +154,7 @@ export default function HomePage() {
           </h2>
           <Link
             href="/work"
-            className="font-mono text-xs transition"
+            className="font-mono text-xs transition-colors duration-200 hover:text-[var(--accent)]"
             style={{ color: 'var(--text-dim)' }}
           >
             see all →
@@ -190,26 +183,29 @@ export default function HomePage() {
           <StackRow label="integrations" items={siteConfig.stack.integrations} />
           <StackRow label="focus" items={siteConfig.stack.focus} accent />
         </div>
+
         <div className="mt-14 max-w-4xl opacity-70 transition-opacity duration-200 hover:opacity-100">
-  <Terminal />
-</div>
+          <Terminal />
+        </div>
       </section>
 
       {/* CTA */}
       <section className="py-20" style={{ borderTop: '1px solid var(--border)' }}>
         <div className="max-w-2xl">
           <h2 className="text-3xl sm:text-4xl font-medium text-white mb-4 tracking-tight">
-            If your operations rely on spreadsheets, manual workarounds, or fragile automations, the system is already failing. 
-           <span className="block mt-8">
-            I fix the structure underneath it.
-          </span>
-          <span className="block mt-2">
-            Built to hold under real-world pressure.
-         </span>
+            If your operations rely on spreadsheets, manual workarounds, or fragile automations, the system is already failing.
+            <span className="block mt-8">
+              I fix the structure underneath it.
+            </span>
+            <span className="block mt-2">
+              Built to hold under real-world pressure.
+            </span>
           </h2>
+
           <p className="mb-8 leading-relaxed" style={{ color: 'var(--text-dim)' }}>
-           I take on a limited number of contracts where the problems are real and the system matters.
+            I take on a limited number of contracts where the problems are real and the system matters.
           </p>
+
           <Link
             href="/contact"
             className="btn-glow inline-flex items-center gap-2 font-mono text-sm font-medium px-5 py-2.5 rounded"
@@ -239,10 +235,9 @@ function WorkCard({
   href: string
   cta: string
 }) {
-  const useHover = siteConfig.effects.cardHoverGlow
   return (
     <article
-      className={`${useHover ? 'card-glow' : ''} rounded-md p-5`}
+      className="rounded-md p-5 transition-colors duration-200"
       style={{
         background: 'var(--bg-card)',
         border: '1px solid var(--border)',
@@ -259,17 +254,20 @@ function WorkCard({
           {period}
         </span>
       </div>
+
       <h3 className="text-white font-medium mb-2">{title}</h3>
+
       <p className="text-sm leading-relaxed" style={{ color: 'var(--text-dim)' }}>
         {body}
-      </p>      
+      </p>
+
       <a
         href={href}
         target="_blank"
         rel="noopener noreferrer"
-        className="mt-5 inline-flex w-fit items-center gap-2 rounded border border-green-500 px-3 py-1.5 text-xs font-mono text-green-500 transition-all duration-200 hover:bg-green-500 hover:text-black hover:shadow-[0_0_14px_rgba(0,255,0,0.4)]"
+        className="btn-glow mt-5 inline-flex w-fit items-center gap-2 rounded px-3 py-1.5 text-xs font-mono"
       >
-      {cta}
+        {cta}
       </a>
     </article>
   )
@@ -292,6 +290,7 @@ function StackRow({
       >
         {label}
       </div>
+
       <div className="flex flex-wrap gap-2">
         {items.map((item) => (
           <span
