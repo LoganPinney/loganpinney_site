@@ -64,7 +64,7 @@ export default function HomePage() {
           {siteConfig.identity.tagline}
         </p>
 
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap gap-3 mb-12 md:mb-16">
           <Link
             href="/contact"
             className="btn-glow inline-flex items-center gap-2 font-mono text-sm font-medium px-5 py-2.5 rounded"
