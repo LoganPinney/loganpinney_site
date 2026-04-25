@@ -14,8 +14,8 @@ export const metadata: Metadata = {
 
 export default function BeanWarsPage() {
   return (
-    <main className="min-h-screen bg-black px-4 py-8 text-white">
-      <div className="mx-auto max-w-6xl">
+    <main className="min-h-screen bg-black px-3 py-6 text-white sm:px-4 sm:py-8">
+      <div className="mx-auto max-w-5xl">
         <Link
           href="/"
           className="mb-6 inline-block text-sm text-white/50 transition hover:text-white"
@@ -38,15 +38,15 @@ export default function BeanWarsPage() {
           </p>
         </section>
 
-        <div className="overflow-hidden rounded-xl border border-white/10 bg-black shadow-2xl">
-          <iframe
-            src="/games/bean-wars/"
-            width="100%"
-            height="780"
-            className="block w-full border-0 bg-black"
-            title="Bean Wars"
-            allow="fullscreen; gamepad; autoplay"
-          />
+        <div className="mx-auto max-w-[980px]">
+          <div className="overflow-hidden rounded-xl border border-white/10 bg-black shadow-2xl">
+            <iframe
+              src="/games/bean-wars/"
+              className="block h-[72vh] min-h-[560px] w-full sm:h-[78vh] sm:min-h-[700px] lg:h-[820px]"
+              title="Bean Wars"
+              allow="fullscreen; gamepad; autoplay"
+            />
+          </div>
         </div>
       </div>
     </main>
