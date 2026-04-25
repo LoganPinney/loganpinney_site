@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Terminal from '@/components/Terminal'
 import { siteConfig } from '@/config/site.config'
 
 export default function Footer() {
@@ -38,6 +39,12 @@ export default function Footer() {
               privacy
             </FooterLink>
           </div>
+        </div>
+      </div>
+
+      <div className="mx-auto mt-10 max-w-5xl">
+        <div className="max-w-4xl opacity-70 transition-opacity duration-200 hover:opacity-100">
+          <Terminal />
         </div>
       </div>
     </footer>

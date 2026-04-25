@@ -2,14 +2,13 @@ import { siteConfig } from '@/config/site.config'
 
 /**
  * Server component that injects theme values from site.config.ts
- * into CSS custom properties on <html>. Also toggles scanline overlay.
+ * into CSS custom properties.
  *
  * Renders a <style> tag with the current theme. Since this is a server
  * component, the CSS is inlined into the initial HTML — no FOUC.
  */
 export default function ThemeProvider() {
   const t = siteConfig.theme
-  const fx = siteConfig.effects
 
   const css = `
     :root {
@@ -28,14 +27,6 @@ export default function ThemeProvider() {
   `.trim()
 
   return (
-    <>
-      <style dangerouslySetInnerHTML={{ __html: css }} />
-      {/* Script runs before hydration — sets data attrs for CSS toggles */}
-      <script
-        dangerouslySetInnerHTML={{
-          __html: `document.documentElement.setAttribute('data-scanlines','${fx.scanlines}');`,
-        }}
-      />
-    </>
+    <style dangerouslySetInnerHTML={{ __html: css }} />
   )
 }

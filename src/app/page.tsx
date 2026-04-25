@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import Terminal from '@/components/Terminal'
 import { siteConfig } from '@/config/site.config'
 
 const glowText = siteConfig.effects.glowText ? 'glow-text' : ''
@@ -179,10 +178,6 @@ export default function HomePage() {
           <StackRow label="languages" items={siteConfig.stack.languages} />
           <StackRow label="integrations" items={siteConfig.stack.integrations} />
           <StackRow label="focus" items={siteConfig.stack.focus} accent />
-        </div>
-
-        <div className="mt-14 max-w-4xl opacity-70 transition-opacity duration-200 hover:opacity-100">
-          <Terminal />
         </div>
       </section>
 
