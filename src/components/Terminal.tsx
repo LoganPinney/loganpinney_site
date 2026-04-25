@@ -2,6 +2,13 @@
 
 import { FormEvent, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import {
+  findLabGameByCommand,
+  findLabGameByRoute,
+  findLabGameBySlug,
+  labGames,
+  type LabGame,
+} from '@/config/lab.config';
 
 type TerminalLine = {
   type: 'command' | 'output' | 'error' | 'system';
@@ -24,13 +31,6 @@ type PublicTerminalFile = {
 
 const initialLines: TerminalLine[] = [];
 
-const LAB_COMMANDS: Record<string, string> = {
-  beanwars: '/lab/bean-wars',
-  beans: '/lab/bean-wars',
-  'bean-wars': '/lab/bean-wars',
-  'play bean-wars': '/lab/bean-wars',
-};
-
 const RIDDLES: Riddle[] = [
   {
     question:
@@ -47,6 +47,21 @@ const RIDDLES: Riddle[] = [
     success: 'Correct. Lab access unlocked.',
   },
 ];
+
+function getUnavailableMessage(game: LabGame) {
+  if (game.status === 'locked') {
+    return `${game.slug} locked // access key not issued`;
+  }
+
+  return `${game.slug} unavailable // access layer not deployed`;
+}
+
+function getLabListLines(games: LabGame[]) {
+  return games.map((game) => ({
+    type: game.status === 'live' ? 'system' : 'output',
+    text: `${game.slug} [${game.status}] // ${game.unlockCommand}`,
+  })) satisfies TerminalLine[];
+}
 
 export default function Terminal() {
   const router = useRouter();
@@ -89,6 +104,23 @@ export default function Terminal() {
     setTimeout(() => {
       router.push(route);
     }, 450);
+  }
+
+  function handleLabGame(game: LabGame) {
+    if (game.status === 'live') {
+      addLines([
+        { type: 'system', text: 'access granted.' },
+      ]);
+
+      launchRoute(game.route);
+      return;
+    }
+
+    addLines([
+      { type: 'system', text: getUnavailableMessage(game) },
+      { type: 'output', text: game.description },
+      { type: 'output', text: `status: ${game.status}` },
+    ]);
   }
 
   function startRandomRiddle() {
@@ -252,7 +284,26 @@ if (command.startsWith('open ')) {
   const target = rawCommand.slice(5).trim();
 
   if (target.startsWith('/lab/')) {
-    launchRoute(target);
+    const game = findLabGameByRoute(target);
+
+    if (game) {
+      handleLabGame(game);
+      return;
+    }
+
+    addLines([
+      {
+        type: 'error',
+        text: `open: ${target}: lab route unavailable`,
+      },
+    ]);
+    return;
+  }
+
+  const game = findLabGameBySlug(target);
+
+  if (game) {
+    handleLabGame(game);
     return;
   }
 
@@ -273,13 +324,10 @@ if (command.startsWith('open ')) {
       return;
     }
 
-    if (LAB_COMMANDS[command]) {
-      addLines([
-        { type: 'system', text: 'access granted.' },
-      ]);
+    const labGame = findLabGameByCommand(command);
 
-      launchRoute(LAB_COMMANDS[command]);
-
+    if (labGame) {
+      handleLabGame(labGame);
       return;
     }
 
@@ -297,8 +345,10 @@ if (command.startsWith('open ')) {
     { type: 'output', text: '-  ls' },
     { type: 'output', text: '-  ls -a' },
     { type: 'output', text: '-  ls /lab' },
+    { type: 'output', text: '-  ls /lab/simulations' },
     { type: 'output', text: '-  cat <file>' },
     { type: 'output', text: '-  open <file>' },
+    { type: 'output', text: '-  run <protocol>' },
     { type: 'output', text: '-  riddle' },
     { type: 'output', text: '-  sudo fix' },
     
@@ -315,8 +365,9 @@ if (command.startsWith('open ')) {
     { type: 'output', text: 'work       — selected systems work' },
     { type: 'output', text: 'case       — operational automation case study' },
     { type: 'output', text: 'contact    — email and links' },
-    { type: 'output', text: 'lab        — restricted experiments' },
     { type: 'output', text: 'clear      — reset terminal' },
+    { type: 'output', text: '\u00A0' },
+    { type: 'output', text: 'lab        — restricted experiments' },
   ]);
   break;
 
@@ -365,13 +416,19 @@ case 'lab':
 
 
       case 'ls /lab':
-        addTemporaryLine(
-          {
-            type: 'error',
-            text: 'restricted; check logs & coffee',
-          },
-          900
-        );
+        addLines([
+          { type: 'system', text: '/lab registry' },
+          ...getLabListLines(labGames),
+        ]);
+        break;
+
+      case 'ls /lab/simulations':
+        addLines([
+          { type: 'system', text: '/lab/simulations' },
+          ...getLabListLines(
+            labGames.filter((game) => game.tags.includes('simulation'))
+          ),
+        ]);
         break;
 
       case 'ls':
