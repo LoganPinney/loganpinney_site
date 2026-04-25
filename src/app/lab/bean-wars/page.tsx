@@ -1,4 +1,7 @@
+// src/app/lab/bean-wars/page.tsx
+
 import type { Metadata } from 'next';
+import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Bean Wars | Logan Pinney Lab',
@@ -13,16 +16,16 @@ export default function BeanWarsPage() {
   return (
     <main className="min-h-screen bg-black px-4 py-8 text-white">
       <div className="mx-auto max-w-6xl">
-        <a
+        <Link
           href="/"
           className="mb-6 inline-block text-sm text-white/50 transition hover:text-white"
         >
           ← back to main system
-        </a>
+        </Link>
 
         <section className="mb-6 rounded-2xl border border-white/10 bg-white/[0.03] p-5">
           <p className="mb-2 font-mono text-xs uppercase tracking-[0.3em] text-white/40">
-            // lab
+            {'// lab'}
           </p>
 
           <h1 className="mb-2 text-3xl font-semibold tracking-tight">
