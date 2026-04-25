@@ -82,14 +82,15 @@ export default function HomePage() {
        </section>
 
       {/* FEATURED CASE STUDY */}
+
 <section className="py-16" style={{ borderTop: '1px solid var(--border)' }}>
   <div className="mb-8">
     <h2
-      className={`font-mono text-xs uppercase tracking-widest mb-4 ${glowText}`}
-      style={{ color: 'var(--accent)' }}
-    >
-      {'// featured case study'}
-    </h2>
+  className={`font-mono text-xs uppercase tracking-widest mb-8 ${glowText}`}
+  style={{ color: 'var(--accent)' }}
+>
+  {'// featured case study'}
+</h2>
 
     <div
       className={`${siteConfig.effects.cardHoverGlow ? 'card-glow' : ''} rounded-md p-6 sm:p-8`}
