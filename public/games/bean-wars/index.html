@@ -29,7 +29,8 @@
   @media (max-width: 600px) {
     body { padding: 8px; }
     #crt { height: calc(100vh - 16px); padding: 12px 14px 10px; border-radius: 10px; }
-    #screen { font-size: 12px !important; }
+    #screen { font-size: 12px !important; width: 100%; min-width: 0;
+    margin: 0; }
   }
   #crt::after {
     content: ""; position: absolute; inset: 0; pointer-events: none;
@@ -41,9 +42,17 @@
     );
   }
   #screen {
-    flex: 1; overflow-y: auto; margin: 0; padding: 0;
-    white-space: pre-wrap; font-size: 14px; line-height: 1.45;
-  }
+  flex: 1;
+  overflow-y: auto;
+  margin: 0 auto;
+  padding: 0;
+  width: fit-content;
+  min-width: 62ch;
+  max-width: 100%;
+  white-space: pre-wrap;
+  font-size: 14px;
+  line-height: 1.45;
+}
   #screen::-webkit-scrollbar { width: 8px; }
   #screen::-webkit-scrollbar-thumb { background: #33ff3344; border-radius: 4px; }
   .dim   { color: #1a8a1a; }
