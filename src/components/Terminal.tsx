@@ -70,7 +70,24 @@ export default function Terminal() {
   function addLines(newLines: TerminalLine[]) {
     setLines((current) => [...current, ...newLines]);
   }
+  function addTemporaryLine(line: TerminalLine, clearAfterMs = 900) {
+  setLines((current) => [...current, line]);
 
+  window.setTimeout(() => {
+    setLines((current) => {
+      const next = [...current];
+
+      for (let i = next.length - 1; i >= 0; i--) {
+        if (next[i].type === line.type && next[i].text === line.text) {
+          next.splice(i, 1);
+          break;
+        }
+      }
+
+      return next;
+    });
+  }, clearAfterMs);
+}
   function launchRoute(route: string) {
     addLines([
       { type: 'system', text: `launching ${route} ...` },
@@ -282,6 +299,7 @@ if (command.startsWith('open ')) {
     { type: 'output', text: 'status' },
     { type: 'output', text: 'ls' },
     { type: 'output', text: 'ls -a' },
+    { type: 'output', text: 'ls /lab' },
     { type: 'output', text: 'cat <file>' },
     { type: 'output', text: 'open <file>' },
     { type: 'output', text: 'riddle' },
@@ -289,6 +307,15 @@ if (command.startsWith('open ')) {
   ]);
   break;
 
+      case 'ls /lab':
+        addTemporaryLine(
+          {
+            type: 'error',
+            text: 'restricted',
+          },
+          900
+        );
+        break;
 
       case 'ls':
       case 'dir':
