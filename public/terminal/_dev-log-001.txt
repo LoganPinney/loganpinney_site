@@ -1,0 +1,5 @@
+DEV LOG 001
+
+The surface is not the system.
+
+open .dev-log-001.txt

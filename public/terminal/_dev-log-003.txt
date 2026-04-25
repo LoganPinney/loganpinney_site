@@ -1,0 +1,5 @@
+DEV LOG 003
+
+The map is not the territory.
+
+open .dev-log-003.txt

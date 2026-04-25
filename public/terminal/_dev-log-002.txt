@@ -1,0 +1,5 @@
+DEV LOG 002
+
+Manual work has a smell.
+
+open .dev-log-002.txt
