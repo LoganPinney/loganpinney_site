@@ -20,27 +20,28 @@
     "hidden": true,
     "route": "/lab/memos/bean-protocol"
   },
-  {
-    "name": ".dev-log-001.txt",
-    "path": "/terminal/_dev-log-001.txt",
-    "hidden": true,
-    "route": "/lab/dev-log-001"
-  },
-  {
-    "name": ".dev-log-002.txt",
-    "path": "/terminal/_dev-log-002.txt",
-    "hidden": true,
-    "route": "/lab/dev-log-002"
-  },
-  {
-    "name": ".dev-log-003.txt",
-    "path": "/terminal/_dev-log-003.txt",
-    "hidden": true,
-    "route": "/lab/dev-log-003"
-  },
-  {
-    "name": ".future-self.txt",
-    "path": "/terminal/_future-self.txt",
-    "hidden": true
-  }
+{
+  "name": ".dev-log-001.txt",
+  "path": "/terminal/_dev-log-001.txt",
+  "hidden": true,
+  "route": "/lab/memos/dev-log-001"
+},
+{
+  "name": ".dev-log-002.txt",
+  "path": "/terminal/_dev-log-002.txt",
+  "hidden": true,
+  "route": "/lab/memos/dev-log-002"
+},
+{
+  "name": ".dev-log-003.txt",
+  "path": "/terminal/_dev-log-003.txt",
+  "hidden": true,
+  "route": "/lab/memos/dev-log-003"
+},
+ {
+  "name": ".future-self.txt",
+  "path": "/terminal/_future-self.txt",
+  "hidden": true,
+  "route": "/lab/memos/future-self"
+}  
 ]

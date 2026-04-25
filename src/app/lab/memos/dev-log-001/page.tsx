@@ -71,7 +71,7 @@ export default function DevLog001Page() {
       title="Dev Log 001"
       lines={lines}
       backHref="/"
-      nextHref="/lab/dev-log-002"
+      nextHref="/lab/memos/dev-log-002"
       nextLabel="dev log 002"
     />
   );
