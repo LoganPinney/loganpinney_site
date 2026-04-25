@@ -1,0 +1,9 @@
+BEAN PROTOCOL // INTERNAL MEMO
+
+Status: unstable
+Access phrase: beans
+
+This system was never supposed to be serious all the way down.
+
+Relevant endpoint:
+/lab/bean-wars

@@ -1,0 +1,28 @@
+[
+  {
+    "name": "focus.txt",
+    "path": "/terminal/focus.txt",
+    "hidden": false
+  },
+  {
+    "name": "status.txt",
+    "path": "/terminal/status.txt",
+    "hidden": false
+  },
+  {
+    "name": ".breadcrumbs.txt",
+    "path": "/terminal/_breadcrumbs.txt",
+    "hidden": true
+  },
+  {
+  "name": ".bean-protocol.txt",
+  "path": "/terminal/_bean-protocol.txt",
+  "hidden": true,
+  "route": "/lab/memos/bean-protocol"
+},
+  {
+    "name": ".future-self.txt",
+    "path": "/terminal/_future-self.txt",
+    "hidden": true
+  }
+]

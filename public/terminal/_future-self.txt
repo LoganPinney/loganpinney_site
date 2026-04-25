@@ -1,0 +1,5 @@
+FUTURE SELF NOTE
+
+Ship the useful thing first.
+Hide the weird thing second.
+Do not make the weird thing harder to maintain than the useful thing.

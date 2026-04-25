@@ -15,6 +15,13 @@ type Riddle = {
   success: string;
 };
 
+type PublicTerminalFile = {
+  name: string;
+  path: string;
+  hidden?: boolean;
+  route?: string;
+};
+
 const initialLines: TerminalLine[] = [
   { type: 'command', text: 'whoami' },
   { type: 'output', text: 'operator rebuilding broken systems' },
@@ -51,6 +58,9 @@ const RIDDLES: Riddle[] = [
 export default function Terminal() {
   const router = useRouter();
 
+  const [publicFiles, setPublicFiles] = useState<PublicTerminalFile[]>([]);
+  const [manifestLoaded, setManifestLoaded] = useState(false);
+
   const [lines, setLines] = useState<TerminalLine[]>(initialLines);
   const [input, setInput] = useState('');
   const [activeRiddle, setActiveRiddle] = useState<Riddle | null>(null);
@@ -81,13 +91,164 @@ export default function Terminal() {
       { type: 'output', text: riddle.question },
     ]);
   }
+  async function loadPublicFiles() {
+  if (manifestLoaded) return publicFiles;
 
-  function runCommand(rawCommand: string) {
+  try {
+    const response = await fetch('/terminal/manifest.json', {
+      cache: 'no-store',
+    });
+
+    if (!response.ok) {
+      throw new Error('manifest not found');
+    }
+
+    const files = (await response.json()) as PublicTerminalFile[];
+
+    setPublicFiles(files);
+    setManifestLoaded(true);
+
+    return files;
+  } catch {
+    setManifestLoaded(true);
+
+    addLines([
+      {
+        type: 'error',
+        text: 'filesystem manifest unavailable',
+      },
+    ]);
+
+    return [];
+  }
+}
+
+function findPublicFile(files: PublicTerminalFile[], fileName: string) {
+  return files.find(
+    (file) => file.name.toLowerCase() === fileName.toLowerCase()
+  );
+}
+
+async function listPublicFiles(showHidden: boolean) {
+  const files = await loadPublicFiles();
+
+  const visibleFiles = files.filter((file) => showHidden || !file.hidden);
+
+  if (visibleFiles.length === 0) {
+    addLines([
+      {
+        type: 'output',
+        text: 'no files found',
+      },
+    ]);
+
+    return;
+  }
+
+  addLines(
+    visibleFiles.map((file) => ({
+      type: file.hidden ? 'system' : 'output',
+      text: file.name,
+    }))
+  );
+}
+
+async function readPublicFile(fileName: string) {
+  const files = await loadPublicFiles();
+  const file = findPublicFile(files, fileName);
+
+  if (!file) {
+    addLines([
+      {
+        type: 'error',
+        text: `cat: ${fileName}: no such file`,
+      },
+    ]);
+
+    return;
+  }
+
+  try {
+    const response = await fetch(file.path, {
+      cache: 'no-store',
+    });
+
+    if (!response.ok) {
+      throw new Error('file not found');
+    }
+
+    const text = await response.text();
+    const fileLines = text.split('\n').filter((line) => line.trim() !== '');
+
+    addLines(
+      fileLines.map((line) => ({
+        type: file.hidden ? 'system' : 'output',
+        text: line,
+      }))
+    );
+  } catch {
+    addLines([
+      {
+        type: 'error',
+        text: `cat: ${fileName}: unable to read file`,
+      },
+    ]);
+  }
+}
+
+async function openPublicFileRoute(fileName: string) {
+  const files = await loadPublicFiles();
+  const file = findPublicFile(files, fileName);
+
+  if (!file) {
+    addLines([
+      {
+        type: 'error',
+        text: `open: ${fileName}: no such file`,
+      },
+    ]);
+
+    return;
+  }
+
+  if (!file.route) {
+    addLines([
+      {
+        type: 'error',
+        text: `open: ${fileName}: no route attached`,
+      },
+    ]);
+
+    return;
+  }
+
+  launchRoute(file.route);
+}
+
+  async function runCommand(rawCommand: string) {
     const command = rawCommand.trim().toLowerCase();
 
     if (!command) return;
 
     addLines([{ type: 'command', text: rawCommand }]);
+
+    if (command.startsWith('cat ')) {
+  const fileName = rawCommand.slice(4).trim();
+  await readPublicFile(fileName);
+  return;
+}
+
+if (command.startsWith('open ')) {
+  const target = rawCommand.slice(5).trim();
+
+  if (target.startsWith('/lab/')) {
+    launchRoute(target);
+    return;
+  }
+
+  await openPublicFileRoute(target);
+  return;
+}
 
     if (activeRiddle && activeRiddle.answers.includes(command)) {
       addLines([
@@ -114,16 +275,31 @@ export default function Terminal() {
 
     switch (command) {
       case 'help':
-        addLines([
-          { type: 'output', text: 'available commands:' },
-          { type: 'output', text: 'whoami' },
-          { type: 'output', text: 'focus' },
-          { type: 'output', text: 'status' },
-          { type: 'output', text: 'riddle' },
-          { type: 'output', text: 'clear' },
-        ]);
-        break;
+  addLines([
+    { type: 'output', text: 'available commands:' },
+    { type: 'output', text: 'whoami' },
+    { type: 'output', text: 'focus' },
+    { type: 'output', text: 'status' },
+    { type: 'output', text: 'ls' },
+    { type: 'output', text: 'ls -a' },
+    { type: 'output', text: 'cat <file>' },
+    { type: 'output', text: 'open <file>' },
+    { type: 'output', text: 'riddle' },
+    { type: 'output', text: 'clear' },
+  ]);
+  break;
 
+
+      case 'ls':
+      case 'dir':
+        await listPublicFiles(false);
+        break;
+      case 'ls -a':
+      case 'dir -a':
+      case 'dir /a':
+          await listPublicFiles(true);
+          break;
+        
       case 'whoami':
         addLines([
           { type: 'output', text: 'operator rebuilding broken systems' },
@@ -202,7 +378,8 @@ export default function Terminal() {
 
     const command = input;
     setInput('');
-    runCommand(command);
+    
+    void runCommand(command);
   }
 
   return (

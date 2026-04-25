@@ -1,0 +1,7 @@
+BREADCRUMBS
+
+help gives you the official map.
+ls gives you the visible map.
+ls -a gives you the real map.
+
+Not all doors need buttons.
