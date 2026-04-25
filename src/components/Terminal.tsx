@@ -1,142 +1,168 @@
-'use client'
+'use client';
 
-import { useEffect, useState } from 'react'
-import { siteConfig } from '@/config/site.config'
+import { FormEvent, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
-type Line =
-  | { type: 'cmd'; text: string }
-  | { type: 'out'; text: string }
+type TerminalLine = {
+  type: 'command' | 'output' | 'error';
+  text: string;
+};
+
+const initialLines: TerminalLine[] = [
+  { type: 'command', text: 'whoami' },
+  { type: 'output', text: 'operator rebuilding broken systems' },
+  { type: 'command', text: 'cat focus.txt' },
+  { type: 'output', text: 'workflow automation · integrations · governance' },
+  { type: 'command', text: 'echo $status' },
+  { type: 'output', text: 'select contracts · high-impact only' },
+];
 
 export default function Terminal() {
-  const glow = siteConfig.effects.glowText
-  const script: Line[] = siteConfig.terminal.flatMap((t) => [
-    { type: 'cmd' as const, text: t.cmd },
-    { type: 'out' as const, text: t.out },
-  ])
+  const router = useRouter();
+  const [lines, setLines] = useState<TerminalLine[]>(initialLines);
+  const [input, setInput] = useState('');
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
-  const [visible, setVisible] = useState<Line[]>([])
-  const [current, setCurrent] = useState('')
-  const [idx, setIdx] = useState(0)
-  const [charIdx, setCharIdx] = useState(0)
-
-  useEffect(() => {
-    if (idx >= script.length) return
-
-    const line = script[idx]
-
-    if (charIdx < line.text.length) {
-      const delay = line.type === 'cmd' ? 35 : 12 //type speed calm = 35: 12 faster = 45: 18
-      const t = setTimeout(() => {
-        setCurrent(line.text.slice(0, charIdx + 1))
-        setCharIdx((c) => c + 1)
-      }, delay)
-      return () => clearTimeout(t)
-    } else {
-      const t = setTimeout(() => {
-        setVisible((v) => [...v, line])
-        setCurrent('')
-        setCharIdx(0)
-        setIdx((i) => i + 1)
-      }, line.type === 'cmd' ? 250 : 400)
-      return () => clearTimeout(t)
-    }
-  }, [idx, charIdx, script])
-
-  const done = idx >= script.length
-  const currentLine = !done ? script[idx] : null
-
-  return (
-    <div
-      className="mt-12 max-w-xl rounded-md overflow-hidden opacity-85"
-      style={{
-        background: 'var(--bg-card)',
-        border: '1px solid var(--border)',
-      }}
-    >
-      {/* title bar */}
-      <div
-        className="flex items-center gap-1.5 px-3 py-2"
-        style={{
-          borderBottom: '1px solid var(--border)',
-          background: 'color-mix(in srgb, var(--accent) 2%, transparent)',
-        }}
-      >
-        <span
-          className="h-2.5 w-2.5 rounded-full"
-          style={{ background: '#2a2a2a' }}
-        />
-        <span
-          className="h-2.5 w-2.5 rounded-full"
-          style={{ background: '#2a2a2a' }}
-        />
-        <span
-          className="h-2.5 w-2.5 rounded-full"
-          style={{ background: '#2a2a2a' }}
-        />
-        <span
-          className="ml-2 font-mono text-[10px]"
-          style={{ color: 'var(--text-faint)' }}
-        >
-          ~/loganpinney
-        </span>
-      </div>
-
-      {/* body */}
-      <div className="px-4 py-3 font-mono text-xs leading-[1.9]">
-        {visible.map((line, i) => (
-          <TerminalLine key={i} line={line} glow={glow} />
-        ))}
-        {currentLine && (
-          <TerminalLine line={{ ...currentLine, text: current }} glow={glow} />
-        )}
-        {done && (
-          <div>
-            <span
-              style={{
-                color: 'var(--accent)',
-                textShadow: glow ? '0 0 6px var(--accent-glow)' : undefined,
-              }}
-            >
-              ${' '}
-            </span>
-            <span
-              className="inline-block h-3 w-2 align-middle cursor-blink"
-              style={{
-                background: 'var(--accent)',
-                boxShadow: glow ? '0 0 6px var(--accent-glow)' : undefined,
-              }}
-            />
-          </div>
-        )}
-      </div>
-    </div>
-  )
-}
-
-function TerminalLine({ line, glow }: { line: Line; glow: boolean }) {
-  if (line.type === 'cmd') {
-    return (
-      <div>
-        <span
-          style={{
-            color: 'var(--accent)',
-            textShadow: glow ? '0 0 6px var(--accent-glow)' : undefined,
-          }}
-        >
-          ${' '}
-        </span>
-        <span style={{ color: '#999' }}>{line.text}</span>
-      </div>
-    )
+  function addLines(newLines: TerminalLine[]) {
+    setLines((current) => [...current, ...newLines]);
   }
+
+  function runCommand(rawCommand: string) {
+    const command = rawCommand.trim().toLowerCase();
+
+    if (!command) return;
+
+    addLines([{ type: 'command', text: rawCommand }]);
+
+    switch (command) {
+      case 'help':
+        addLines([
+          { type: 'output', text: 'available commands:' },
+          { type: 'output', text: 'whoami' },
+          { type: 'output', text: 'focus' },
+          { type: 'output', text: 'status' },
+          { type: 'output', text: 'clear' },
+        ]);
+        break;
+
+      case 'whoami':
+        addLines([{ type: 'output', text: 'operator rebuilding broken systems' }]);
+        break;
+
+      case 'focus':
+      case 'cat focus.txt':
+        addLines([
+          {
+            type: 'output',
+            text: 'workflow automation · integrations · governance',
+          },
+        ]);
+        break;
+
+      case 'status':
+      case 'echo $status':
+        addLines([
+          {
+            type: 'output',
+            text: 'select contracts · high-impact only',
+          },
+        ]);
+        break;
+
+      case 'clear':
+        setLines([]);
+        break;
+
+      case 'beanwars':
+      case 'bean-wars':
+      case 'beans':
+      case 'play bean-wars':
+        addLines([
+          { type: 'output', text: 'access granted.' },
+          { type: 'output', text: 'launching /lab/bean-wars ...' },
+        ]);
+
+        setTimeout(() => {
+          router.push('/lab/bean-wars');
+        }, 450);
+
+        break;
+
+      default:
+        addLines([
+          {
+            type: 'error',
+            text: `command not found: ${rawCommand}`,
+          },
+        ]);
+        break;
+    }
+  }
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const command = input;
+    setInput('');
+    runCommand(command);
+  }
+
   return (
-    <div
-      style={{
-        color: 'var(--accent)',
-        textShadow: glow ? '0 0 4px var(--accent-glow)' : undefined,
-      }}
+    <section
+      className="group rounded-2xl border border-white/10 bg-black/80 p-4 font-mono text-sm text-white shadow-2xl shadow-black/30"
+      onClick={() => inputRef.current?.focus()}
+      aria-label="Interactive terminal"
     >
-      {line.text}
-    </div>
-  )
+      <div className="mb-4 flex items-center gap-2 border-b border-white/10 pb-3">
+        <span className="h-3 w-3 rounded-full bg-red-500/80" />
+        <span className="h-3 w-3 rounded-full bg-yellow-500/80" />
+        <span className="h-3 w-3 rounded-full bg-green-500/80" />
+        <span className="ml-3 text-xs text-white/40">~/loganpinney</span>
+      </div>
+
+      <div className="space-y-2">
+        {lines.map((line, index) => {
+          if (line.type === 'command') {
+            return (
+              <p key={`${line.text}-${index}`} className="text-white/80">
+                <span className="text-white/35">$ </span>
+                {line.text}
+              </p>
+            );
+          }
+
+          if (line.type === 'error') {
+            return (
+              <p key={`${line.text}-${index}`} className="text-red-300/80">
+                {line.text}
+              </p>
+            );
+          }
+
+          return (
+            <p key={`${line.text}-${index}`} className="text-white/55">
+              {line.text}
+            </p>
+          );
+        })}
+
+        <form onSubmit={handleSubmit} className="flex items-center gap-2">
+          <span className="text-white/35">$</span>
+
+          <input
+            ref={inputRef}
+            value={input}
+            onChange={(event) => setInput(event.target.value)}
+            className="min-w-0 flex-1 bg-transparent text-white outline-none placeholder:text-white/20"
+            placeholder="type help"
+            spellCheck={false}
+            autoComplete="off"
+            aria-label="Terminal command input"
+          />
+
+          <span className="h-4 w-2 animate-pulse bg-white/70" />
+        </form>
+      </div>
+    </section>
+  );
 }
