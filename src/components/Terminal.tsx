@@ -22,14 +22,7 @@ type PublicTerminalFile = {
   route?: string;
 };
 
-const initialLines: TerminalLine[] = [
-  { type: 'command', text: 'whoami' },
-  { type: 'output', text: 'operator rebuilding broken systems' },
-  { type: 'command', text: 'cat focus.txt' },
-  { type: 'output', text: 'workflow automation · integrations · governance' },
-  { type: 'command', text: 'echo $status' },
-  { type: 'output', text: 'select contracts · high-impact only' },
-];
+const initialLines: TerminalLine[] = [];
 
 const LAB_COMMANDS: Record<string, string> = {
   beanwars: '/lab/bean-wars',
@@ -294,40 +287,80 @@ if (command.startsWith('open ')) {
       case 'h':
   addLines([
     { type: 'output', text: 'available commands:' },
-    { type: 'output', text: 'whoami' },
-    { type: 'output', text: 'focus' },
-    { type: 'output', text: 'status' },
-    { type: 'output', text: 'ls' },
-    { type: 'output', text: 'ls -a' },
-    { type: 'output', text: 'ls /lab' },
-    { type: 'output', text: 'cat <file>' },
-    { type: 'output', text: 'open <file>' },
-    { type: 'output', text: 'riddle' },
-    { type: 'output', text: 'sudo fix' },
-    { type: 'output', text: 'scan' },
-    { type: 'output', text: 'who broke it' },
-    { type: 'output', text: 'clear' },
+    { type: 'output', text: '' },
+    { type: 'output', text: '-  whoami' },
+    { type: 'output', text: '-  focus' },
+    { type: 'output', text: '-  status' },
+    { type: 'output', text: '-  ls' },
+    { type: 'output', text: '-  ls -a' },
+    { type: 'output', text: '-  ls /lab' },
+    { type: 'output', text: '-  cat <file>' },
+    { type: 'output', text: '-  open <file>' },
+    { type: 'output', text: '-  riddle' },
+    { type: 'output', text: '-  sudo fix' },
+    { type: 'output', text: '-  scan' },
+    { type: 'output', text: '-  who broke it' },
+    { type: 'output', text: '-  clear' },
+    { type: 'output', text: '-  cl' },
   ]);
   break;
   
   case 'help':
   addLines([
-    { type: 'output', text: 'available commands:' },
-    { type: 'output', text: 'whoami — identify operator' },
-    { type: 'output', text: 'focus — current work focus' },
-    { type: 'output', text: 'status — availability state' },
-    { type: 'output', text: 'ls — list public files' },
-    { type: 'output', text: 'ls -a — list all visible files' },
-    { type: 'output', text: 'ls /lab — inspect restricted lab path' },
-    { type: 'output', text: 'cat <file> — read file' },
-    { type: 'output', text: 'open <file> — open linked file route' },
-    { type: 'output', text: 'riddle — request access challenge' },
-    { type: 'output', text: 'sudo fix      - attempts to repair the workflow' },
-    { type: 'output', text: 'scan          - runs an operational failure scan' },
-    { type: 'output', text: 'who broke it  - identifies the actual failure point' },
-    { type: 'output', text: 'clear — clear terminal' },
+    { type: 'output', text: 'available commands' },
+    { type: 'output', text: '' },
+    { type: 'output', text: 'about      — who I am' },
+    { type: 'output', text: 'work       — selected systems work' },
+    { type: 'output', text: 'case       — operational automation case study' },
+    { type: 'output', text: 'contact    — email and links' },
+    { type: 'output', text: 'lab        — restricted experiments' },
+    { type: 'output', text: 'clear      — reset terminal' },
   ]);
   break;
+
+
+  case 'about':
+  addLines([
+    { type: 'output', text: 'Logan Pinney — data systems architect.' },
+    {
+      type: 'output',
+      text: 'I rebuild operational workflows, automation pipelines, and data systems that break under real-world pressure.',
+    },
+  ]);
+  break;
+
+case 'work':
+  addLines([
+    { type: 'output', text: 'Selected work: operational automation, integration architecture, validation systems, and workflow governance.' },
+  ]);
+  break;
+
+case 'case':
+  addLines([
+    {
+      type: 'output',
+      text: 'Operational automation case study: intake, approval gating, validation, sync states, exception handling, and audit-ready logs.',
+    },
+  ]);
+  break;
+
+case 'contact':
+  addLines([
+    { type: 'output', text: 'info@loganpinney.com' },
+    { type: 'output', text: 'linkedin available from main navigation' },
+  ]);
+  break;
+
+case 'lab':
+  addTemporaryLine(
+    {
+      type: 'error',
+      text: 'restricted;  type h',
+    },
+    900
+  );
+  break;
+
 
       case 'ls /lab':
         addTemporaryLine(
@@ -450,6 +483,10 @@ if (command.startsWith('open ')) {
         addLines([
           { type: 'system', text: 'riddle cleared.' },
         ]);
+        break;
+
+        case 'cl':
+        setLines([]);
         break;
 
       case 'clear':

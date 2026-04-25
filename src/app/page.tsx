@@ -143,7 +143,7 @@ export default function HomePage() {
           color: 'var(--accent)',
         }}
       >
-        workflow montage coming soon <span aria-hidden>→</span>
+        architecture walkthrough available upon request <span aria-hidden>→</span>
       </span>
     </div>
   </div>
