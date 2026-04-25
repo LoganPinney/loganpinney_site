@@ -7,9 +7,9 @@ export default function Footer() {
 
   return (
     <footer
-      className="mt-24 px-6 pt-10 pb-16 sm:px-8 sm:pb-20"
-      style={{ borderTop: '1px solid var(--border)' }}
-    >
+  className="mt-24 px-6 pt-10 pb-20 sm:px-8 sm:pb-24"
+  style={{ borderTop: '1px solid var(--border)' }}
+>
       <div className="max-w-5xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
         {/* left: nav */}
         <nav className="flex flex-wrap gap-5 font-mono text-xs">
