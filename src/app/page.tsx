@@ -91,12 +91,12 @@ export default function HomePage() {
           </h2>
 
           <div
-            className="rounded-md p-6 sm:p-8 transition-colors duration-200"
-            style={{
-              background: 'var(--bg-card)',
-              border: '1px solid var(--border)',
-            }}
-          >
+  className="rounded-md p-6 sm:p-8 transition-colors duration-200 hover:border-[var(--accent)]"
+  style={{
+    background: 'var(--bg-card)',
+    border: '1px solid var(--border)',
+  }}
+>
             <div className="mb-4 flex flex-wrap gap-2">
               {[
                 '400–1,200 participants per event',
@@ -237,11 +237,11 @@ function WorkCard({
 }) {
   return (
     <article
-      className="rounded-md p-5 transition-colors duration-200"
-      style={{
-        background: 'var(--bg-card)',
-        border: '1px solid var(--border)',
-      }}
+  className="rounded-md p-5 transition-colors duration-200 hover:border-[var(--accent)]"
+  style={{
+    background: 'var(--bg-card)',
+    border: '1px solid var(--border)',
+  }}
     >
       <div className="flex items-center justify-between mb-3">
         <span
