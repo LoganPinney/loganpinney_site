@@ -7,7 +7,7 @@ export default function Footer() {
 
   return (
     <footer
-      className="mt-24 py-10 px-6 sm:px-8"
+      className="mt-24 px-6 pt-10 pb-16 sm:px-8 sm:pb-20"
       style={{ borderTop: '1px solid var(--border)' }}
     >
       <div className="max-w-5xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
