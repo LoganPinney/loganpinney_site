@@ -26,12 +26,30 @@
     text-shadow: 0 0 3px #33ff3399;
     display: flex; flex-direction: column;
   }
-  @media (max-width: 600px) {
-    body { padding: 8px; }
-    #crt { height: calc(100vh - 16px); padding: 12px 14px 10px; border-radius: 10px; }
-    #screen { font-size: 12px !important; width: 100%; min-width: 0;
-    margin: 0; }
+ @media (max-width: 600px) {
+  body { padding: 8px; }
+
+  #crt {
+    height: calc(100vh - 16px);
+    padding: 12px 14px 10px;
+    border-radius: 10px;
   }
+
+  #screen {
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+    font-size: 12px !important;
+  }
+
+  .inputbar,
+  .btnbar {
+    width: 100%;
+    min-width: 0;
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
   #crt::after {
     content: ""; position: absolute; inset: 0; pointer-events: none;
     background: repeating-linear-gradient(
@@ -61,16 +79,29 @@
   .bad   { color: #ff5555; }
   .acc   { color: #66ddff; }
   .inputbar {
-    display: flex; gap: 8px; align-items: center;
-    border-top: 1px dashed #33ff3355; padding-top: 8px; margin-top: 8px;
-  }
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  border-top: 1px dashed #33ff3355;
+  padding-top: 8px;
+  margin: 8px auto 0;
+  width: fit-content;
+  min-width: 62ch;
+  max-width: 100%;
+}
   .inputbar input {
     background: transparent; border: none; color: #aaffaa;
     font-family: inherit; font-size: 16px; outline: none; flex: 1;
     text-shadow: inherit; caret-color: #aaffaa;
   }
   .btnbar {
-    display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px;
+    display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px auto 0;
+  width: fit-content;
+  min-width: 62ch;
+  max-width: 100%;
   }
   .btnbar button {
     background: #002a00; color: #aaffaa;
