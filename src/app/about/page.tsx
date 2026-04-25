@@ -129,17 +129,11 @@ export default function AboutPage() {
             <div
               key={c.role}
               className="
-                rounded-md p-5
-                transition-all duration-200 ease-out
-                border
+                card-glow rounded-md p-5
+                border border-[var(--border)] bg-[var(--bg-card)]
                 hover:-translate-y-1 hover:shadow-md
-                hover:border-[var(--accent)]
                 hover:bg-[rgba(255,255,255,0.02)]
               "
-              style={{
-                background: 'var(--bg-card)',
-                borderColor: 'var(--border)',
-              }}
             >
               <div className="text-white font-medium mb-1">{c.role}</div>
               {c.detail && (
@@ -169,17 +163,11 @@ export default function AboutPage() {
             <div
               key={p.t}
               className="
-                rounded-md p-6 cursor-default
-                transition-all duration-200 ease-out
-                border
+                card-glow rounded-md p-6 cursor-default
+                border border-[var(--border)] bg-[var(--bg-card)]
                 hover:-translate-y-1 hover:shadow-md
-                hover:border-[var(--accent)]
                 hover:bg-[rgba(255,255,255,0.02)]
               "
-              style={{
-                background: 'var(--bg-card)',
-                borderColor: 'var(--border)',
-              }}
             >
               <h3 className="text-white font-medium mb-2">{p.t}</h3>
               <p
