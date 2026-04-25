@@ -32,8 +32,9 @@ export default function ContactPage() {
           Let&apos;s talk.
         </h1>
         <p className="leading-relaxed" style={{ color: 'var(--text-dim)' }}>
-          Short or long — doesn&apos;t matter. I&apos;ll read it and get back to you.
-          If email is easier, reach out directly at{' '}
+          Send the problem, the context, and what needs to change.
+          If your workflow is brittle, manual, unclear, or failing under real pressure, I want to hear about it.
+          If email is easier, reach me directly at{' '}
           <a
             href={`mailto:${siteConfig.identity.email}`}
             className="underline hover:no-underline"
