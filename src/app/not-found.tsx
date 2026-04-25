@@ -1,4 +1,3 @@
-import Link from 'next/link'
 //import { siteConfig } from '@/config/site.config'
 
 //const glow = siteConfig.effects.glowText ? 'glow-text' : ''
