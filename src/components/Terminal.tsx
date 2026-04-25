@@ -286,11 +286,14 @@ if (command.startsWith('open ')) {
     switch (command) {
       case 'h':
   addLines([
-    { type: 'output', text: 'available commands:' },
-    { type: 'output', text: '' },
+    { type: 'output', text: 'additional commands:' },
+    { type: 'output', text: '\u00A0' },
     { type: 'output', text: '-  whoami' },
     { type: 'output', text: '-  focus' },
     { type: 'output', text: '-  status' },
+    { type: 'output', text: '-  who broke it' },
+    { type: 'output', text: '-  scan' },
+    { type: 'output', text: '\u00A0' },
     { type: 'output', text: '-  ls' },
     { type: 'output', text: '-  ls -a' },
     { type: 'output', text: '-  ls /lab' },
@@ -298,17 +301,16 @@ if (command.startsWith('open ')) {
     { type: 'output', text: '-  open <file>' },
     { type: 'output', text: '-  riddle' },
     { type: 'output', text: '-  sudo fix' },
-    { type: 'output', text: '-  scan' },
-    { type: 'output', text: '-  who broke it' },
-    { type: 'output', text: '-  clear' },
+    
+    
     { type: 'output', text: '-  cl' },
   ]);
   break;
   
   case 'help':
   addLines([
-    { type: 'output', text: 'available commands' },
-    { type: 'output', text: '' },
+    { type: 'output', text: 'available commands:' },
+    { type: 'output', text: '\u00A0' },
     { type: 'output', text: 'about      — who I am' },
     { type: 'output', text: 'work       — selected systems work' },
     { type: 'output', text: 'case       — operational automation case study' },
@@ -366,7 +368,7 @@ case 'lab':
         addTemporaryLine(
           {
             type: 'error',
-            text: 'restricted',
+            text: 'restricted; check logs & coffee',
           },
           900
         );
