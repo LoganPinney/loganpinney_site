@@ -92,7 +92,7 @@ export default function HomePage() {
     </h2>
 
     <div
-      className="rounded-md p-6 sm:p-8 transition-all duration-200 hover:-translate-y-1"
+      className={`${siteConfig.effects.cardHoverGlow ? 'card-glow' : ''} rounded-md p-6 sm:p-8`}
       style={{
         background: 'var(--bg-card)',
         border: '1px solid var(--border)',
