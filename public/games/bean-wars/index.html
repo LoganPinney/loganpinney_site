@@ -5,58 +5,34 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>BEAN WARS</title>
 <style>
-  * {
-    box-sizing: border-box;
-  }
-
-  html,
-  body {
-    margin: 0;
-    padding: 0;
-    background: #000;
-    color: #33ff33;
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: #000; color: #33ff33;
     font-family: "Consolas", "Courier New", "Lucida Console", monospace;
-    width: 100%;
-    min-height: 100%;
-    overflow-x: hidden;
   }
-
-  body {
-    min-height: 100dvh;
-    padding: clamp(6px, 2vw, 16px);
-  }
-
+  body { padding: 16px; }
   #crt {
-    width: min(100%, 760px);
-    height: min(760px, calc(100dvh - 32px));
+    width: 100%; max-width: 760px;
+    height: 760px; max-height: calc(100vh - 32px);
     margin: 0 auto;
     background: #001500;
     border: 2px solid #33ff33;
     border-radius: 14px;
     box-shadow: 0 0 50px #33ff3355, inset 0 0 80px #00aa0022;
-    padding: clamp(8px, 2vw, 18px) clamp(10px, 2.5vw, 24px) clamp(8px, 1.5vw, 14px);
+    padding: 18px 24px 14px;
     overflow: hidden;
     position: relative;
     text-shadow: 0 0 3px #33ff3399;
-    display: flex;
-    flex-direction: column;
+    display: flex; flex-direction: column;
   }
-
-  @supports not (height: 100dvh) {
-    body {
-      min-height: 100vh;
-    }
-
-    #crt {
-      height: min(760px, calc(100vh - 32px));
-    }
+  @media (max-width: 600px) {
+    body { padding: 8px; }
+    #crt { height: calc(100vh - 16px); padding: 12px 14px 10px; border-radius: 10px; }
+    #screen { font-size: 12px !important; }
   }
-
   #crt::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
+    content: ""; position: absolute; inset: 0; pointer-events: none;
     background: repeating-linear-gradient(
       to bottom,
       rgba(0,0,0,0) 0px,
@@ -64,153 +40,43 @@
       rgba(0,0,0,0.18) 3px
     );
   }
-
   #screen {
-    flex: 1;
-    overflow-y: auto;
-    overflow-x: hidden;
-    margin: 0;
-    padding: 0;
-    white-space: pre-wrap;
-    font-size: clamp(9px, 1.3vw, 14px);
-    line-height: 1.45;
+    flex: 1; overflow-y: auto; margin: 0; padding: 0;
+    white-space: pre-wrap; font-size: 14px; line-height: 1.45;
   }
-
-  #screen::-webkit-scrollbar {
-    width: 8px;
-  }
-
-  #screen::-webkit-scrollbar-thumb {
-    background: #33ff3344;
-    border-radius: 4px;
-  }
-
-  .dim {
-    color: #1a8a1a;
-  }
-
-  .hi {
-    color: #aaffaa;
-  }
-
-  .warn {
-    color: #ffcc33;
-  }
-
-  .bad {
-    color: #ff5555;
-  }
-
-  .acc {
-    color: #66ddff;
-  }
-
+  #screen::-webkit-scrollbar { width: 8px; }
+  #screen::-webkit-scrollbar-thumb { background: #33ff3344; border-radius: 4px; }
+  .dim   { color: #1a8a1a; }
+  .hi    { color: #aaffaa; }
+  .warn  { color: #ffcc33; }
+  .bad   { color: #ff5555; }
+  .acc   { color: #66ddff; }
   .inputbar {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    border-top: 1px dashed #33ff3355;
-    padding-top: 8px;
-    margin-top: 8px;
+    display: flex; gap: 8px; align-items: center;
+    border-top: 1px dashed #33ff3355; padding-top: 8px; margin-top: 8px;
   }
-
   .inputbar input {
-    background: transparent;
-    border: none;
-    color: #aaffaa;
-    font-family: inherit;
-    font-size: clamp(13px, 3.4vw, 16px);
-    outline: none;
-    flex: 1;
-    min-width: 0;
-    text-shadow: inherit;
-    caret-color: #aaffaa;
+    background: transparent; border: none; color: #aaffaa;
+    font-family: inherit; font-size: 16px; outline: none; flex: 1;
+    text-shadow: inherit; caret-color: #aaffaa;
   }
-
   .btnbar {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-top: 8px;
+    display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px;
   }
-
   .btnbar button {
-    background: #002a00;
-    color: #aaffaa;
-    border: 1px solid #33ff33;
-    border-radius: 4px;
-    font-family: inherit;
-    font-size: clamp(11px, 2.8vw, 13px);
-    font-weight: bold;
-    padding: 7px 9px;
-    min-width: 36px;
-    cursor: pointer;
-    text-shadow: inherit;
-    touch-action: manipulation;
-    user-select: none;
+    background: #002a00; color: #aaffaa;
+    border: 1px solid #33ff33; border-radius: 4px;
+    font-family: inherit; font-size: 13px; font-weight: bold;
+    padding: 8px 10px; min-width: 40px;
+    cursor: pointer; text-shadow: inherit;
+    touch-action: manipulation; user-select: none;
   }
-
-  .btnbar button:hover {
-    background: #044404;
-  }
-
-  .btnbar button:active {
-    background: #066b06;
-  }
-
-  .btnbar button.alt {
-    border-color: #66ddff;
-    color: #aaeeff;
-  }
-
-  .btnbar button.danger {
-    border-color: #ff5555;
-    color: #ff9999;
-  }
-
-  .blink {
-    animation: blink 1s steps(2) infinite;
-  }
-
-  @keyframes blink {
-    50% {
-      opacity: 0;
-    }
-  }
-
-  @media (max-width: 430px) {
-    body {
-      padding: 6px;
-    }
-
-    #crt {
-      width: 100%;
-      height: calc(100dvh - 12px);
-      padding: 8px 9px 8px;
-      border-radius: 10px;
-    }
-
-    #screen {
-      font-size: 9px;
-      line-height: 1.42;
-    }
-
-    .inputbar {
-      gap: 5px;
-      padding-top: 6px;
-      margin-top: 6px;
-    }
-
-    .btnbar {
-      gap: 4px;
-      margin-top: 6px;
-    }
-
-    .btnbar button {
-      padding: 6px 7px;
-      min-width: 34px;
-    }
-  }
+  .btnbar button:hover { background: #044404; }
+  .btnbar button:active { background: #066b06; }
+  .btnbar button.alt { border-color: #66ddff; color: #aaeeff; }
+  .btnbar button.danger { border-color: #ff5555; color: #ff9999; }
+  .blink { animation: blink 1s steps(2) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
 </style>
 </head>
 <body>
@@ -223,7 +89,6 @@
   </div>
   <div id="btns" class="btnbar"></div>
 </div>
-
 <script>
 "use strict";
 
@@ -237,7 +102,6 @@ const BEANS = [
   { name: "Jamaican Blue Mountain", min: 1500,  max: 6500  },
   { name: "Panamanian Geisha",      min: 4500,  max: 24000 }
 ];
-
 // modifier per city, per bean
 const CITY_MOD = {
   "Helsinki":  [1.05, 1.10, 1.15, 1.20, 1.25, 1.30],
@@ -247,7 +111,6 @@ const CITY_MOD = {
   "Seattle":   [0.90, 0.95, 1.05, 1.10, 1.25, 1.40],
   "Melbourne": [0.85, 0.90, 1.10, 1.10, 1.20, 1.30]
 };
-
 const CITY_DESC = {
   "Helsinki":  "Coffee-mad capital. Bank and Supplier here.",
   "Vienna":    "Old-world cafe culture. Pays well for rare origins.",
@@ -276,260 +139,164 @@ function newGame() {
     log: [],
     over: false
   };
-
   rollPrices();
-
   G.log.push(`<span class="dim">--- BEAN WARS v1.0 ---</span>`);
   G.log.push(`Welcome. You owe the Supplier <span class="bad">${fmt(G.debt)}</span>.`);
   G.log.push(`You have 30 days to make a fortune in coffee beans.`);
 }
 
 // ---------- HELPERS ----------
-function rand(a, b) {
-  return Math.floor(Math.random() * (b - a + 1)) + a;
-}
-
-function chance(p) {
-  return Math.random() < p;
-}
-
-function bagUsed() {
-  return G.bag.reduce((s, v) => s + v, 0);
-}
-
-function bagFree() {
-  return G.bagCap - bagUsed();
-}
-
-function fmt(n) {
-  const s = (n < 0 ? "-" : "") + "$" + Math.abs(Math.round(n)).toLocaleString("en-US");
-  return s;
-}
-
-function pad(s, n) {
-  s = String(s);
-  return s.length >= n ? s : s + " ".repeat(n - s.length);
-}
-
-function padL(s, n) {
-  s = String(s);
-  return s.length >= n ? s : " ".repeat(n - s.length) + s;
-}
+function rand(a, b)   { return Math.floor(Math.random()*(b-a+1))+a; }
+function chance(p)    { return Math.random() < p; }
+function bagUsed()    { return G.bag.reduce((s,v)=>s+v,0); }
+function bagFree()    { return G.bagCap - bagUsed(); }
+function fmt(n)       { const s = (n<0?"-":"") + "$" + Math.abs(Math.round(n)).toLocaleString("en-US"); return s; }
+function pad(s,n)     { s=String(s); return s.length>=n?s:s+" ".repeat(n-s.length); }
+function padL(s,n)    { s=String(s); return s.length>=n?s:" ".repeat(n-s.length)+s; }
 
 function rollPrices() {
   const mods = CITY_MOD[G.city];
-
   G.prices = BEANS.map((b, i) => {
-    if (!chance(0.85)) return null;
-
+    if (!chance(0.85)) return null;          // not all beans available
     let p = rand(b.min, b.max) * mods[i];
-
-    if (chance(0.10)) {
-      p *= 0.25 + Math.random() * 0.25;
-    } else if (chance(0.10)) {
-      p *= 1.8 + Math.random() * 1.5;
-    }
-
+    if (chance(0.10)) p *= 0.25 + Math.random()*0.25;  // crash
+    else if (chance(0.10)) p *= 1.8 + Math.random()*1.5; // boom
     return Math.max(1, Math.round(p));
   });
 }
 
 function logLine(s, cls) {
   G.log.push(cls ? `<span class="${cls}">${s}</span>` : s);
-
-  if (G.log.length > 60) {
-    G.log.shift();
-  }
+  if (G.log.length > 60) G.log.shift();
 }
 
 // ---------- RENDER ----------
 function render() {
   let out = "";
-
   out += `<span class="dim">============================================================</span>\n`;
   out += ` <span class="hi">BEAN WARS</span>   `
-       + `Day <span class="acc">${pad(G.day + "/" + G.maxDay, 5)}</span>  `
-       + `City <span class="acc">${pad(G.city, 10)}</span>\n`;
+       + `Day <span class="acc">${pad(G.day+"/"+G.maxDay,5)}</span>  `
+       + `City <span class="acc">${pad(G.city,10)}</span>\n`;
   out += `<span class="dim">============================================================</span>\n`;
-  out += ` Cash    <span class="hi">${pad(fmt(G.cash), 12)}</span>`
+  out += ` Cash    <span class="hi">${pad(fmt(G.cash),12)}</span>`
        + ` Bag   <span class="hi">${bagUsed()}/${G.bagCap}</span>\n`;
-  out += ` Debt    <span class="bad">${pad(fmt(G.debt), 12)}</span>`
+  out += ` Debt    <span class="bad">${pad(fmt(G.debt),12)}</span>`
        + ` Savings <span class="hi">${fmt(G.savings)}</span>\n`;
   out += `<span class="dim">------------------------------------------------------------</span>\n`;
   out += ` <span class="dim">${CITY_DESC[G.city]}</span>\n`;
   out += `<span class="dim">------------------------------------------------------------</span>\n`;
   out += ` <span class="hi">MARKET</span>                       price/lb     in bag\n`;
-
-  for (let i = 0; i < BEANS.length; i++) {
+  for (let i=0; i<BEANS.length; i++) {
     const p = G.prices[i];
     const n = G.bag[i];
     const priceTxt = p == null ? `<span class="dim">    --     </span>` : padL(fmt(p), 11);
-
-    out += ` ${i + 1}. ${pad(BEANS[i].name, 27)} ${priceTxt}    ${padL(n, 4)}\n`;
+    out += ` ${i+1}. ${pad(BEANS[i].name, 27)} ${priceTxt}    ${padL(n, 4)}\n`;
   }
-
   out += `<span class="dim">------------------------------------------------------------</span>\n`;
 
+  // recent log (last 8 lines)
   const tail = G.log.slice(-8);
-
-  for (const ln of tail) {
-    out += " " + ln + "\n";
-  }
+  for (const ln of tail) out += " " + ln + "\n";
 
   out += `<span class="dim">------------------------------------------------------------</span>\n`;
   out += ` ` + promptText() + `\n`;
 
   screen.innerHTML = out;
   screen.scrollTop = screen.scrollHeight;
-
   renderButtons();
-
-  const numModes = ["qty", "bankAmt", "loanAmt", "eventAmt"];
+  // numeric soft keyboard for amount prompts
+  const numModes = ["qty","bankAmt","loanAmt","eventAmt"];
   cmd.inputMode = numModes.includes(MODE) ? "numeric" : "text";
 }
 
 function renderButtons() {
   btns.innerHTML = "";
-
-  const add = (label, key, cls = "") => {
+  const add = (label, key, cls="") => {
     const b = document.createElement("button");
-
     b.textContent = label;
-
-    if (cls) {
-      b.className = cls;
-    }
-
-    b.addEventListener("click", (e) => {
-      e.preventDefault();
-      handle(key);
-    });
-
+    if (cls) b.className = cls;
+    b.addEventListener("click", (e) => { e.preventDefault(); handle(key); });
     btns.appendChild(b);
   };
-
-  if (G && G.over && MODE === "over") {
-    add("Play again", "");
-    return;
-  }
-
+  if (G && G.over && MODE === "over") { add("Play again", ""); return; }
   if (MODE === "main") {
-    add("Buy", "b");
-    add("Sell", "s");
-    add("Jet", "j");
-    add("Upgrade bag", "u");
-
-    if (G.city === "Helsinki") {
-      add("Bank", "n", "alt");
-      add("Supplier", "l", "alt");
-    }
+    add("Buy", "b"); add("Sell", "s"); add("Jet", "j"); add("Upgrade bag", "u");
+    if (G.city === "Helsinki") { add("Bank", "n", "alt"); add("Supplier", "l", "alt"); }
   } else if (MODE === "buy" || MODE === "sell") {
-    for (let i = 1; i <= 6; i++) {
-      add(String(i), String(i));
-    }
-
+    for (let i=1;i<=6;i++) add(String(i), String(i));
     add("Cancel", "x", "danger");
   } else if (MODE === "qty") {
-    add("All", "all");
-    add("Cancel", "x", "danger");
+    add("All", "all"); add("Cancel", "x", "danger");
   } else if (MODE === "jet") {
-    for (let i = 0; i < CITIES.length; i++) {
-      add(CITIES[i], String(i + 1));
-    }
-
+    for (let i=0;i<CITIES.length;i++) add(CITIES[i], String(i+1));
     add("Cancel", "x", "danger");
   } else if (MODE === "bank") {
-    add("Deposit", "d");
-    add("Withdraw", "w");
-    add("Back", "x", "danger");
+    add("Deposit", "d"); add("Withdraw", "w"); add("Back", "x", "danger");
   } else if (MODE === "loan") {
-    add("Pay", "p");
-    add("Borrow", "b");
-    add("Back", "x", "danger");
+    add("Pay", "p"); add("Borrow", "b"); add("Back", "x", "danger");
   } else if (MODE === "bankAmt" || MODE === "loanAmt") {
-    add("All", "all");
-    add("Cancel", "x", "danger");
+    add("All", "all"); add("Cancel", "x", "danger");
   } else if (MODE === "event") {
     add("Continue", "");
   } else if (MODE === "choice") {
-    add("Yes", "y");
-    add("No", "n", "danger");
+    add("Yes", "y"); add("No", "n", "danger");
   } else if (MODE === "customs") {
-    add("Pay bribe", "p");
-    add("Run!", "r", "danger");
+    add("Pay bribe", "p"); add("Run!", "r", "danger");
   } else if (MODE === "eventAmt") {
     add("0 / Skip", "0", "danger");
   }
 }
 
 function promptText() {
-  if (MODE === "main") return menuMain();
-  if (MODE === "buy") return `<span class="hi">BUY</span>   pick bean # (1-6) or <span class="hi">X</span> to cancel`;
-  if (MODE === "sell") return `<span class="hi">SELL</span>  pick bean # (1-6) or <span class="hi">X</span> to cancel`;
-  if (MODE === "qty") return `Enter quantity (or <span class="hi">all</span> / <span class="hi">max</span> / <span class="hi">x</span>):`;
-  if (MODE === "jet") return `<span class="hi">JET</span>   pick city # (1-6) or <span class="hi">X</span>`;
-  if (MODE === "bank") return `<span class="hi">BANK</span>  <span class="hi">D</span>eposit / <span class="hi">W</span>ithdraw / <span class="hi">X</span>`;
-  if (MODE === "loan") return `<span class="hi">SUPPLIER</span>  <span class="hi">P</span>ay debt / <span class="hi">B</span>orrow more / <span class="hi">X</span>`;
+  if (MODE === "main")  return menuMain();
+  if (MODE === "buy")   return `<span class="hi">BUY</span>   pick bean # (1-6) or <span class="hi">X</span> to cancel`;
+  if (MODE === "sell")  return `<span class="hi">SELL</span>  pick bean # (1-6) or <span class="hi">X</span> to cancel`;
+  if (MODE === "qty")   return `Enter quantity (or <span class="hi">all</span> / <span class="hi">max</span> / <span class="hi">x</span>):`;
+  if (MODE === "jet")   return `<span class="hi">JET</span>   pick city # (1-6) or <span class="hi">X</span>`;
+  if (MODE === "bank")  return `<span class="hi">BANK</span>  <span class="hi">D</span>eposit / <span class="hi">W</span>ithdraw / <span class="hi">X</span>`;
+  if (MODE === "loan")  return `<span class="hi">SUPPLIER</span>  <span class="hi">P</span>ay debt / <span class="hi">B</span>orrow more / <span class="hi">X</span>`;
   if (MODE === "bankAmt") return `Amount (or <span class="hi">all</span>):`;
   if (MODE === "loanAmt") return `Amount:`;
   if (MODE === "event") return `Press <span class="hi">ENTER</span> to continue...`;
   if (MODE === "choice") return BUF.prompt || `Choose:`;
-  if (MODE === "over") return `Press <span class="hi">ENTER</span> to play again`;
-
+  if (MODE === "over")  return `Press <span class="hi">ENTER</span> to play again`;
   return "";
 }
 
 function menuMain() {
   let s = `<span class="hi">B</span>uy  <span class="hi">S</span>ell  <span class="hi">J</span>et  <span class="hi">U</span>pgrade bag`;
-
-  if (G.city === "Helsinki") {
-    s += `  <span class="hi">N</span>=Bank  <span class="hi">L</span>=Supplier`;
-  }
-
+  if (G.city === "Helsinki") s += `  <span class="hi">N</span>=Bank  <span class="hi">L</span>=Supplier`;
   return s;
 }
 
 // ---------- ACTIONS ----------
 function endTurn() {
+  // travel = 1 day; called by jet
+  // supplier interest accrues per day
   G.day++;
   G.debt = Math.round(G.debt * 1.10);
-
-  if (G.savings > 0) {
-    G.savings = Math.round(G.savings * 1.005);
-  }
-
+  if (G.savings > 0) G.savings = Math.round(G.savings * 1.005);
   rollPrices();
-
-  if (G.day > G.maxDay) {
-    return endGame();
-  }
-
+  if (G.day > G.maxDay) return endGame();
   maybeEvent();
 }
 
 function endGame() {
   const score = G.cash + G.savings - G.debt;
-
   G.over = true;
-
   let msg = `\n  <span class="hi">=== 30 DAYS ARE UP ===</span>\n`;
-
   msg += `  Cash:    ${fmt(G.cash)}\n`;
   msg += `  Savings: ${fmt(G.savings)}\n`;
   msg += `  Debt:    ${fmt(-G.debt)}\n`;
   msg += `  <span class="acc">NET WORTH: ${fmt(score)}</span>\n`;
-
   let rank;
-
   if (score >= 1000000) rank = "BEAN BARON";
   else if (score >= 250000) rank = "MASTER ROASTER";
-  else if (score >= 75000) rank = "SPECIALTY DEALER";
-  else if (score >= 15000) rank = "CAFE OWNER";
-  else if (score >= 0) rank = "SMALL-TIME TRADER";
-  else rank = "BANKRUPT";
-
+  else if (score >= 75000)  rank = "SPECIALTY DEALER";
+  else if (score >= 15000)  rank = "CAFE OWNER";
+  else if (score >= 0)      rank = "SMALL-TIME TRADER";
+  else                      rank = "BANKRUPT";
   msg += `  Rank: <span class="hi">${rank}</span>\n`;
-
   logLine(msg);
   MODE = "over";
 }
@@ -537,209 +304,109 @@ function endGame() {
 // --- BUY ---
 function tryBuy(idx) {
   const p = G.prices[idx];
-
-  if (p == null) {
-    logLine(`That bean is not for sale here.`, "bad");
-    return false;
-  }
-
+  if (p == null) { logLine(`That bean is not for sale here.`, "bad"); return false; }
   const aff = Math.floor(G.cash / p);
   const space = bagFree();
   const max = Math.min(aff, space);
-
   if (max <= 0) {
     logLine(aff <= 0 ? "Can't afford any." : "Bag is full.", "bad");
     return false;
   }
-
-  BUF = {
-    kind: "buy",
-    idx,
-    max
-  };
-
+  BUF = { kind: "buy", idx, max };
   MODE = "qty";
-
   return true;
 }
-
 function doBuy(qty) {
   const { idx, max } = BUF;
-
   qty = Math.max(0, Math.min(qty, max));
-
-  if (qty === 0) {
-    logLine(`Cancelled.`);
-    return;
-  }
-
+  if (qty === 0) { logLine(`Cancelled.`); return; }
   const cost = qty * G.prices[idx];
-
   G.cash -= cost;
   G.bag[idx] += qty;
-
   logLine(`Bought ${qty} lb ${BEANS[idx].name} for ${fmt(cost)}.`, "hi");
 }
 
 // --- SELL ---
 function trySell(idx) {
   const p = G.prices[idx];
-
-  if (p == null) {
-    logLine(`No buyers here for that bean.`, "bad");
-    return false;
-  }
-
+  if (p == null) { logLine(`No buyers here for that bean.`, "bad"); return false; }
   const have = G.bag[idx];
-
-  if (have <= 0) {
-    logLine(`You have none of that.`, "bad");
-    return false;
-  }
-
-  BUF = {
-    kind: "sell",
-    idx,
-    max: have
-  };
-
+  if (have <= 0) { logLine(`You have none of that.`, "bad"); return false; }
+  BUF = { kind: "sell", idx, max: have };
   MODE = "qty";
-
   return true;
 }
-
 function doSell(qty) {
   const { idx, max } = BUF;
-
   qty = Math.max(0, Math.min(qty, max));
-
-  if (qty === 0) {
-    logLine(`Cancelled.`);
-    return;
-  }
-
+  if (qty === 0) { logLine(`Cancelled.`); return; }
   const gain = qty * G.prices[idx];
-
   G.cash += gain;
   G.bag[idx] -= qty;
-
   logLine(`Sold ${qty} lb ${BEANS[idx].name} for ${fmt(gain)}.`, "hi");
 }
 
 // --- JET ---
 function doJet(idx) {
   const dest = CITIES[idx];
-
-  if (dest === G.city) {
-    logLine(`You're already in ${dest}.`, "bad");
-    return false;
-  }
-
+  if (dest === G.city) { logLine(`You're already in ${dest}.`, "bad"); return false; }
   G.city = dest;
-
   logLine(`Flew to ${dest}.`, "acc");
   endTurn();
-
   return true;
 }
 
-// --- BANK & LOAN ---
+// --- BANK & LOAN (Helsinki only) ---
 function doBank(action) {
-  BUF = {
-    kind: action
-  };
-
+  BUF = { kind: action }; // "dep" or "wd"
   MODE = "bankAmt";
 }
-
 function applyBank(amt) {
   if (BUF.kind === "dep") {
     amt = Math.min(amt, G.cash);
-
-    if (amt <= 0) {
-      logLine(`Nothing deposited.`);
-      return;
-    }
-
-    G.cash -= amt;
-    G.savings += amt;
-
+    if (amt <= 0) { logLine(`Nothing deposited.`); return; }
+    G.cash -= amt; G.savings += amt;
     logLine(`Deposited ${fmt(amt)}. Bank pays 0.5%/day.`, "hi");
   } else {
     amt = Math.min(amt, G.savings);
-
-    if (amt <= 0) {
-      logLine(`Nothing withdrawn.`);
-      return;
-    }
-
-    G.savings -= amt;
-    G.cash += amt;
-
+    if (amt <= 0) { logLine(`Nothing withdrawn.`); return; }
+    G.savings -= amt; G.cash += amt;
     logLine(`Withdrew ${fmt(amt)}.`, "hi");
   }
 }
-
 function doLoan(action) {
-  BUF = {
-    kind: action
-  };
-
+  BUF = { kind: action };
   MODE = "loanAmt";
 }
-
 function applyLoan(amt) {
   if (BUF.kind === "pay") {
     amt = Math.min(amt, Math.min(G.cash, G.debt));
-
-    if (amt <= 0) {
-      logLine(`Nothing paid.`);
-      return;
-    }
-
-    G.cash -= amt;
-    G.debt -= amt;
-
+    if (amt <= 0) { logLine(`Nothing paid.`); return; }
+    G.cash -= amt; G.debt -= amt;
     logLine(`Paid down ${fmt(amt)}. Debt now ${fmt(G.debt)}.`, "hi");
   } else {
     amt = Math.max(0, Math.floor(amt));
-
-    if (amt <= 0) {
-      logLine(`Nothing borrowed.`);
-      return;
-    }
-
-    G.cash += amt;
-    G.debt += amt;
-
+    if (amt <= 0) { logLine(`Nothing borrowed.`); return; }
+    G.cash += amt; G.debt += amt;
     logLine(`Borrowed ${fmt(amt)}. Supplier smiles thinly. (10%/day)`, "warn");
   }
 }
 
 // --- BAG UPGRADE ---
 function tryUpgrade() {
-  const cost = Math.round(G.bagCap * 35);
-  const add = 50;
-
-  if (G.cash < cost) {
-    logLine(`A bigger duffel costs ${fmt(cost)}. Can't afford.`, "bad");
-    return;
-  }
-
-  BUF = {
-    prompt: `Bigger duffel: +${add} lb capacity for ${fmt(cost)}. <span class="hi">Y</span>/<span class="hi">N</span>?`,
-    onYes: () => {
-      G.cash -= cost;
-      G.bagCap += add;
-      logLine(`Capacity upgraded to ${G.bagCap} lb.`, "hi");
-    }
-  };
-
+  const cost = Math.round(G.bagCap * 35); // scales
+  const add  = 50;
+  if (G.cash < cost) { logLine(`A bigger duffel costs ${fmt(cost)}. Can't afford.`, "bad"); return; }
+  BUF = { prompt: `Bigger duffel: +${add} lb capacity for ${fmt(cost)}. <span class="hi">Y</span>/<span class="hi">N</span>?`, onYes: () => {
+    G.cash -= cost; G.bagCap += add;
+    logLine(`Capacity upgraded to ${G.bagCap} lb.`, "hi");
+  }};
   MODE = "choice";
 }
 
 // ---------- EVENTS ----------
 const EVENTS = [
+  // [weight, fn]
   [3, evCustomsSeize],
   [3, evFoundStash],
   [2, evMold],
@@ -756,406 +423,235 @@ const EVENTS = [
 
 function maybeEvent() {
   if (!chance(0.40)) return;
-
-  let total = 0;
-
-  for (const [w] of EVENTS) {
-    total += w;
-  }
-
-  let r = Math.random() * total;
-
-  for (const [w, fn] of EVENTS) {
-    r -= w;
-
-    if (r <= 0) {
-      fn();
-      return;
-    }
-  }
+  let total = 0; for (const [w] of EVENTS) total += w;
+  let r = Math.random()*total;
+  for (const [w, fn] of EVENTS) { r -= w; if (r <= 0) { fn(); return; } }
 }
 
 function pickHeldBean() {
-  const owned = G.bag.map((n, i) => n > 0 ? i : -1).filter(i => i >= 0);
-
-  return owned.length ? owned[rand(0, owned.length - 1)] : -1;
+  const owned = G.bag.map((n,i)=>n>0?i:-1).filter(i=>i>=0);
+  return owned.length ? owned[rand(0, owned.length-1)] : -1;
 }
 
 function evCustomsSeize() {
   const i = pickHeldBean();
-
   if (i < 0) return;
-
-  const lost = Math.max(1, Math.floor(G.bag[i] * (0.3 + Math.random() * 0.4)));
-
+  const lost = Math.max(1, Math.floor(G.bag[i] * (0.3 + Math.random()*0.4)));
   G.bag[i] -= lost;
-
   showEvent(`Airport customs flagged your bag. They seized ${lost} lb of ${BEANS[i].name}.`, "bad");
 }
-
 function evFoundStash() {
-  const i = rand(0, BEANS.length - 1);
+  const i = rand(0, BEANS.length-1);
   const room = bagFree();
-
   if (room <= 0) return;
-
   const got = Math.min(room, rand(3, 15));
-
   G.bag[i] += got;
-
   showEvent(`A defunct cafe left a forgotten case behind. +${got} lb ${BEANS[i].name}.`, "hi");
 }
-
 function evMold() {
   const i = pickHeldBean();
-
   if (i < 0) return;
-
   const lost = Math.max(1, Math.floor(G.bag[i] * 0.2));
-
   G.bag[i] -= lost;
-
   showEvent(`Hotel pipes burst. ${lost} lb of ${BEANS[i].name} ruined by water.`, "bad");
 }
-
 function evInfluencer() {
   const i = pickHeldBean();
-
   if (i < 0) return;
-
   const qty = G.bag[i];
-  const price = G.prices[i] ? G.prices[i] * 2 : Math.round(BEANS[i].max * 1.5);
-
-  BUF = {
-    prompt: `A coffee influencer offers <span class="hi">${fmt(price)}/lb</span> for all your ${BEANS[i].name} (${qty} lb). <span class="hi">Y</span>=Sell / <span class="hi">N</span>=Pass`,
-    onYes: () => {
-      G.cash += qty * price;
-      G.bag[i] = 0;
-      logLine(`Sold ${qty} lb ${BEANS[i].name} to the influencer for ${fmt(qty * price)}.`, "hi");
-    },
-    onNo: () => {
-      logLine(`You pass on the influencer.`);
-    }
+  const price = G.prices[i] ? G.prices[i]*2 : Math.round(BEANS[i].max*1.5);
+  BUF = { prompt: `A coffee influencer offers <span class="hi">${fmt(price)}/lb</span> for all your ${BEANS[i].name} (${qty} lb). <span class="hi">Y</span>=Sell / <span class="hi">N</span>=Pass`,
+    onYes: () => { G.cash += qty*price; G.bag[i] = 0; logLine(`Sold ${qty} lb ${BEANS[i].name} to the influencer for ${fmt(qty*price)}.`, "hi"); },
+    onNo:  () => { logLine(`You pass on the influencer.`); }
   };
-
   MODE = "choice";
 }
-
 function evClearance() {
-  const i = rand(0, BEANS.length - 1);
-  const price = Math.round(BEANS[i].min * (0.3 + Math.random() * 0.3));
+  const i = rand(0, BEANS.length-1);
+  const price = Math.round(BEANS[i].min * (0.3 + Math.random()*0.3));
   const aff = Math.floor(G.cash / price);
   const room = bagFree();
   const max = Math.min(aff, room, rand(10, 60));
-
   if (max <= 0) return;
-
-  BUF = {
-    prompt: `Roaster fire-sale: up to ${max} lb of ${BEANS[i].name} at <span class="hi">${fmt(price)}/lb</span>. Buy how many? (0 to skip)`,
+  BUF = { prompt: `Roaster fire-sale: up to ${max} lb of ${BEANS[i].name} at <span class="hi">${fmt(price)}/lb</span>. Buy how many? (0 to skip)`,
     onAmt: (n) => {
       n = Math.max(0, Math.min(n, max));
-
-      if (n <= 0) {
-        logLine(`Walked away.`);
-        return;
-      }
-
-      G.cash -= n * price;
-      G.bag[i] += n;
-
-      logLine(`Snagged ${n} lb ${BEANS[i].name} for ${fmt(n * price)}.`, "hi");
+      if (n <= 0) { logLine(`Walked away.`); return; }
+      G.cash -= n*price; G.bag[i] += n;
+      logLine(`Snagged ${n} lb ${BEANS[i].name} for ${fmt(n*price)}.`, "hi");
     }
   };
-
   MODE = "eventAmt";
 }
-
 function evPickpocket() {
   const lost = Math.min(G.cash, rand(50, 600));
-
   G.cash -= lost;
-
   showEvent(`Pickpocketed in a crowded cafe. Lost ${fmt(lost)}.`, "bad");
 }
-
 function evNewDuffel() {
   G.bagCap += 20;
-
   showEvent(`A barista gave you her old hiking duffel. Capacity +20 (now ${G.bagCap}).`, "hi");
 }
-
 function evCustoms() {
   const bribe = rand(200, 1500);
-
-  BUF = {
-    prompt: `<span class="bad">CUSTOMS INSPECTOR!</span>  Pay bribe ${fmt(bribe)} (<span class="hi">P</span>) or run (<span class="hi">R</span>)? (lose ~30% of bag if caught running)`,
+  BUF = { prompt: `<span class="bad">CUSTOMS INSPECTOR!</span>  Pay bribe ${fmt(bribe)} (<span class="hi">P</span>) or run (<span class="hi">R</span>)? (lose ~30% of bag if caught running)`,
     onP: () => {
-      if (G.cash >= bribe) {
-        G.cash -= bribe;
-        logLine(`Slipped him ${fmt(bribe)}. He waves you through.`, "warn");
-      } else {
-        logLine(`Can't pay! He confiscates everything.`, "bad");
-
-        for (let i = 0; i < 6; i++) {
-          G.bag[i] = 0;
-        }
-      }
+      if (G.cash >= bribe) { G.cash -= bribe; logLine(`Slipped him ${fmt(bribe)}. He waves you through.`, "warn"); }
+      else { logLine(`Can't pay! He confiscates everything.`, "bad"); for (let i=0;i<6;i++) G.bag[i]=0; }
     },
     onR: () => {
       if (chance(0.5)) {
-        for (let i = 0; i < 6; i++) {
-          G.bag[i] = Math.floor(G.bag[i] * 0.7);
-        }
-
+        for (let i=0;i<6;i++) G.bag[i] = Math.floor(G.bag[i]*0.7);
         logLine(`Got away but dumped 30% of your beans in the chase.`, "warn");
       } else {
         logLine(`You ran clean! Heart pounding, beans intact.`, "hi");
       }
     }
   };
-
   MODE = "customs";
 }
-
 function evFrostNews() {
   showEvent(`NEWS: Frost in Brazil. Santos prices spiking worldwide.`, "warn");
+  // bias next price roll: temporarily boost Santos
   G._santosBoost = true;
 }
-
 function evLottery() {
   const win = rand(150, 900);
-
   G.cash += win;
-
   showEvent(`Won a barista raffle: +${fmt(win)}.`, "hi");
 }
-
 function evSmuggler() {
-  const i = 5;
+  const i = 5; // Geisha
   const price = Math.round(BEANS[i].min * 0.6);
   const room = bagFree();
   const aff = Math.floor(G.cash / price);
   const max = Math.min(aff, room, 8);
-
   if (max <= 0) return;
-
-  BUF = {
-    prompt: `A smuggler whispers: Panamanian Geisha at <span class="hi">${fmt(price)}/lb</span>, up to ${max} lb. How many? (0 to skip)`,
+  BUF = { prompt: `A smuggler whispers: Panamanian Geisha at <span class="hi">${fmt(price)}/lb</span>, up to ${max} lb. How many? (0 to skip)`,
     onAmt: (n) => {
       n = Math.max(0, Math.min(n, max));
-
-      if (n <= 0) {
-        logLine(`You decline. Probably wise.`);
-        return;
-      }
-
-      G.cash -= n * price;
-      G.bag[i] += n;
-
-      logLine(`Bought ${n} lb Geisha for ${fmt(n * price)}. Hide it well.`, "hi");
+      if (n <= 0) { logLine(`You decline. Probably wise.`); return; }
+      G.cash -= n*price; G.bag[i] += n;
+      logLine(`Bought ${n} lb Geisha for ${fmt(n*price)}. Hide it well.`, "hi");
     }
   };
-
   MODE = "eventAmt";
 }
-
 function evMarketRefresh() {
   rollPrices();
-
   showEvent(`Market apps glitched and re-synced. Prices updated.`, "acc");
 }
 
 function showEvent(text, cls) {
   logLine(text, cls);
-
   MODE = "event";
 }
 
 // ---------- INPUT ----------
 cmd.addEventListener("keydown", (e) => {
   if (e.key !== "Enter") return;
-
   const raw = cmd.value.trim();
-
   cmd.value = "";
-
   handle(raw);
 });
 
 function handle(raw) {
   if (G && G.over && MODE === "over") {
-    newGame();
-    MODE = "main";
-    render();
-    return;
+    newGame(); MODE = "main"; render(); return;
   }
-
   const k = raw.toLowerCase();
 
   if (MODE === "main") {
-    if (k === "b") {
-      MODE = "buy";
-    } else if (k === "s") {
-      MODE = "sell";
-    } else if (k === "j") {
-      MODE = "jet";
-    } else if (k === "u") {
-      tryUpgrade();
-    } else if (k === "n" && G.city === "Helsinki") {
-      MODE = "bank";
-    } else if (k === "l" && G.city === "Helsinki") {
-      MODE = "loan";
-    } else if (k && k !== "") {
-      logLine(`Unknown command: ${raw}`, "dim");
-    }
-  } else if (MODE === "buy") {
-    if (k === "x" || k === "") {
-      MODE = "main";
-    } else {
+    if (k === "b") { MODE = "buy"; }
+    else if (k === "s") { MODE = "sell"; }
+    else if (k === "j") { MODE = "jet"; }
+    else if (k === "u") { tryUpgrade(); }
+    else if (k === "n" && G.city === "Helsinki") { MODE = "bank"; }
+    else if (k === "l" && G.city === "Helsinki") { MODE = "loan"; }
+    else if (k && k !== "") logLine(`Unknown command: ${raw}`, "dim");
+  }
+  else if (MODE === "buy") {
+    if (k === "x" || k === "") { MODE = "main"; }
+    else {
       const n = parseInt(k, 10) - 1;
-
-      if (n >= 0 && n < 6) {
-        if (!tryBuy(n)) MODE = "main";
-      } else {
-        logLine(`Pick 1-6 or X.`, "dim");
-      }
+      if (n>=0 && n<6) { if (!tryBuy(n)) MODE = "main"; }
+      else logLine(`Pick 1-6 or X.`, "dim");
     }
-  } else if (MODE === "sell") {
-    if (k === "x" || k === "") {
-      MODE = "main";
-    } else {
+  }
+  else if (MODE === "sell") {
+    if (k === "x" || k === "") { MODE = "main"; }
+    else {
       const n = parseInt(k, 10) - 1;
-
-      if (n >= 0 && n < 6) {
-        if (!trySell(n)) MODE = "main";
-      } else {
-        logLine(`Pick 1-6 or X.`, "dim");
-      }
+      if (n>=0 && n<6) { if (!trySell(n)) MODE = "main"; }
+      else logLine(`Pick 1-6 or X.`, "dim");
     }
-  } else if (MODE === "qty") {
-    if (k === "x" || k === "") {
-      MODE = "main";
-      BUF = null;
-    } else {
+  }
+  else if (MODE === "qty") {
+    if (k === "x" || k === "") { MODE = "main"; BUF = null; }
+    else {
       let n;
-
-      if (k === "all" || k === "max" || k === "a" || k === "m") {
-        n = BUF.max;
-      } else {
-        n = parseInt(k, 10);
-      }
-
-      if (isNaN(n)) {
-        logLine(`Number, "all", or X.`, "dim");
-      } else {
-        if (BUF.kind === "buy") {
-          doBuy(n);
-        } else {
-          doSell(n);
-        }
-
-        MODE = "main";
-        BUF = null;
+      if (k === "all" || k === "max" || k === "a" || k === "m") n = BUF.max;
+      else n = parseInt(k, 10);
+      if (isNaN(n)) { logLine(`Number, "all", or X.`, "dim"); }
+      else {
+        if (BUF.kind === "buy") doBuy(n); else doSell(n);
+        MODE = "main"; BUF = null;
       }
     }
-  } else if (MODE === "jet") {
-    if (k === "x" || k === "") {
-      MODE = "main";
-    } else {
+  }
+  else if (MODE === "jet") {
+    if (k === "x" || k === "") { MODE = "main"; }
+    else {
       const n = parseInt(k, 10) - 1;
-
-      if (n >= 0 && n < 6) {
-        if (doJet(n)) MODE = "main";
-      } else {
-        logLine(`Pick 1-6 or X.`, "dim");
-      }
+      if (n>=0 && n<6) { if (doJet(n)) MODE = "main"; }
+      else logLine(`Pick 1-6 or X.`, "dim");
     }
-  } else if (MODE === "bank") {
-    if (k === "x" || k === "") {
-      MODE = "main";
-    } else if (k === "d") {
-      doBank("dep");
-    } else if (k === "w") {
-      doBank("wd");
-    } else {
-      logLine(`D, W, or X.`, "dim");
+  }
+  else if (MODE === "bank") {
+    if (k === "x" || k === "") { MODE = "main"; }
+    else if (k === "d") { doBank("dep"); }
+    else if (k === "w") { doBank("wd"); }
+    else logLine(`D, W, or X.`, "dim");
+  }
+  else if (MODE === "loan") {
+    if (k === "x" || k === "") { MODE = "main"; }
+    else if (k === "p") { doLoan("pay"); }
+    else if (k === "b") { doLoan("borrow"); }
+    else logLine(`P, B, or X.`, "dim");
+  }
+  else if (MODE === "bankAmt") {
+    if (k === "x" || k === "") { MODE = "main"; BUF = null; }
+    else {
+      let n = (k==="all") ? (BUF.kind==="dep"?G.cash:G.savings) : parseInt(k, 10);
+      if (isNaN(n)) { logLine(`Number or "all".`, "dim"); }
+      else { applyBank(n); MODE = "main"; BUF = null; }
     }
-  } else if (MODE === "loan") {
-    if (k === "x" || k === "") {
-      MODE = "main";
-    } else if (k === "p") {
-      doLoan("pay");
-    } else if (k === "b") {
-      doLoan("borrow");
-    } else {
-      logLine(`P, B, or X.`, "dim");
+  }
+  else if (MODE === "loanAmt") {
+    if (k === "x" || k === "") { MODE = "main"; BUF = null; }
+    else {
+      let n = (k==="all") ? (BUF.kind==="pay"?Math.min(G.cash,G.debt):0) : parseInt(k, 10);
+      if (isNaN(n)) { logLine(`Number or "all".`, "dim"); }
+      else { applyLoan(n); MODE = "main"; BUF = null; }
     }
-  } else if (MODE === "bankAmt") {
-    if (k === "x" || k === "") {
-      MODE = "main";
-      BUF = null;
-    } else {
-      let n = k === "all" ? (BUF.kind === "dep" ? G.cash : G.savings) : parseInt(k, 10);
-
-      if (isNaN(n)) {
-        logLine(`Number or "all".`, "dim");
-      } else {
-        applyBank(n);
-        MODE = "main";
-        BUF = null;
-      }
-    }
-  } else if (MODE === "loanAmt") {
-    if (k === "x" || k === "") {
-      MODE = "main";
-      BUF = null;
-    } else {
-      let n = k === "all" ? (BUF.kind === "pay" ? Math.min(G.cash, G.debt) : 0) : parseInt(k, 10);
-
-      if (isNaN(n)) {
-        logLine(`Number or "all".`, "dim");
-      } else {
-        applyLoan(n);
-        MODE = "main";
-        BUF = null;
-      }
-    }
-  } else if (MODE === "event") {
+  }
+  else if (MODE === "event") {
     MODE = "main";
-  } else if (MODE === "choice") {
-    if (k === "y") {
-      BUF.onYes && BUF.onYes();
-      MODE = "main";
-      BUF = null;
-    } else if (k === "n" || k === "x" || k === "") {
-      BUF.onNo && BUF.onNo();
-      MODE = "main";
-      BUF = null;
-    } else {
-      logLine(`Y or N.`, "dim");
-    }
-  } else if (MODE === "customs") {
-    if (k === "p") {
-      BUF.onP();
-      MODE = "main";
-      BUF = null;
-    } else if (k === "r") {
-      BUF.onR();
-      MODE = "main";
-      BUF = null;
-    } else {
-      logLine(`P or R.`, "dim");
-    }
-  } else if (MODE === "eventAmt") {
+  }
+  else if (MODE === "choice") {
+    if (k === "y") { BUF.onYes && BUF.onYes(); MODE = "main"; BUF = null; }
+    else if (k === "n" || k === "x" || k === "") { BUF.onNo && BUF.onNo(); MODE = "main"; BUF = null; }
+    else logLine(`Y or N.`, "dim");
+  }
+  else if (MODE === "customs") {
+    if (k === "p") { BUF.onP(); MODE = "main"; BUF = null; }
+    else if (k === "r") { BUF.onR(); MODE = "main"; BUF = null; }
+    else logLine(`P or R.`, "dim");
+  }
+  else if (MODE === "eventAmt") {
     let n = parseInt(k, 10);
-
-    if (isNaN(n)) {
-      n = 0;
-    }
-
-    BUF.onAmt(n);
-    MODE = "main";
-    BUF = null;
+    if (isNaN(n)) n = 0;
+    BUF.onAmt(n); MODE = "main"; BUF = null;
   }
 
   render();

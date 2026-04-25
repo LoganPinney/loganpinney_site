@@ -38,7 +38,7 @@ export default function BeanWarsPage() {
           </p>
         </section>
 
-        <div className="mx-auto max-w-[980px]">
+        <div className="mx-auto max-w-[760px]">
           <div className="overflow-hidden rounded-xl border border-white/10 bg-black shadow-2xl">
             <iframe
               src="/games/bean-wars/"
