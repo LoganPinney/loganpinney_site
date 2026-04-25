@@ -9,7 +9,7 @@ export default function HomePage() {
   return (
     <div className="max-w-5xl mx-auto px-6 sm:px-8">
       {/* HERO */}
-      <section className="pt-20 pb-24">
+      <section className="pt-20 pb-8 sm:pt-24 sm:pb-10">
         <div className="flex items-center gap-2 mb-6">
           <span className="relative flex h-2 w-2">
             <span
@@ -64,7 +64,7 @@ export default function HomePage() {
           {siteConfig.identity.tagline}
         </p>
 
-        <div className="flex flex-wrap gap-3 mb-12 md:mb-16">
+        <div className="flex flex-wrap gap-2 mb-8 md:mb-10">
           <Link
             href="/contact"
             className="btn-glow inline-flex items-center gap-2 font-mono text-sm font-medium px-5 py-2.5 rounded"
