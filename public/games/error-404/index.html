@@ -2,33 +2,29 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>BEAN WARS</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>ERROR 404 — TARGET NOT FOUND</title>
 <style>
-  * { box-sizing: border-box; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body {
     margin: 0; padding: 0;
     background: #000; color: #33ff33;
     font-family: "Consolas", "Courier New", "Lucida Console", monospace;
+    overscroll-behavior: none;
   }
   body { padding: 16px; }
   #crt {
-    width: 100%; max-width: 960px;
-    height: 760px; max-height: calc(100vh - 32px);
+    width: 100%; max-width: 760px;
     margin: 0 auto;
     background: #001500;
     border: 2px solid #33ff33;
     border-radius: 14px;
-    box-shadow: 0 0 50px #33ff3355, inset 0 0 80px #00aa0022;
-    padding: 18px 24px 14px;
-    overflow: hidden;
+    box-shadow: 0 0 50px #33ff3555, inset 0 0 80px #00aa0022;
+    padding: 14px 20px 14px;
     position: relative;
     text-shadow: 0 0 3px #33ff3399;
     display: flex; flex-direction: column;
-  }
-  @media (max-width: 600px) {
-    body { padding: 8px; }
-    #crt { height: calc(100vh - 16px); padding: 12px 14px 10px; border-radius: 10px; }
-    #screen { font-size: 12px !important; }
+    overflow: hidden;
   }
   #crt::after {
     content: ""; position: absolute; inset: 0; pointer-events: none;
@@ -38,632 +34,656 @@
       rgba(0,0,0,0) 2px,
       rgba(0,0,0,0.18) 3px
     );
+    z-index: 5;
   }
-  #screen {
-    flex: 1; overflow-y: auto; margin: 0; padding: 0;
-    white-space: pre-wrap; font-size: 14px; line-height: 1.45;
+  .topbar {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 8px;
   }
-  #screen::-webkit-scrollbar { width: 8px; }
-  #screen::-webkit-scrollbar-thumb { background: #33ff3344; border-radius: 4px; }
-  .dim   { color: #1a8a1a; }
-  .hi    { color: #aaffaa; }
-  .warn  { color: #ffcc33; }
-  .bad   { color: #ff5555; }
-  .acc   { color: #66ddff; }
-  .inputbar {
-    display: flex; gap: 8px; align-items: center;
-    border-top: 1px dashed #33ff3355; padding-top: 8px; margin-top: 8px;
+  .backlink {
+    color: #1a8a1a;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-decoration: none;
+    transition: color .15s, text-shadow .15s;
+    text-shadow: 0 0 3px #33ff3355;
   }
-  .inputbar input {
-    background: transparent; border: none; color: #aaffaa;
-    font-family: inherit; font-size: 16px; outline: none; flex: 1;
-    text-shadow: inherit; caret-color: #aaffaa;
+  .backlink:hover { color: #aaffaa; }
+  .topbar .tag { color: #1a8a1a; font-size: 11px; letter-spacing: 0.18em; }
+  .hud {
+    display: flex; justify-content: space-between; gap: 12px;
+    font-size: 13px; padding: 4px 2px 8px;
+    border-top: 1px dashed #33ff3555;
+    border-bottom: 1px dashed #33ff3555;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+  .hud .label { color: #1a8a1a; margin-right: 4px; }
+  .hud .val   { color: #aaffaa; }
+  .hud .err   { color: #ff5555; letter-spacing: 0.2em; }
+  #stage {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    background: #000a00;
+    border: 1px solid #1a8a1a;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  #game { display: block; width: 100%; height: 100%; }
+  #overlay {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    color: #aaffaa; text-align: center; padding: 16px;
+    pointer-events: none;
+    z-index: 4;
+  }
+  #overlay .box {
+    background: rgba(0, 21, 0, 0.85);
+    border: 1px solid #33ff3388;
+    border-radius: 8px;
+    padding: 18px 22px;
+    max-width: 90%;
+  }
+  #overlay h1 {
+    font-size: 28px; margin: 0 0 8px;
+    color: #ff5555; letter-spacing: 0.25em;
+  }
+  #overlay h2 {
+    font-size: 18px; margin: 0 0 10px;
+    color: #aaffaa;
+  }
+  #overlay p { margin: 6px 0; font-size: 13px; line-height: 1.5; color: #88dd88; }
+  #overlay .key {
+    display: inline-block; border: 1px solid #33ff33;
+    padding: 1px 6px; border-radius: 3px; margin: 0 2px;
+    color: #aaffaa; font-size: 12px;
   }
   .btnbar {
-    display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px;
+    display: flex; gap: 8px; margin-top: 10px;
+    justify-content: center; flex-wrap: wrap;
   }
   .btnbar button {
     background: #002a00; color: #aaffaa;
-    border: 1px solid #33ff33; border-radius: 4px;
-    font-family: inherit; font-size: 13px; font-weight: bold;
-    padding: 8px 10px; min-width: 40px;
+    border: 1px solid #33ff33; border-radius: 6px;
+    font-family: inherit; font-size: 14px; font-weight: bold;
+    padding: 12px 16px; min-width: 64px;
     cursor: pointer; text-shadow: inherit;
     touch-action: manipulation; user-select: none;
   }
-  .btnbar button:hover { background: #044404; }
   .btnbar button:active { background: #066b06; }
-  .btnbar button.alt { border-color: #66ddff; color: #aaeeff; }
-  .btnbar button.danger { border-color: #ff5555; color: #ff9999; }
-  .blink { animation: blink 1s steps(2) infinite; }
-  @keyframes blink { 50% { opacity: 0; } }
+  .btnbar button.fire { border-color: #66ddff; color: #aaeeff; flex: 1; max-width: 200px; }
+  .footer {
+    margin-top: 8px; text-align: center;
+    color: #1a8a1a; font-size: 11px; letter-spacing: 0.15em;
+  }
+  @media (max-width: 600px) {
+    body { padding: 8px; }
+    #crt { padding: 10px 12px 10px; border-radius: 10px; }
+    .hud { font-size: 12px; }
+    #overlay h1 { font-size: 22px; }
+    #overlay h2 { font-size: 15px; }
+    #overlay p { font-size: 12px; }
+    .btnbar button { padding: 14px 14px; font-size: 13px; }
+    .backlink, .topbar .tag { font-size: 10px; }
+  }
 </style>
 </head>
 <body>
 <div id="crt">
-  <pre id="screen"></pre>
-  <div class="inputbar">
-    <span class="hi">&gt;</span>
-    <input id="cmd" autocomplete="off" spellcheck="false">
-    <span class="blink hi">_</span>
+  <div class="topbar">
+    <a href="/" target="_top" class="backlink">← BACK TO MAIN SYSTEM</a>
+    <span class="tag">// 404.SYS</span>
   </div>
-  <div id="btns" class="btnbar"></div>
+  <div class="hud">
+    <span><span class="label">SYS:</span><span class="err">ERR 404</span></span>
+    <span><span class="label">SCORE</span><span id="score" class="val">0</span></span>
+    <span><span class="label">HIGH</span><span id="high" class="val">0</span></span>
+    <span><span class="label">LIVES</span><span id="lives" class="val">3</span></span>
+    <span><span class="label">WAVE</span><span id="wave" class="val">1</span></span>
+    <span id="powerlbl" style="display:none"><span class="label">PWR</span><span id="power" class="val"></span></span>
+  </div>
+  <div id="stage">
+    <canvas id="game"></canvas>
+    <div id="overlay"><div class="box" id="overlayBox"></div></div>
+  </div>
+  <div class="btnbar">
+    <button id="bL">◀</button>
+    <button id="bF" class="fire">FIRE</button>
+    <button id="bR">▶</button>
+  </div>
+  <div class="footer">// PAGE NOT FOUND — DEFEND THE BUFFER</div>
 </div>
+
 <script>
 "use strict";
 
-// ---------- DATA ----------
-const CITIES = ["Helsinki","Vienna","Rome","Istanbul","Seattle","Melbourne"];
-const BEANS = [
-  { name: "Brazilian Santos",       min: 15,    max: 60    },
-  { name: "Colombian Supremo",      min: 30,    max: 180   },
-  { name: "Ethiopian Yirgacheffe",  min: 90,    max: 450   },
-  { name: "Yemen Mocha",            min: 300,   max: 1400  },
-  { name: "Jamaican Blue Mountain", min: 1500,  max: 6500  },
-  { name: "Panamanian Geisha",      min: 4500,  max: 24000 }
-];
-// modifier per city, per bean
-const CITY_MOD = {
-  "Helsinki":  [1.05, 1.10, 1.15, 1.20, 1.25, 1.30],
-  "Vienna":    [0.95, 1.00, 1.20, 1.35, 1.05, 1.10],
-  "Rome":      [1.20, 1.10, 0.90, 1.00, 0.95, 0.90],
-  "Istanbul":  [0.85, 0.90, 1.00, 0.70, 0.95, 1.00],
-  "Seattle":   [0.90, 0.95, 1.05, 1.10, 1.25, 1.40],
-  "Melbourne": [0.85, 0.90, 1.10, 1.10, 1.20, 1.30]
-};
-const CITY_DESC = {
-  "Helsinki":  "Coffee-mad capital. Bank and Supplier here.",
-  "Vienna":    "Old-world cafe culture. Pays well for rare origins.",
-  "Rome":      "Espresso obsessed. Brazilian Santos goes fast.",
-  "Istanbul":  "Gateway market. Yemen Mocha runs cheap.",
-  "Seattle":   "Third-wave nerds pay top dollar for Geisha.",
-  "Melbourne": "Specialty crowd. Premium prices on the good stuff."
-};
+// ---------- CONFIG ----------
+const W = 720, H = 540;
+const SHIP_SPEED = 380;
+const BULLET_SPEED = 620;
+const FIRE_COOLDOWN = 0.22;
+const RAPID_COOLDOWN = 0.10;
+
+// ---------- DOM ----------
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+const overlay = document.getElementById("overlay");
+const overlayBox = document.getElementById("overlayBox");
+const elScore = document.getElementById("score");
+const elHigh  = document.getElementById("high");
+const elLives = document.getElementById("lives");
+const elWave  = document.getElementById("wave");
+const elPower = document.getElementById("power");
+const elPowerLbl = document.getElementById("powerlbl");
+
+function resizeCanvas() {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const rect = canvas.getBoundingClientRect();
+  canvas.width  = Math.round(rect.width  * dpr);
+  canvas.height = Math.round(rect.height * dpr);
+  ctx.setTransform(canvas.width / W, 0, 0, canvas.height / H, 0, 0);
+}
+new ResizeObserver(resizeCanvas).observe(canvas);
+window.addEventListener("orientationchange", resizeCanvas);
 
 // ---------- STATE ----------
-let G, MODE, BUF;
-const screen = document.getElementById("screen");
-const cmd    = document.getElementById("cmd");
-const btns   = document.getElementById("btns");
+let state = "title";
+let ship, bullets, enemies, particles, powerups, stars;
+let score, lives, wave, waveTimer, spawnTimer, spawnEvery;
+let highScore = parseInt(localStorage.getItem("p404_high") || "0", 10);
+let keys = { left:false, right:false, fire:false };
+let lastTime = 0;
 
-function newGame() {
-  G = {
-    day: 1, maxDay: 30,
-    city: "Helsinki",
-    cash: 2000,
-    debt: 5500,
-    savings: 0,
-    bagCap: 100,
-    bag: [0,0,0,0,0,0],
-    prices: [],
-    log: [],
-    over: false
+function reset() {
+  ship = {
+    x: W/2, y: H - 50, w: 28, h: 22,
+    cooldown: 0, iframes: 0,
+    shield: 0, triple: 0, rapid: 0
   };
-  rollPrices();
-  G.log.push(`<span class="dim">--- BEAN WARS v1.0 ---</span>`);
-  G.log.push(`Welcome. You owe the Supplier <span class="bad">${fmt(G.debt)}</span>.`);
-  G.log.push(`You have 30 days to make a fortune in coffee beans.`);
+  bullets = []; enemies = []; particles = []; powerups = [];
+  stars = makeStars(70);
+  score = 0; lives = 3; wave = 1;
+  waveTimer = 0; spawnTimer = 0;
+  spawnEvery = 1.4;
+  updateHUD();
 }
 
-// ---------- HELPERS ----------
-function rand(a, b)   { return Math.floor(Math.random()*(b-a+1))+a; }
-function chance(p)    { return Math.random() < p; }
-function bagUsed()    { return G.bag.reduce((s,v)=>s+v,0); }
-function bagFree()    { return G.bagCap - bagUsed(); }
-function fmt(n)       { const s = (n<0?"-":"") + "$" + Math.abs(Math.round(n)).toLocaleString("en-US"); return s; }
-function pad(s,n)     { s=String(s); return s.length>=n?s:s+" ".repeat(n-s.length); }
-function padL(s,n)    { s=String(s); return s.length>=n?s:" ".repeat(n-s.length)+s; }
-
-function rollPrices() {
-  const mods = CITY_MOD[G.city];
-  G.prices = BEANS.map((b, i) => {
-    if (!chance(0.85)) return null;          // not all beans available
-    let p = rand(b.min, b.max) * mods[i];
-    if (chance(0.10)) p *= 0.25 + Math.random()*0.25;  // crash
-    else if (chance(0.10)) p *= 1.8 + Math.random()*1.5; // boom
-    return Math.max(1, Math.round(p));
-  });
-}
-
-function logLine(s, cls) {
-  G.log.push(cls ? `<span class="${cls}">${s}</span>` : s);
-  if (G.log.length > 60) G.log.shift();
-}
-
-// ---------- RENDER ----------
-function render() {
-  let out = "";
-  out += `<span class="dim">============================================================</span>\n`;
-  out += ` <span class="hi">BEAN WARS</span>   `
-       + `Day <span class="acc">${pad(G.day+"/"+G.maxDay,5)}</span>  `
-       + `City <span class="acc">${pad(G.city,10)}</span>\n`;
-  out += `<span class="dim">============================================================</span>\n`;
-  out += ` Cash    <span class="hi">${pad(fmt(G.cash),12)}</span>`
-       + ` Bag   <span class="hi">${bagUsed()}/${G.bagCap}</span>\n`;
-  out += ` Debt    <span class="bad">${pad(fmt(G.debt),12)}</span>`
-       + ` Savings <span class="hi">${fmt(G.savings)}</span>\n`;
-  out += `<span class="dim">------------------------------------------------------------</span>\n`;
-  out += ` <span class="dim">${CITY_DESC[G.city]}</span>\n`;
-  out += `<span class="dim">------------------------------------------------------------</span>\n`;
-  out += ` <span class="hi">MARKET</span>                       price/lb     in bag\n`;
-  for (let i=0; i<BEANS.length; i++) {
-    const p = G.prices[i];
-    const n = G.bag[i];
-    const priceTxt = p == null ? `<span class="dim">    --     </span>` : padL(fmt(p), 11);
-    out += ` ${i+1}. ${pad(BEANS[i].name, 27)} ${priceTxt}    ${padL(n, 4)}\n`;
+function makeStars(n) {
+  const s = [];
+  for (let i = 0; i < n; i++) {
+    s.push({ x: Math.random()*W, y: Math.random()*H, v: 20 + Math.random()*60, z: Math.random() });
   }
-  out += `<span class="dim">------------------------------------------------------------</span>\n`;
-
-  // recent log (last 8 lines)
-  const tail = G.log.slice(-8);
-  for (const ln of tail) out += " " + ln + "\n";
-
-  out += `<span class="dim">------------------------------------------------------------</span>\n`;
-  out += ` ` + promptText() + `\n`;
-
-  screen.innerHTML = out;
-  screen.scrollTop = screen.scrollHeight;
-  renderButtons();
-  // numeric soft keyboard for amount prompts
-  const numModes = ["qty","bankAmt","loanAmt","eventAmt"];
-  cmd.inputMode = numModes.includes(MODE) ? "numeric" : "text";
-}
-
-function renderButtons() {
-  btns.innerHTML = "";
-  const add = (label, key, cls="") => {
-    const b = document.createElement("button");
-    b.textContent = label;
-    if (cls) b.className = cls;
-    b.addEventListener("click", (e) => { e.preventDefault(); handle(key); });
-    btns.appendChild(b);
-  };
-  if (G && G.over && MODE === "over") { add("Play again", ""); return; }
-  if (MODE === "main") {
-    add("Buy", "b"); add("Sell", "s"); add("Jet", "j"); add("Upgrade bag", "u");
-    if (G.city === "Helsinki") { add("Bank", "n", "alt"); add("Supplier", "l", "alt"); }
-  } else if (MODE === "buy" || MODE === "sell") {
-    for (let i=1;i<=6;i++) add(String(i), String(i));
-    add("Cancel", "x", "danger");
-  } else if (MODE === "qty") {
-    add("All", "all"); add("Cancel", "x", "danger");
-  } else if (MODE === "jet") {
-    for (let i=0;i<CITIES.length;i++) add(CITIES[i], String(i+1));
-    add("Cancel", "x", "danger");
-  } else if (MODE === "bank") {
-    add("Deposit", "d"); add("Withdraw", "w"); add("Back", "x", "danger");
-  } else if (MODE === "loan") {
-    add("Pay", "p"); add("Borrow", "b"); add("Back", "x", "danger");
-  } else if (MODE === "bankAmt" || MODE === "loanAmt") {
-    add("All", "all"); add("Cancel", "x", "danger");
-  } else if (MODE === "event") {
-    add("Continue", "");
-  } else if (MODE === "choice") {
-    add("Yes", "y"); add("No", "n", "danger");
-  } else if (MODE === "customs") {
-    add("Pay bribe", "p"); add("Run!", "r", "danger");
-  } else if (MODE === "eventAmt") {
-    add("0 / Skip", "0", "danger");
-  }
-}
-
-function promptText() {
-  if (MODE === "main")  return menuMain();
-  if (MODE === "buy")   return `<span class="hi">BUY</span>   pick bean # (1-6) or <span class="hi">X</span> to cancel`;
-  if (MODE === "sell")  return `<span class="hi">SELL</span>  pick bean # (1-6) or <span class="hi">X</span> to cancel`;
-  if (MODE === "qty")   return `Enter quantity (or <span class="hi">all</span> / <span class="hi">max</span> / <span class="hi">x</span>):`;
-  if (MODE === "jet")   return `<span class="hi">JET</span>   pick city # (1-6) or <span class="hi">X</span>`;
-  if (MODE === "bank")  return `<span class="hi">BANK</span>  <span class="hi">D</span>eposit / <span class="hi">W</span>ithdraw / <span class="hi">X</span>`;
-  if (MODE === "loan")  return `<span class="hi">SUPPLIER</span>  <span class="hi">P</span>ay debt / <span class="hi">B</span>orrow more / <span class="hi">X</span>`;
-  if (MODE === "bankAmt") return `Amount (or <span class="hi">all</span>):`;
-  if (MODE === "loanAmt") return `Amount:`;
-  if (MODE === "event") return `Press <span class="hi">ENTER</span> to continue...`;
-  if (MODE === "choice") return BUF.prompt || `Choose:`;
-  if (MODE === "over")  return `Press <span class="hi">ENTER</span> to play again`;
-  return "";
-}
-
-function menuMain() {
-  let s = `<span class="hi">B</span>uy  <span class="hi">S</span>ell  <span class="hi">J</span>et  <span class="hi">U</span>pgrade bag`;
-  if (G.city === "Helsinki") s += `  <span class="hi">N</span>=Bank  <span class="hi">L</span>=Supplier`;
   return s;
 }
 
-// ---------- ACTIONS ----------
-function endTurn() {
-  // travel = 1 day; called by jet
-  // supplier interest accrues per day
-  G.day++;
-  G.debt = Math.round(G.debt * 1.10);
-  if (G.savings > 0) G.savings = Math.round(G.savings * 1.005);
-  rollPrices();
-  if (G.day > G.maxDay) return endGame();
-  maybeEvent();
-}
-
-function endGame() {
-  const score = G.cash + G.savings - G.debt;
-  G.over = true;
-  let msg = `\n  <span class="hi">=== 30 DAYS ARE UP ===</span>\n`;
-  msg += `  Cash:    ${fmt(G.cash)}\n`;
-  msg += `  Savings: ${fmt(G.savings)}\n`;
-  msg += `  Debt:    ${fmt(-G.debt)}\n`;
-  msg += `  <span class="acc">NET WORTH: ${fmt(score)}</span>\n`;
-  let rank;
-  if (score >= 1000000) rank = "BEAN BARON";
-  else if (score >= 250000) rank = "MASTER ROASTER";
-  else if (score >= 75000)  rank = "SPECIALTY DEALER";
-  else if (score >= 15000)  rank = "CAFE OWNER";
-  else if (score >= 0)      rank = "SMALL-TIME TRADER";
-  else                      rank = "BANKRUPT";
-  msg += `  Rank: <span class="hi">${rank}</span>\n`;
-  logLine(msg);
-  MODE = "over";
-}
-
-// --- BUY ---
-function tryBuy(idx) {
-  const p = G.prices[idx];
-  if (p == null) { logLine(`That bean is not for sale here.`, "bad"); return false; }
-  const aff = Math.floor(G.cash / p);
-  const space = bagFree();
-  const max = Math.min(aff, space);
-  if (max <= 0) {
-    logLine(aff <= 0 ? "Can't afford any." : "Bag is full.", "bad");
-    return false;
-  }
-  BUF = { kind: "buy", idx, max };
-  MODE = "qty";
-  return true;
-}
-function doBuy(qty) {
-  const { idx, max } = BUF;
-  qty = Math.max(0, Math.min(qty, max));
-  if (qty === 0) { logLine(`Cancelled.`); return; }
-  const cost = qty * G.prices[idx];
-  G.cash -= cost;
-  G.bag[idx] += qty;
-  logLine(`Bought ${qty} lb ${BEANS[idx].name} for ${fmt(cost)}.`, "hi");
-}
-
-// --- SELL ---
-function trySell(idx) {
-  const p = G.prices[idx];
-  if (p == null) { logLine(`No buyers here for that bean.`, "bad"); return false; }
-  const have = G.bag[idx];
-  if (have <= 0) { logLine(`You have none of that.`, "bad"); return false; }
-  BUF = { kind: "sell", idx, max: have };
-  MODE = "qty";
-  return true;
-}
-function doSell(qty) {
-  const { idx, max } = BUF;
-  qty = Math.max(0, Math.min(qty, max));
-  if (qty === 0) { logLine(`Cancelled.`); return; }
-  const gain = qty * G.prices[idx];
-  G.cash += gain;
-  G.bag[idx] -= qty;
-  logLine(`Sold ${qty} lb ${BEANS[idx].name} for ${fmt(gain)}.`, "hi");
-}
-
-// --- JET ---
-function doJet(idx) {
-  const dest = CITIES[idx];
-  if (dest === G.city) { logLine(`You're already in ${dest}.`, "bad"); return false; }
-  G.city = dest;
-  logLine(`Flew to ${dest}.`, "acc");
-  endTurn();
-  return true;
-}
-
-// --- BANK & LOAN (Helsinki only) ---
-function doBank(action) {
-  BUF = { kind: action }; // "dep" or "wd"
-  MODE = "bankAmt";
-}
-function applyBank(amt) {
-  if (BUF.kind === "dep") {
-    amt = Math.min(amt, G.cash);
-    if (amt <= 0) { logLine(`Nothing deposited.`); return; }
-    G.cash -= amt; G.savings += amt;
-    logLine(`Deposited ${fmt(amt)}. Bank pays 0.5%/day.`, "hi");
+function updateHUD() {
+  elScore.textContent = score;
+  elHigh.textContent  = highScore;
+  elLives.textContent = lives;
+  elWave.textContent  = wave;
+  const tags = [];
+  if (ship && ship.shield > 0) tags.push("SHLD");
+  if (ship && ship.triple > 0) tags.push("TRPL " + ship.triple.toFixed(0));
+  if (ship && ship.rapid > 0)  tags.push("RAPD " + ship.rapid.toFixed(0));
+  if (tags.length) {
+    elPowerLbl.style.display = "";
+    elPower.textContent = tags.join(" ");
   } else {
-    amt = Math.min(amt, G.savings);
-    if (amt <= 0) { logLine(`Nothing withdrawn.`); return; }
-    G.savings -= amt; G.cash += amt;
-    logLine(`Withdrew ${fmt(amt)}.`, "hi");
+    elPowerLbl.style.display = "none";
   }
-}
-function doLoan(action) {
-  BUF = { kind: action };
-  MODE = "loanAmt";
-}
-function applyLoan(amt) {
-  if (BUF.kind === "pay") {
-    amt = Math.min(amt, Math.min(G.cash, G.debt));
-    if (amt <= 0) { logLine(`Nothing paid.`); return; }
-    G.cash -= amt; G.debt -= amt;
-    logLine(`Paid down ${fmt(amt)}. Debt now ${fmt(G.debt)}.`, "hi");
-  } else {
-    amt = Math.max(0, Math.floor(amt));
-    if (amt <= 0) { logLine(`Nothing borrowed.`); return; }
-    G.cash += amt; G.debt += amt;
-    logLine(`Borrowed ${fmt(amt)}. Supplier smiles thinly. (10%/day)`, "warn");
-  }
-}
-
-// --- BAG UPGRADE ---
-function tryUpgrade() {
-  const cost = Math.round(G.bagCap * 35); // scales
-  const add  = 50;
-  if (G.cash < cost) { logLine(`A bigger duffel costs ${fmt(cost)}. Can't afford.`, "bad"); return; }
-  BUF = { prompt: `Bigger duffel: +${add} lb capacity for ${fmt(cost)}. <span class="hi">Y</span>/<span class="hi">N</span>?`, onYes: () => {
-    G.cash -= cost; G.bagCap += add;
-    logLine(`Capacity upgraded to ${G.bagCap} lb.`, "hi");
-  }};
-  MODE = "choice";
-}
-
-// ---------- EVENTS ----------
-const EVENTS = [
-  // [weight, fn]
-  [3, evCustomsSeize],
-  [3, evFoundStash],
-  [2, evMold],
-  [2, evInfluencer],
-  [2, evClearance],
-  [3, evPickpocket],
-  [1, evNewDuffel],
-  [3, evCustoms],
-  [2, evFrostNews],
-  [1, evLottery],
-  [2, evSmuggler],
-  [2, evMarketRefresh]
-];
-
-function maybeEvent() {
-  if (!chance(0.40)) return;
-  let total = 0; for (const [w] of EVENTS) total += w;
-  let r = Math.random()*total;
-  for (const [w, fn] of EVENTS) { r -= w; if (r <= 0) { fn(); return; } }
-}
-
-function pickHeldBean() {
-  const owned = G.bag.map((n,i)=>n>0?i:-1).filter(i=>i>=0);
-  return owned.length ? owned[rand(0, owned.length-1)] : -1;
-}
-
-function evCustomsSeize() {
-  const i = pickHeldBean();
-  if (i < 0) return;
-  const lost = Math.max(1, Math.floor(G.bag[i] * (0.3 + Math.random()*0.4)));
-  G.bag[i] -= lost;
-  showEvent(`Airport customs flagged your bag. They seized ${lost} lb of ${BEANS[i].name}.`, "bad");
-}
-function evFoundStash() {
-  const i = rand(0, BEANS.length-1);
-  const room = bagFree();
-  if (room <= 0) return;
-  const got = Math.min(room, rand(3, 15));
-  G.bag[i] += got;
-  showEvent(`A defunct cafe left a forgotten case behind. +${got} lb ${BEANS[i].name}.`, "hi");
-}
-function evMold() {
-  const i = pickHeldBean();
-  if (i < 0) return;
-  const lost = Math.max(1, Math.floor(G.bag[i] * 0.2));
-  G.bag[i] -= lost;
-  showEvent(`Hotel pipes burst. ${lost} lb of ${BEANS[i].name} ruined by water.`, "bad");
-}
-function evInfluencer() {
-  const i = pickHeldBean();
-  if (i < 0) return;
-  const qty = G.bag[i];
-  const price = G.prices[i] ? G.prices[i]*2 : Math.round(BEANS[i].max*1.5);
-  BUF = { prompt: `A coffee influencer offers <span class="hi">${fmt(price)}/lb</span> for all your ${BEANS[i].name} (${qty} lb). <span class="hi">Y</span>=Sell / <span class="hi">N</span>=Pass`,
-    onYes: () => { G.cash += qty*price; G.bag[i] = 0; logLine(`Sold ${qty} lb ${BEANS[i].name} to the influencer for ${fmt(qty*price)}.`, "hi"); },
-    onNo:  () => { logLine(`You pass on the influencer.`); }
-  };
-  MODE = "choice";
-}
-function evClearance() {
-  const i = rand(0, BEANS.length-1);
-  const price = Math.round(BEANS[i].min * (0.3 + Math.random()*0.3));
-  const aff = Math.floor(G.cash / price);
-  const room = bagFree();
-  const max = Math.min(aff, room, rand(10, 60));
-  if (max <= 0) return;
-  BUF = { prompt: `Roaster fire-sale: up to ${max} lb of ${BEANS[i].name} at <span class="hi">${fmt(price)}/lb</span>. Buy how many? (0 to skip)`,
-    onAmt: (n) => {
-      n = Math.max(0, Math.min(n, max));
-      if (n <= 0) { logLine(`Walked away.`); return; }
-      G.cash -= n*price; G.bag[i] += n;
-      logLine(`Snagged ${n} lb ${BEANS[i].name} for ${fmt(n*price)}.`, "hi");
-    }
-  };
-  MODE = "eventAmt";
-}
-function evPickpocket() {
-  const lost = Math.min(G.cash, rand(50, 600));
-  G.cash -= lost;
-  showEvent(`Pickpocketed in a crowded cafe. Lost ${fmt(lost)}.`, "bad");
-}
-function evNewDuffel() {
-  G.bagCap += 20;
-  showEvent(`A barista gave you her old hiking duffel. Capacity +20 (now ${G.bagCap}).`, "hi");
-}
-function evCustoms() {
-  const bribe = rand(200, 1500);
-  BUF = { prompt: `<span class="bad">CUSTOMS INSPECTOR!</span>  Pay bribe ${fmt(bribe)} (<span class="hi">P</span>) or run (<span class="hi">R</span>)? (lose ~30% of bag if caught running)`,
-    onP: () => {
-      if (G.cash >= bribe) { G.cash -= bribe; logLine(`Slipped him ${fmt(bribe)}. He waves you through.`, "warn"); }
-      else { logLine(`Can't pay! He confiscates everything.`, "bad"); for (let i=0;i<6;i++) G.bag[i]=0; }
-    },
-    onR: () => {
-      if (chance(0.5)) {
-        for (let i=0;i<6;i++) G.bag[i] = Math.floor(G.bag[i]*0.7);
-        logLine(`Got away but dumped 30% of your beans in the chase.`, "warn");
-      } else {
-        logLine(`You ran clean! Heart pounding, beans intact.`, "hi");
-      }
-    }
-  };
-  MODE = "customs";
-}
-function evFrostNews() {
-  showEvent(`NEWS: Frost in Brazil. Santos prices spiking worldwide.`, "warn");
-  // bias next price roll: temporarily boost Santos
-  G._santosBoost = true;
-}
-function evLottery() {
-  const win = rand(150, 900);
-  G.cash += win;
-  showEvent(`Won a barista raffle: +${fmt(win)}.`, "hi");
-}
-function evSmuggler() {
-  const i = 5; // Geisha
-  const price = Math.round(BEANS[i].min * 0.6);
-  const room = bagFree();
-  const aff = Math.floor(G.cash / price);
-  const max = Math.min(aff, room, 8);
-  if (max <= 0) return;
-  BUF = { prompt: `A smuggler whispers: Panamanian Geisha at <span class="hi">${fmt(price)}/lb</span>, up to ${max} lb. How many? (0 to skip)`,
-    onAmt: (n) => {
-      n = Math.max(0, Math.min(n, max));
-      if (n <= 0) { logLine(`You decline. Probably wise.`); return; }
-      G.cash -= n*price; G.bag[i] += n;
-      logLine(`Bought ${n} lb Geisha for ${fmt(n*price)}. Hide it well.`, "hi");
-    }
-  };
-  MODE = "eventAmt";
-}
-function evMarketRefresh() {
-  rollPrices();
-  showEvent(`Market apps glitched and re-synced. Prices updated.`, "acc");
-}
-
-function showEvent(text, cls) {
-  logLine(text, cls);
-  MODE = "event";
 }
 
 // ---------- INPUT ----------
-cmd.addEventListener("keydown", (e) => {
-  if (e.key !== "Enter") return;
-  const raw = cmd.value.trim();
-  cmd.value = "";
-  handle(raw);
+window.addEventListener("keydown", (e) => {
+  if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") keys.left = true;
+  else if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") keys.right = true;
+  else if (e.key === " " || e.key === "Spacebar") {
+    keys.fire = true;
+    if (state !== "play") startGame();
+    e.preventDefault();
+  } else if (e.key === "Enter") {
+    if (state !== "play") startGame();
+  }
+});
+window.addEventListener("keyup", (e) => {
+  if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") keys.left = false;
+  else if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") keys.right = false;
+  else if (e.key === " " || e.key === "Spacebar") keys.fire = false;
 });
 
-function handle(raw) {
-  if (G && G.over && MODE === "over") {
-    newGame(); MODE = "main"; render(); return;
-  }
-  const k = raw.toLowerCase();
+function bindHold(btn, k) {
+  const on  = (e) => { e.preventDefault(); keys[k] = true; };
+  const off = (e) => { e.preventDefault(); keys[k] = false; };
+  btn.addEventListener("touchstart", on,  { passive: false });
+  btn.addEventListener("touchend",   off, { passive: false });
+  btn.addEventListener("touchcancel",off, { passive: false });
+  btn.addEventListener("mousedown",  on);
+  btn.addEventListener("mouseup",    off);
+  btn.addEventListener("mouseleave", off);
+}
+bindHold(document.getElementById("bL"), "left");
+bindHold(document.getElementById("bR"), "right");
+const bF = document.getElementById("bF");
+bindHold(bF, "fire");
+bF.addEventListener("click", () => { if (state !== "play") startGame(); });
 
-  if (MODE === "main") {
-    if (k === "b") { MODE = "buy"; }
-    else if (k === "s") { MODE = "sell"; }
-    else if (k === "j") { MODE = "jet"; }
-    else if (k === "u") { tryUpgrade(); }
-    else if (k === "n" && G.city === "Helsinki") { MODE = "bank"; }
-    else if (k === "l" && G.city === "Helsinki") { MODE = "loan"; }
-    else if (k && k !== "") logLine(`Unknown command: ${raw}`, "dim");
+// ---------- GAME LOOP ----------
+function startGame() {
+  reset();
+  state = "play";
+  overlay.style.display = "none";
+}
+
+function gameOver() {
+  state = "over";
+  if (score > highScore) {
+    highScore = score;
+    localStorage.setItem("p404_high", String(highScore));
   }
-  else if (MODE === "buy") {
-    if (k === "x" || k === "") { MODE = "main"; }
-    else {
-      const n = parseInt(k, 10) - 1;
-      if (n>=0 && n<6) { if (!tryBuy(n)) MODE = "main"; }
-      else logLine(`Pick 1-6 or X.`, "dim");
+  updateHUD();
+  showOverlay(`
+    <h1>ERROR 404</h1>
+    <h2>BUFFER OVERRUN</h2>
+    <p>Score <span class="key">${score}</span> &nbsp; High <span class="key">${highScore}</span></p>
+    <p>Press <span class="key">SPACE</span> / <span class="key">FIRE</span> to retry</p>
+  `);
+}
+
+function showOverlay(html) {
+  overlayBox.innerHTML = html;
+  overlay.style.display = "flex";
+}
+
+function showTitle() {
+  showOverlay(`
+    <h1>ERROR 404</h1>
+    <h2>TARGET NOT FOUND</h2>
+    <p>Move <span class="key">◀</span> <span class="key">▶</span> &nbsp; Fire <span class="key">SPACE</span></p>
+    <p>collect <span class="key">T</span> triple &nbsp; <span class="key">S</span> shield &nbsp; <span class="key">R</span> rapid &nbsp; <span class="key">+</span> life</p>
+    <p>Press <span class="key">SPACE</span> / <span class="key">FIRE</span> to begin</p>
+  `);
+}
+
+// ---------- SPAWNING ----------
+function spawnEnemy() {
+  const r = Math.random();
+  let t;
+  if (wave < 2)      t = r < 0.75 ? "asteroid" : "comet";
+  else if (wave < 4) t = r < 0.55 ? "asteroid" : (r < 0.85 ? "comet" : "satellite");
+  else               t = r < 0.40 ? "asteroid" : (r < 0.65 ? "comet" : (r < 0.85 ? "satellite" : "drone"));
+
+  const e = { type: t, x: 30 + Math.random()*(W-60), y: -30, vx: 0, vy: 0, hp: 1, r: 16 };
+  if (t === "asteroid") {
+    e.r = 18 + Math.random()*14;
+    e.hp = e.r > 25 ? 3 : 2;
+    e.vy = 60 + wave*8 + Math.random()*40;
+    e.vx = (Math.random()-0.5) * 30;
+    e.spin = (Math.random()-0.5) * 1.4;
+    e.angle = 0;
+    e.shape = makeAsteroidShape(e.r);
+    e.points = e.hp * 30;
+  } else if (t === "comet") {
+    e.r = 8;
+    e.hp = 1;
+    e.vy = 200 + wave*12 + Math.random()*80;
+    e.vx = (Math.random()-0.5) * 60;
+    e.points = 100;
+    e.tail = [];
+  } else if (t === "satellite") {
+    e.r = 16;
+    e.hp = 4;
+    e.vy = 50 + wave*5;
+    e.vx = (Math.random() < 0.5 ? -1 : 1) * (40 + Math.random()*30);
+    e.points = 200;
+    e.dropPower = true;
+  } else if (t === "drone") {
+    e.r = 12;
+    e.hp = 1;
+    e.vy = 90 + wave*6;
+    e.vx = 0;
+    e.zigPhase = Math.random() * Math.PI * 2;
+    e.zigAmp = 80 + Math.random()*60;
+    e.baseX = e.x;
+    e.points = 150;
+  }
+  enemies.push(e);
+}
+
+function makeAsteroidShape(r) {
+  const n = 9 + Math.floor(Math.random()*4);
+  const pts = [];
+  for (let i = 0; i < n; i++) {
+    const a = (i / n) * Math.PI * 2;
+    const rr = r * (0.75 + Math.random()*0.5);
+    pts.push([Math.cos(a)*rr, Math.sin(a)*rr]);
+  }
+  return pts;
+}
+
+function spawnPowerup(x, y) {
+  const types = ["T", "S", "R", "+"];
+  const t = types[Math.floor(Math.random()*types.length)];
+  powerups.push({ x, y, vy: 80, type: t, t: 0 });
+}
+
+// ---------- COLLISIONS ----------
+function hit(a, b, pad = 0) {
+  const dx = a.x - b.x, dy = a.y - b.y;
+  const r = (a.r || 6) + (b.r || 6) + pad;
+  return dx*dx + dy*dy < r*r;
+}
+
+// ---------- UPDATE ----------
+function update(dt) {
+  let dx = 0;
+  if (keys.left)  dx -= 1;
+  if (keys.right) dx += 1;
+  ship.x += dx * SHIP_SPEED * dt;
+  ship.x = Math.max(20, Math.min(W - 20, ship.x));
+
+  ship.cooldown -= dt;
+  if (ship.iframes > 0) ship.iframes -= dt;
+  if (ship.triple > 0) ship.triple = Math.max(0, ship.triple - dt);
+  if (ship.rapid  > 0) ship.rapid  = Math.max(0, ship.rapid  - dt);
+
+  if (keys.fire && ship.cooldown <= 0) {
+    fire();
+    ship.cooldown = ship.rapid > 0 ? RAPID_COOLDOWN : FIRE_COOLDOWN;
+  }
+
+  for (const b of bullets) {
+    b.y += b.vy * dt;
+    if (b.vx) b.x += b.vx * dt;
+  }
+  bullets = bullets.filter(b => b.y > -10 && b.x > -10 && b.x < W+10);
+
+  for (const e of enemies) {
+    e.x += e.vx * dt;
+    e.y += e.vy * dt;
+    if (e.type === "asteroid") {
+      e.angle += e.spin * dt;
+      if (e.x < e.r || e.x > W - e.r) e.vx *= -1;
+    } else if (e.type === "satellite") {
+      if (e.x < e.r || e.x > W - e.r) e.vx *= -1;
+    } else if (e.type === "drone") {
+      e.zigPhase += dt * 3;
+      e.x = e.baseX + Math.sin(e.zigPhase) * e.zigAmp;
+    } else if (e.type === "comet") {
+      e.tail.push({ x: e.x, y: e.y });
+      if (e.tail.length > 10) e.tail.shift();
     }
   }
-  else if (MODE === "sell") {
-    if (k === "x" || k === "") { MODE = "main"; }
-    else {
-      const n = parseInt(k, 10) - 1;
-      if (n>=0 && n<6) { if (!trySell(n)) MODE = "main"; }
-      else logLine(`Pick 1-6 or X.`, "dim");
-    }
-  }
-  else if (MODE === "qty") {
-    if (k === "x" || k === "") { MODE = "main"; BUF = null; }
-    else {
-      let n;
-      if (k === "all" || k === "max" || k === "a" || k === "m") n = BUF.max;
-      else n = parseInt(k, 10);
-      if (isNaN(n)) { logLine(`Number, "all", or X.`, "dim"); }
-      else {
-        if (BUF.kind === "buy") doBuy(n); else doSell(n);
-        MODE = "main"; BUF = null;
+
+  for (const b of bullets) {
+    for (const e of enemies) {
+      if (e.dead) continue;
+      if (hit(b, e)) {
+        e.hp--;
+        b.dead = true;
+        spark(b.x, b.y, "#aaffaa", 5);
+        if (e.hp <= 0) {
+          e.dead = true;
+          score += e.points;
+          spark(e.x, e.y, e.type === "comet" ? "#ffcc33" : "#aaffaa", 14);
+          if (e.type === "satellite" && e.dropPower) spawnPowerup(e.x, e.y);
+          else if (Math.random() < 0.05) spawnPowerup(e.x, e.y);
+        }
+        break;
       }
     }
   }
-  else if (MODE === "jet") {
-    if (k === "x" || k === "") { MODE = "main"; }
-    else {
-      const n = parseInt(k, 10) - 1;
-      if (n>=0 && n<6) { if (doJet(n)) MODE = "main"; }
-      else logLine(`Pick 1-6 or X.`, "dim");
+  bullets = bullets.filter(b => !b.dead);
+
+  for (const e of enemies) {
+    if (e.dead) continue;
+    if (e.y > H + 40) {
+      e.dead = true;
+      score = Math.max(0, score - 10);
+      continue;
+    }
+    if (ship.iframes > 0) continue;
+    if (hit(ship, e, -2)) {
+      if (ship.shield > 0) {
+        ship.shield = 0;
+        e.dead = true;
+        spark(e.x, e.y, "#66ddff", 18);
+        ship.iframes = 0.5;
+      } else {
+        e.dead = true;
+        spark(ship.x, ship.y, "#ff5555", 22);
+        ship.iframes = 1.2;
+        lives--;
+        if (lives <= 0) { updateHUD(); gameOver(); return; }
+      }
     }
   }
-  else if (MODE === "bank") {
-    if (k === "x" || k === "") { MODE = "main"; }
-    else if (k === "d") { doBank("dep"); }
-    else if (k === "w") { doBank("wd"); }
-    else logLine(`D, W, or X.`, "dim");
-  }
-  else if (MODE === "loan") {
-    if (k === "x" || k === "") { MODE = "main"; }
-    else if (k === "p") { doLoan("pay"); }
-    else if (k === "b") { doLoan("borrow"); }
-    else logLine(`P, B, or X.`, "dim");
-  }
-  else if (MODE === "bankAmt") {
-    if (k === "x" || k === "") { MODE = "main"; BUF = null; }
-    else {
-      let n = (k==="all") ? (BUF.kind==="dep"?G.cash:G.savings) : parseInt(k, 10);
-      if (isNaN(n)) { logLine(`Number or "all".`, "dim"); }
-      else { applyBank(n); MODE = "main"; BUF = null; }
+  enemies = enemies.filter(e => !e.dead);
+
+  for (const p of powerups) {
+    p.y += p.vy * dt;
+    p.t += dt;
+    if (hit(ship, { x: p.x, y: p.y, r: 14 })) {
+      applyPower(p.type);
+      p.dead = true;
     }
   }
-  else if (MODE === "loanAmt") {
-    if (k === "x" || k === "") { MODE = "main"; BUF = null; }
-    else {
-      let n = (k==="all") ? (BUF.kind==="pay"?Math.min(G.cash,G.debt):0) : parseInt(k, 10);
-      if (isNaN(n)) { logLine(`Number or "all".`, "dim"); }
-      else { applyLoan(n); MODE = "main"; BUF = null; }
-    }
+  powerups = powerups.filter(p => !p.dead && p.y < H + 20);
+
+  for (const p of particles) {
+    p.x += p.vx * dt;
+    p.y += p.vy * dt;
+    p.life -= dt;
   }
-  else if (MODE === "event") {
-    MODE = "main";
-  }
-  else if (MODE === "choice") {
-    if (k === "y") { BUF.onYes && BUF.onYes(); MODE = "main"; BUF = null; }
-    else if (k === "n" || k === "x" || k === "") { BUF.onNo && BUF.onNo(); MODE = "main"; BUF = null; }
-    else logLine(`Y or N.`, "dim");
-  }
-  else if (MODE === "customs") {
-    if (k === "p") { BUF.onP(); MODE = "main"; BUF = null; }
-    else if (k === "r") { BUF.onR(); MODE = "main"; BUF = null; }
-    else logLine(`P or R.`, "dim");
-  }
-  else if (MODE === "eventAmt") {
-    let n = parseInt(k, 10);
-    if (isNaN(n)) n = 0;
-    BUF.onAmt(n); MODE = "main"; BUF = null;
+  particles = particles.filter(p => p.life > 0);
+
+  for (const s of stars) {
+    s.y += s.v * dt;
+    if (s.y > H) { s.y = -2; s.x = Math.random()*W; }
   }
 
-  render();
-  cmd.focus();
+  spawnTimer -= dt;
+  if (spawnTimer <= 0) {
+    spawnEnemy();
+    spawnTimer = spawnEvery * (0.7 + Math.random()*0.6);
+  }
+  waveTimer += dt;
+  if (waveTimer > 18) {
+    wave++;
+    waveTimer = 0;
+    spawnEvery = Math.max(0.45, spawnEvery * 0.9);
+    flashWave();
+  }
+
+  updateHUD();
 }
 
-// focus input only when user clicks the screen text area, not buttons
-screen.addEventListener("click", () => cmd.focus());
+function fire() {
+  const triple = ship.triple > 0;
+  const baseY = ship.y - 14;
+  if (triple) {
+    bullets.push({ x: ship.x,    y: baseY, vy: -BULLET_SPEED, vx: 0,   r: 4 });
+    bullets.push({ x: ship.x-10, y: baseY+4, vy: -BULLET_SPEED, vx: -60, r: 4 });
+    bullets.push({ x: ship.x+10, y: baseY+4, vy: -BULLET_SPEED, vx: 60,  r: 4 });
+  } else {
+    bullets.push({ x: ship.x, y: baseY, vy: -BULLET_SPEED, vx: 0, r: 4 });
+  }
+}
+
+function applyPower(t) {
+  if (t === "T") ship.triple = 8;
+  else if (t === "S") ship.shield = 1;
+  else if (t === "R") ship.rapid = 8;
+  else if (t === "+") lives = Math.min(9, lives + 1);
+  spark(ship.x, ship.y, "#66ddff", 12);
+}
+
+function spark(x, y, color, n) {
+  for (let i = 0; i < n; i++) {
+    const a = Math.random() * Math.PI * 2;
+    const v = 60 + Math.random()*120;
+    particles.push({ x, y, vx: Math.cos(a)*v, vy: Math.sin(a)*v, life: 0.4 + Math.random()*0.3, color });
+  }
+}
+
+let waveBanner = 0;
+function flashWave() { waveBanner = 1.5; }
+
+// ---------- RENDER ----------
+function render() {
+  ctx.clearRect(0, 0, W, H);
+
+  ctx.strokeStyle = "#0a3a0a";
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  for (let gx = 0; gx <= W; gx += 60) { ctx.moveTo(gx, 0); ctx.lineTo(gx, H); }
+  for (let gy = 0; gy <= H; gy += 60) { ctx.moveTo(0, gy); ctx.lineTo(W, gy); }
+  ctx.stroke();
+
+  for (const s of stars) {
+    ctx.fillStyle = s.z > 0.6 ? "#33ff33" : (s.z > 0.3 ? "#1a8a1a" : "#0c4a0c");
+    ctx.fillRect(s.x, s.y, s.z > 0.6 ? 2 : 1, s.z > 0.6 ? 2 : 1);
+  }
+
+  for (const p of powerups) {
+    const wob = Math.sin(p.t * 5) * 2;
+    drawPowerup(p.x, p.y + wob, p.type);
+  }
+
+  for (const e of enemies) drawEnemy(e);
+
+  ctx.fillStyle = "#aaffaa";
+  for (const b of bullets) ctx.fillRect(b.x - 1.5, b.y - 6, 3, 10);
+
+  drawShip();
+
+  for (const p of particles) {
+    const alpha = Math.max(0, p.life / 0.6);
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = p.color;
+    ctx.fillRect(p.x - 1, p.y - 1, 2, 2);
+  }
+  ctx.globalAlpha = 1;
+
+  if (waveBanner > 0) {
+    ctx.globalAlpha = Math.min(1, waveBanner);
+    ctx.fillStyle = "#aaffaa";
+    ctx.font = "bold 22px Consolas, monospace";
+    ctx.textAlign = "center";
+    ctx.fillText("WAVE " + wave, W/2, H/2);
+    ctx.globalAlpha = 1;
+  }
+}
+
+function drawShip() {
+  if (ship.iframes > 0 && Math.floor(ship.iframes * 12) % 2 === 0) return;
+  ctx.strokeStyle = "#aaffaa";
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(ship.x,        ship.y - 14);
+  ctx.lineTo(ship.x - 14,   ship.y + 10);
+  ctx.lineTo(ship.x - 6,    ship.y + 6);
+  ctx.lineTo(ship.x + 6,    ship.y + 6);
+  ctx.lineTo(ship.x + 14,   ship.y + 10);
+  ctx.closePath();
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(ship.x - 4, ship.y - 2);
+  ctx.lineTo(ship.x + 4, ship.y - 2);
+  ctx.stroke();
+  if (ship.shield > 0) {
+    ctx.strokeStyle = "#66ddff";
+    ctx.beginPath();
+    ctx.arc(ship.x, ship.y, 22, 0, Math.PI*2);
+    ctx.stroke();
+  }
+}
+
+function drawEnemy(e) {
+  if (e.type === "asteroid") {
+    ctx.save();
+    ctx.translate(e.x, e.y);
+    ctx.rotate(e.angle);
+    ctx.strokeStyle = e.hp >= 3 ? "#aaffaa" : "#33ff33";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    const pts = e.shape;
+    ctx.moveTo(pts[0][0], pts[0][1]);
+    for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
+    ctx.closePath();
+    ctx.stroke();
+    ctx.restore();
+  } else if (e.type === "comet") {
+    for (let i = 0; i < e.tail.length; i++) {
+      const t = e.tail[i];
+      ctx.globalAlpha = i / e.tail.length * 0.8;
+      ctx.fillStyle = "#ffcc33";
+      ctx.fillRect(t.x - 1, t.y - 1, 2, 2);
+    }
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = "#ffcc33";
+    ctx.beginPath();
+    ctx.arc(e.x, e.y, 5, 0, Math.PI*2);
+    ctx.fill();
+  } else if (e.type === "satellite") {
+    ctx.strokeStyle = "#aaffaa";
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(e.x - 10, e.y - 7, 20, 14);
+    ctx.beginPath();
+    ctx.moveTo(e.x - 10, e.y); ctx.lineTo(e.x - 22, e.y);
+    ctx.moveTo(e.x + 10, e.y); ctx.lineTo(e.x + 22, e.y);
+    ctx.stroke();
+    ctx.strokeRect(e.x - 28, e.y - 5, 6, 10);
+    ctx.strokeRect(e.x + 22, e.y - 5, 6, 10);
+    ctx.beginPath();
+    ctx.moveTo(e.x, e.y - 7);
+    ctx.lineTo(e.x, e.y - 14);
+    ctx.stroke();
+  } else if (e.type === "drone") {
+    ctx.strokeStyle = "#66ddff";
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(e.x, e.y - 8);
+    ctx.lineTo(e.x - 10, e.y + 6);
+    ctx.lineTo(e.x + 10, e.y + 6);
+    ctx.closePath();
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(e.x, e.y - 1, 3, 0, Math.PI*2);
+    ctx.stroke();
+  }
+}
+
+function drawPowerup(x, y, t) {
+  const colors = { T: "#66ddff", S: "#ffcc33", R: "#aaffaa", "+": "#aaffaa" };
+  ctx.strokeStyle = colors[t] || "#aaffaa";
+  ctx.lineWidth = 1.5;
+  ctx.strokeRect(x - 10, y - 10, 20, 20);
+  ctx.fillStyle = colors[t] || "#aaffaa";
+  ctx.font = "bold 14px Consolas, monospace";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(t, x, y + 1);
+}
+
+// ---------- LOOP ----------
+function loop(t) {
+  const now = t / 1000;
+  let dt = lastTime ? Math.min(0.05, now - lastTime) : 0;
+  lastTime = now;
+
+  if (state === "play") {
+    update(dt);
+    if (waveBanner > 0) waveBanner -= dt;
+  }
+  render();
+  requestAnimationFrame(loop);
+}
 
 // ---------- BOOT ----------
-newGame();
-MODE = "main";
-render();
+resizeCanvas();
+reset();
+showTitle();
+requestAnimationFrame(loop);
 </script>
 </body>
 </html>
