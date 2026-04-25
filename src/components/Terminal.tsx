@@ -303,6 +303,9 @@ if (command.startsWith('open ')) {
     { type: 'output', text: 'cat <file>' },
     { type: 'output', text: 'open <file>' },
     { type: 'output', text: 'riddle' },
+    { type: 'output', text: 'sudo fix' },
+    { type: 'output', text: 'scan' },
+    { type: 'output', text: 'who broke it' },
     { type: 'output', text: 'clear' },
   ]);
   break;
@@ -319,6 +322,9 @@ if (command.startsWith('open ')) {
     { type: 'output', text: 'cat <file> — read file' },
     { type: 'output', text: 'open <file> — open linked file route' },
     { type: 'output', text: 'riddle — request access challenge' },
+    { type: 'output', text: 'sudo fix      - attempts to repair the workflow' },
+    { type: 'output', text: 'scan          - runs an operational failure scan' },
+    { type: 'output', text: 'who broke it  - identifies the actual failure point' },
     { type: 'output', text: 'clear — clear terminal' },
   ]);
   break;
@@ -366,6 +372,51 @@ if (command.startsWith('open ')) {
             type: 'output',
             text: 'select contracts · high-impact only',
           },
+        ]);
+        break;
+
+      case 'sudo fix':
+        addLines([
+          { type: 'output', text: 'permission denied.' },
+          { type: 'output', text: '' },
+          { type: 'output', text: 'root cause:' },
+          { type: 'output', text: 'unclear ownership' },
+          { type: 'output', text: '' },
+          { type: 'output', text: 'failed assumption:' },
+          { type: 'output', text: 'admin access can repair a broken workflow' },
+          { type: 'output', text: '' },
+          { type: 'output', text: 'recommended action:' },
+          { type: 'output', text: 'redesign the system underneath' },
+        ]);
+        break;
+
+      case 'scan':
+        addLines([
+          { type: 'output', text: 'running operational scan...' },
+          { type: 'output', text: '' },
+          { type: 'output', text: '[warn] schema drift detected' },
+          { type: 'output', text: '[warn] manual workaround detected' },
+          { type: 'output', text: '[warn] hidden dependency detected' },
+          { type: 'output', text: '[warn] approval bottleneck detected' },
+          { type: 'output', text: '[fail] failure handling missing' },
+          { type: 'output', text: '' },
+          { type: 'output', text: 'system status:' },
+          { type: 'output', text: 'functional, but fragile' },
+          { type: 'output', text: '' },
+          { type: 'output', text: 'recommended action:' },
+          { type: 'output', text: 'rebuild the foundation' },
+        ]);
+        break;
+
+      case 'who broke it':
+        addLines([
+          { type: 'output', text: 'not a person.' },
+          { type: 'output', text: '' },
+          { type: 'output', text: 'a process with:' },
+          { type: 'output', text: 'no owner' },
+          { type: 'output', text: 'no validation' },
+          { type: 'output', text: 'no failure path' },
+          { type: 'output', text: 'no source of truth' },
         ]);
         break;
 
