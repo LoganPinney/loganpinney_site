@@ -134,11 +134,12 @@ export default function HomePage() {
               paths.
             </p>
 
-            <span
-              className="btn-glow inline-flex cursor-not-allowed items-center gap-2 rounded px-4 py-2 font-mono text-xs opacity-80"
-            >
-              architecture walkthrough available upon request <span aria-hidden>→</span>
-            </span>
+            <Link
+  href="/contact"
+  className="btn-glow inline-flex items-center gap-2 rounded px-4 py-2 font-mono text-xs"
+>
+  architecture walkthrough available upon request <span aria-hidden>→</span>
+</Link>
           </div>
         </div>
       </section>
