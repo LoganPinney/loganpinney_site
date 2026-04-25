@@ -189,7 +189,9 @@ export default function HomePage() {
           <StackRow label="integrations" items={siteConfig.stack.integrations} />
           <StackRow label="focus" items={siteConfig.stack.focus} accent />
         </div>
-        <Terminal />
+        <div className="mt-14 max-w-4xl opacity-70 transition-opacity duration-200 hover:opacity-100">
+  <Terminal />
+</div>
       </section>
 
       {/* CTA */}
