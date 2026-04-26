@@ -12,7 +12,8 @@
   {
     "name": ".breadcrumbs.txt",
     "path": "/terminal/_breadcrumbs.txt",
-    "hidden": true
+    "hidden": true,
+    "route": "/lab/memos/breadcrumbs"
   },
   {
     "name": ".future-self.txt",
@@ -41,17 +42,20 @@
   {
     "name": ".dev-log-004.txt",
     "path": "/terminal/_dev-log-004.txt",
-    "hidden": true
+    "hidden": true,
+    "route": "/lab/memos/dev-log-004"
   },
   {
     "name": ".dev-log-005.txt",
     "path": "/terminal/_dev-log-005.txt",
-    "hidden": true
+    "hidden": true,
+    "route": "/lab/memos/dev-log-005"
   },
   {
     "name": ".dev-log-006.txt",
     "path": "/terminal/_dev-log-006.txt",
-    "hidden": true
+    "hidden": true,
+    "route": "/lab/memos/dev-log-006"
   },
   {
     "name": ".bean-protocol.txt",
@@ -62,41 +66,49 @@
   {
     "name": ".404-protocol.txt",
     "path": "/terminal/_404-protocol.txt",
-    "hidden": true
+    "hidden": true,
+    "route": "/lab/memos/404-protocol"
   },
   {
     "name": ".trace-route-protocol.txt",
     "path": "/terminal/_trace-route-protocol.txt",
-    "hidden": true
+    "hidden": true,
+    "route": "/lab/memos/trace-route-protocol"
   },
   {
     "name": ".stock-wars-protocol.txt",
     "path": "/terminal/_stock-wars-protocol.txt",
-    "hidden": true
+    "hidden": true,
+    "route": "/lab/memos/stock-wars-protocol"
   },
   {
     "name": ".terminal-maintenance-protocol.txt",
     "path": "/terminal/_terminal-maintenance-protocol.txt",
-    "hidden": true
+    "hidden": true,
+    "route": "/lab/memos/terminal-maintenance-protocol"
   },
   {
     "name": ".matrix-escape-protocol.txt",
     "path": "/terminal/_matrix-escape-protocol.txt",
-    "hidden": true
+    "hidden": true,
+    "route": "/lab/memos/matrix-escape-protocol"
   },
   {
     "name": ".ops-governor-protocol.txt",
     "path": "/terminal/_ops-governor-protocol.txt",
-    "hidden": true
+    "hidden": true,
+    "route": "/lab/memos/ops-governor-protocol"
   },
   {
     "name": ".404-maze-protocol.txt",
     "path": "/terminal/_404-maze-protocol.txt",
-    "hidden": true
+    "hidden": true,
+    "route": "/lab/memos/404-maze-protocol"
   },
   {
     "name": ".legacy-system-protocol.txt",
     "path": "/terminal/_legacy-system-protocol.txt",
-    "hidden": true
+    "hidden": true,
+    "route": "/lab/memos/legacy-system-protocol"
   }
 ]
