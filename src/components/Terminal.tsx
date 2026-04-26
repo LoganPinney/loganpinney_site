@@ -383,6 +383,7 @@ if (command.startsWith('open ')) {
     { type: 'output', text: '-  cat <file>' },
     { type: 'output', text: '-  open <file>' },
     { type: 'output', text: '-  run <protocol>' },
+    { type: 'output', text: '-  run matrix-escape' },
     { type: 'output', text: '-  run terminal-maintenance' },
     { type: 'output', text: '-  maint --sector /machine-layer' },
     { type: 'output', text: '-  riddle' },
@@ -404,6 +405,7 @@ if (command.startsWith('open ')) {
     { type: 'output', text: 'clear      — reset terminal' },
     { type: 'output', text: '\u00A0' },
     { type: 'output', text: 'lab        — restricted experiments' },
+    { type: 'output', text: 'run matrix-escape — first-person maze' },
     { type: 'output', text: 'run terminal-maintenance — machine layer cleanup' },
   ]);
   break;

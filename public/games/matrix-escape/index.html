@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>THE ONE :: MATRIX ESCAPE</title>
+<style>
+  * { box-sizing: border-box; user-select: none; }
+  html, body {
+    margin: 0; padding: 0;
+    background: #000; color: #33ff66;
+    font-family: "Consolas", "Courier New", "Lucida Console", monospace;
+    overflow: hidden;
+    height: 100%;
+  }
+  body {
+    display: flex; align-items: center; justify-content: center;
+    min-height: 100vh;
+    background:
+      radial-gradient(ellipse at center, #001a00 0%, #000 70%),
+      #000;
+  }
+  #frame {
+    position: relative;
+    width: 960px; max-width: calc(100vw - 16px);
+    height: 640px; max-height: calc(100vh - 16px);
+    border: 2px solid #33ff66;
+    border-radius: 12px;
+    box-shadow: 0 0 60px #33ff6655, inset 0 0 100px #00ff0018;
+    background: #000;
+    overflow: hidden;
+    text-shadow: 0 0 4px #33ff6688;
+    outline: none;
+  }
+  canvas#bg {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    opacity: 0.18;
+  }
+  canvas#view {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    z-index: 1;
+    image-rendering: pixelated;
+  }
+  /* CRT scanline overlay */
+  #scan {
+    position: absolute; inset: 0; z-index: 2;
+    pointer-events: none;
+    background:
+      repeating-linear-gradient(
+        to bottom,
+        rgba(0,0,0,0) 0px,
+        rgba(0,0,0,0) 2px,
+        rgba(0,0,0,0.25) 3px,
+        rgba(0,0,0,0) 4px
+      );
+    mix-blend-mode: multiply;
+  }
+  #vignette {
+    position: absolute; inset: 0; z-index: 3;
+    pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 55%, #000 100%);
+  }
+  #hud {
+    position: absolute; left: 0; right: 0; top: 0;
+    z-index: 4;
+    padding: 10px 16px 6px;
+    display: flex; justify-content: space-between; align-items: flex-start;
+    font-size: 14px;
+    color: #66ff99;
+    text-shadow: 0 0 5px #33ff66;
+    pointer-events: none;
+    letter-spacing: 1px;
+  }
+  #hud .col { display: flex; flex-direction: column; gap: 2px; }
+  #hud .col.right { text-align: right; }
+  #hud .label { opacity: 0.65; font-size: 11px; }
+  #hud .val { font-size: 18px; font-weight: bold; }
+  #minimap {
+    position: absolute; right: 12px; bottom: 12px;
+    z-index: 4;
+    border: 1px solid #33ff6688;
+    background: #000a;
+    box-shadow: 0 0 10px #33ff6644;
+  }
+  #msg {
+    position: absolute; left: 0; right: 0; bottom: 18px;
+    z-index: 4;
+    text-align: center;
+    font-size: 14px;
+    color: #99ffaa;
+    text-shadow: 0 0 6px #33ff66;
+    letter-spacing: 2px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  #msg.show { opacity: 1; }
+
+  #menu {
+    position: absolute; inset: 0; z-index: 10;
+    background: rgba(0, 8, 0, 0.92);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 18px;
+    color: #33ff66;
+    text-shadow: 0 0 8px #33ff66;
+    text-align: center;
+    padding: 20px;
+  }
+  #menu.hidden { display: none; }
+  #menu h1 {
+    font-size: clamp(28px, 5vw, 56px);
+    margin: 0;
+    letter-spacing: 6px;
+    color: #aaffbb;
+  }
+  #menu h2 { font-size: 14px; margin: 0; opacity: 0.7; letter-spacing: 4px; }
+  #menu p { margin: 4px 0; font-size: 13px; line-height: 1.6; max-width: 520px; opacity: 0.85; }
+  #menu .controls {
+    border: 1px dashed #33ff6688;
+    padding: 12px 20px;
+    font-size: 12px;
+    line-height: 1.8;
+    opacity: 0.85;
+    text-align: left;
+  }
+  #menu .controls b { color: #aaffbb; }
+  #menu button {
+    background: #001500;
+    color: #aaffbb;
+    border: 2px solid #33ff66;
+    padding: 10px 28px;
+    font-family: inherit;
+    font-size: 16px;
+    letter-spacing: 3px;
+    cursor: pointer;
+    text-shadow: 0 0 6px #33ff66;
+    box-shadow: 0 0 12px #33ff6644;
+    transition: all 0.15s;
+  }
+  #menu button:hover {
+    background: #003300;
+    box-shadow: 0 0 22px #33ff66aa;
+  }
+  .blink { animation: blink 1.1s steps(2) infinite; }
+  @keyframes blink { 50% { opacity: 0.2; } }
+
+  #flash {
+    position: absolute; inset: 0; z-index: 5;
+    background: #33ff66;
+    opacity: 0;
+    pointer-events: none;
+    mix-blend-mode: screen;
+  }
+  .glitch {
+    animation: glitch 0.35s steps(2) infinite;
+  }
+  @keyframes glitch {
+    0%   { transform: translate(0,0); }
+    25%  { transform: translate(-2px, 1px); }
+    50%  { transform: translate(2px, -1px); }
+    75%  { transform: translate(-1px, -2px); }
+  }
+</style>
+</head>
+<body>
+<div id="frame" tabindex="0">
+  <canvas id="bg"></canvas>
+  <canvas id="view" width="480" height="320"></canvas>
+  <div id="scan"></div>
+  <div id="vignette"></div>
+
+  <div id="hud">
+    <div class="col">
+      <span class="label">LEVEL</span>
+      <span class="val" id="hudLevel">01 / 03</span>
+      <span class="label" style="margin-top:6px">SIGNAL</span>
+      <span class="val" id="hudAgents">---</span>
+    </div>
+    <div class="col" style="text-align:center">
+      <span class="label">SUBJECT</span>
+      <span class="val">NEO</span>
+    </div>
+    <div class="col right">
+      <span class="label">TIME LEFT</span>
+      <span class="val" id="hudTime">--:--</span>
+      <span class="label" style="margin-top:6px">EXIT</span>
+      <span class="val" id="hudExit">LOCKED</span>
+    </div>
+  </div>
+
+  <canvas id="minimap" width="140" height="140"></canvas>
+  <div id="msg"></div>
+  <div id="flash"></div>
+
+  <div id="menu">
+    <h2>// SYSTEM BOOT</h2>
+    <h1>THE ONE</h1>
+    <p style="opacity:0.6">you're lost in the back-end of the matrix.<br>no agents. no weapons. just corridors that keep going.<br>find the exit before your signal dies.</p>
+    <div class="controls">
+      <div><b>W A S D</b> &nbsp;move &amp; strafe</div>
+      <div><b>&larr; &rarr;</b> or <b>Q / E</b> &nbsp;turn</div>
+      <div><b>MOUSE</b> &nbsp;click view to look freely</div>
+      <div><b>SPACE</b> &nbsp;open door / interact</div>
+      <div><b>SHIFT</b> &nbsp;run</div>
+      <div><b>ESC</b> &nbsp;release mouse</div>
+    </div>
+    <p>3 floors. each one bigger than the last.<br><span class="blink">&gt; press START to jack in</span></p>
+    <button id="btnStart">START</button>
+  </div>
+</div>
+
+<script>
+"use strict";
+
+// ============================================================
+// MATRIX RAIN BACKGROUND
+// ============================================================
+const bg = document.getElementById('bg');
+const bgx = bg.getContext('2d');
+let bgCols = [];
+function resizeBg() {
+  bg.width = bg.clientWidth;
+  bg.height = bg.clientHeight;
+  const fontSize = 14;
+  const cols = Math.ceil(bg.width / fontSize);
+  bgCols = new Array(cols).fill(0).map(() => Math.random() * bg.height);
+}
+window.addEventListener('resize', resizeBg);
+function drawRain() {
+  bgx.fillStyle = 'rgba(0, 12, 0, 0.12)';
+  bgx.fillRect(0, 0, bg.width, bg.height);
+  bgx.fillStyle = '#33ff66';
+  bgx.font = '14px Consolas, monospace';
+  for (let i = 0; i < bgCols.length; i++) {
+    const ch = String.fromCharCode(0x30A0 + Math.random() * 96 | 0);
+    bgx.fillText(ch, i * 14, bgCols[i]);
+    bgCols[i] += 14;
+    if (bgCols[i] > bg.height && Math.random() > 0.975) bgCols[i] = 0;
+  }
+}
+
+// ============================================================
+// LEVEL CONFIG (mazes are procedurally generated each run)
+//  # = wall, . = floor, D = door, E = exit
+// ============================================================
+const LEVEL_CONFIG = [
+  { name: "FLOOR 0 // CACHE",     size: 17, timeLimit: 180, doors: 2, shades: 1 },
+  { name: "FLOOR -3 // BACKLOG",  size: 25, timeLimit: 270, doors: 4, shades: 2 },
+  { name: "FLOOR -7 // VOID",     size: 33, timeLimit: 420, doors: 6, shades: 3 },
+];
+
+// recursive backtracker maze generator on an odd-sized grid.
+// Returns 2D char array of '#' and '.'.
+function genMaze(size) {
+  const w = size, h = size;
+  const map = [];
+  for (let y = 0; y < h; y++) map.push(new Array(w).fill('#'));
+  const stack = [[1, 1]];
+  map[1][1] = '.';
+  const dirs = [[2,0],[-2,0],[0,2],[0,-2]];
+  while (stack.length) {
+    const [x, y] = stack[stack.length - 1];
+    const opts = [];
+    for (const [dx, dy] of dirs) {
+      const nx = x + dx, ny = y + dy;
+      if (nx > 0 && ny > 0 && nx < w - 1 && ny < h - 1 && map[ny][nx] === '#') {
+        opts.push([nx, ny, dx, dy]);
+      }
+    }
+    if (opts.length === 0) { stack.pop(); continue; }
+    const [nx, ny, dx, dy] = opts[(Math.random() * opts.length) | 0];
+    map[y + dy/2][x + dx/2] = '.';
+    map[ny][nx] = '.';
+    stack.push([nx, ny]);
+  }
+  // knock out a few extra walls so it's not a perfect maze (more loops, more lost feeling)
+  const extras = (size * size) / 60 | 0;
+  for (let i = 0; i < extras; i++) {
+    const x = 1 + ((Math.random() * (w - 2)) | 0);
+    const y = 1 + ((Math.random() * (h - 2)) | 0);
+    if (map[y][x] === '#') {
+      // only remove if it has floor on opposite sides (corridor connector)
+      const hOk = map[y][x-1] === '.' && map[y][x+1] === '.';
+      const vOk = map[y-1][x] === '.' && map[y+1][x] === '.';
+      if (hOk || vOk) map[y][x] = '.';
+    }
+  }
+  return map;
+}
+
+// BFS from a start, returns { dist[y*w+x], farthest: [x,y] }
+function bfsAll(map, sx, sy) {
+  const h = map.length, w = map[0].length;
+  const dist = new Int32Array(w * h); dist.fill(-1);
+  dist[sx + sy * w] = 0;
+  const q = [sx + sy * w];
+  let far = [sx, sy], farD = 0;
+  while (q.length) {
+    const i = q.shift();
+    const x = i % w, y = (i / w)|0, d = dist[i];
+    if (d > farD) { farD = d; far = [x, y]; }
+    for (const [dx, dy] of [[1,0],[-1,0],[0,1],[0,-1]]) {
+      const nx = x + dx, ny = y + dy;
+      if (nx < 0 || ny < 0 || nx >= w || ny >= h) continue;
+      const ni = nx + ny * w;
+      if (dist[ni] !== -1) continue;
+      const c = map[ny][nx];
+      if (c === '#') continue;
+      dist[ni] = d + 1;
+      q.push(ni);
+    }
+  }
+  return { dist, farthest: far };
+}
+
+// ============================================================
+// GAME STATE
+// ============================================================
+const view = document.getElementById('view');
+const ctx = view.getContext('2d');
+const VW = view.width;   // internal render width
+const VH = view.height;  // internal render height
+
+const mini = document.getElementById('minimap');
+const mctx = mini.getContext('2d');
+
+const hudLevel = document.getElementById('hudLevel');
+const hudTime  = document.getElementById('hudTime');
+const hudAgents= document.getElementById('hudAgents');
+const hudExit  = document.getElementById('hudExit');
+const msgEl    = document.getElementById('msg');
+const flashEl  = document.getElementById('flash');
+const menuEl   = document.getElementById('menu');
+const btnStart = document.getElementById('btnStart');
+
+let game = null;
+
+class Game {
+  constructor(levelIndex) {
+    this.levelIndex = levelIndex;
+    const L = LEVEL_CONFIG[levelIndex];
+    this.levelDef = L;
+    // ensure odd size
+    const size = (L.size % 2 === 0) ? L.size + 1 : L.size;
+    this.map = genMaze(size);
+    this.h = this.map.length;
+    this.w = this.map[0].length;
+    this.timeLeft = L.timeLimit;
+    this.over = false;
+    this.won = false;
+
+    // start in top-left open cell, find farthest reachable cell for exit
+    this.startX = 1.5; this.startY = 1.5;
+    const { dist, farthest } = bfsAll(this.map, 1, 1);
+    this.exitX = farthest[0]; this.exitY = farthest[1];
+    this.map[this.exitY][this.exitX] = 'E';
+
+    // sprinkle doors on corridor cells roughly halfway along the path to exit
+    this.doors = {};
+    const corridorCells = [];
+    for (let y = 1; y < this.h - 1; y++) {
+      for (let x = 1; x < this.w - 1; x++) {
+        if (this.map[y][x] !== '.') continue;
+        // a corridor cell: exactly two opposite neighbors are floor
+        const hOpen = (this.map[y][x-1] === '.' || this.map[y][x-1] === 'D') &&
+                      (this.map[y][x+1] === '.' || this.map[y][x+1] === 'D');
+        const vOpen = (this.map[y-1][x] === '.' || this.map[y-1][x] === 'D') &&
+                      (this.map[y+1][x] === '.' || this.map[y+1][x] === 'D');
+        const hWall = this.map[y-1][x] === '#' && this.map[y+1][x] === '#';
+        const vWall = this.map[y][x-1] === '#' && this.map[y][x+1] === '#';
+        if ((hOpen && hWall) || (vOpen && vWall)) {
+          const d = dist[x + y*this.w];
+          if (d > 4 && d < dist[this.exitX + this.exitY*this.w] - 2) corridorCells.push({x, y, d});
+        }
+      }
+    }
+    // shuffle and place
+    corridorCells.sort(() => Math.random() - 0.5);
+    for (let i = 0; i < L.doors && i < corridorCells.length; i++) {
+      const c = corridorCells[i];
+      this.map[c.y][c.x] = 'D';
+      this.doors[c.x+","+c.y] = { open: false, t: 0 };
+    }
+
+    // player
+    this.px = this.startX;
+    this.py = this.startY;
+    this.pa = 0;
+    this.bobT = 0;
+    this.bobAmt = 0;
+
+    // shades: drifting silhouettes — purely atmospheric, no collision
+    this.shades = [];
+    this.shadeBudget = L.shades;
+    this.shadeSpawnT = 4 + Math.random() * 4;
+    // no agents in this build — kept as an empty list so minimap rendering
+    // (which iterates g.agents) doesn't throw and silently kill the loop.
+    this.agents = [];
+
+    this.hurtFlash = 0;
+    this.glitchAmt = 0;
+    this.flickerT = 2 + Math.random() * 4;
+    this.flickerLeft = 0;
+  }
+
+  spawnShade() {
+    // pick a floor cell at moderate distance from player
+    const candidates = [];
+    for (let y = 1; y < this.h - 1; y++) {
+      for (let x = 1; x < this.w - 1; x++) {
+        const c = this.map[y][x];
+        if (c !== '.' && c !== 'D') continue;
+        const dx = (x + 0.5) - this.px;
+        const dy = (y + 0.5) - this.py;
+        const d2 = dx*dx + dy*dy;
+        if (d2 > 36 && d2 < 200) candidates.push({x, y});
+      }
+    }
+    if (!candidates.length) return;
+    const c = candidates[(Math.random() * candidates.length) | 0];
+    // pick a drift direction along an open neighbor
+    const dirs = [[1,0],[-1,0],[0,1],[0,-1]].filter(([dx,dy]) => {
+      const nx = c.x + dx, ny = c.y + dy;
+      const t = this.map[ny] && this.map[ny][nx];
+      return t === '.' || t === 'D';
+    });
+    const dir = dirs.length ? dirs[(Math.random() * dirs.length) | 0] : [0, 0];
+    this.shades.push({
+      x: c.x + 0.5, y: c.y + 0.5,
+      vx: dir[0] * 0.35, vy: dir[1] * 0.35,
+      life: 0,
+      maxLife: 5 + Math.random() * 4,
+      alpha: 0,
+      bob: Math.random() * Math.PI * 2,
+    });
+  }
+
+  isWall(x, y) {
+    const ix = x|0, iy = y|0;
+    if (ix < 0 || iy < 0 || ix >= this.w || iy >= this.h) return true;
+    const c = this.map[iy][ix];
+    if (c === '#') return true;
+    if (c === 'D') {
+      const d = this.doors[ix+","+iy];
+      if (!d) return true;
+      // open door is passable when t > 0.7
+      return d.t < 0.7;
+    }
+    return false;
+  }
+
+  // for visual purposes - is solid for raycast?
+  cellType(x, y) {
+    const ix = x|0, iy = y|0;
+    if (ix < 0 || iy < 0 || ix >= this.w || iy >= this.h) return '#';
+    return this.map[iy][ix];
+  }
+
+  tryMove(x, y, dx, dy) {
+    const r = 0.22;
+    let nx = x + dx, ny = y + dy;
+    if (!this.isWall(nx + Math.sign(dx)*r, y)) x = nx;
+    if (!this.isWall(x, ny + Math.sign(dy)*r)) y = ny;
+    return [x, y];
+  }
+
+  interact() {
+    // find a door directly in front within 1.2 units
+    const fx = this.px + Math.cos(this.pa) * 0.9;
+    const fy = this.py + Math.sin(this.pa) * 0.9;
+    const ix = fx|0, iy = fy|0;
+    if (ix >= 0 && iy >= 0 && ix < this.w && iy < this.h) {
+      if (this.map[iy][ix] === 'D') {
+        const k = ix+","+iy;
+        if (!this.doors[k]) this.doors[k] = { open: true, t: 0 };
+        else this.doors[k].open = !this.doors[k].open;
+        flash('> DOOR ' + (this.doors[k].open ? 'OPEN' : 'SEALED'));
+        return;
+      }
+    }
+    // try exit?
+    const exDx = (this.exitX + 0.5) - this.px;
+    const exDy = (this.exitY + 0.5) - this.py;
+    if (exDx*exDx + exDy*exDy < 1.0) {
+      this.won = true; this.over = true;
+    }
+  }
+
+  update(dt) {
+    if (this.over) return;
+    this.timeLeft -= dt;
+    if (this.timeLeft <= 0) {
+      this.timeLeft = 0;
+      this.over = true; this.won = false;
+    }
+
+    // door anim
+    for (const k in this.doors) {
+      const d = this.doors[k];
+      const target = d.open ? 1 : 0;
+      d.t += (target - d.t) * Math.min(1, dt * 5);
+      if (Math.abs(d.t - target) < 0.01) d.t = target;
+    }
+
+    // shades: drift gently, fade in and out, never block or hurt the player
+    this.shadeSpawnT -= dt;
+    if (this.shadeSpawnT <= 0 && this.shades.length < this.shadeBudget) {
+      this.spawnShade();
+      this.shadeSpawnT = 6 + Math.random() * 8;
+    }
+    for (let i = this.shades.length - 1; i >= 0; i--) {
+      const s = this.shades[i];
+      s.life += dt;
+      s.bob += dt * 2.5;
+      // drift; if it would walk into a wall, stop drifting
+      const nx = s.x + s.vx * dt;
+      const ny = s.y + s.vy * dt;
+      const cx = nx | 0, cy = ny | 0;
+      const c = this.map[cy] && this.map[cy][cx];
+      if (c === '.' || c === 'D' || c === 'E') { s.x = nx; s.y = ny; }
+      else { s.vx = 0; s.vy = 0; }
+      // fade in over 1s, hold, fade out at end
+      const fadeIn = Math.min(1, s.life / 1.0);
+      const fadeOut = Math.min(1, (s.maxLife - s.life) / 1.2);
+      s.alpha = Math.max(0, Math.min(fadeIn, fadeOut)) * 0.65;
+      if (s.life >= s.maxLife) this.shades.splice(i, 1);
+    }
+
+    // ambient flicker — momentary darkening / glitch with no danger
+    this.flickerT -= dt;
+    if (this.flickerT <= 0) {
+      this.flickerLeft = 0.15 + Math.random() * 0.2;
+      this.flickerT = 8 + Math.random() * 14;
+    }
+    if (this.flickerLeft > 0) this.flickerLeft -= dt;
+    this.glitchAmt = Math.max(0, this.flickerLeft) * 1.5;
+
+    if (this.hurtFlash > 0) this.hurtFlash -= dt * 2;
+  }
+}
+
+// ============================================================
+// BFS on the grid (treats open doors as passable)
+// ============================================================
+function bfsPath(map, doors, sx, sy, tx, ty) {
+  const h = map.length, w = map[0].length;
+  if (sx === tx && sy === ty) return [];
+  const visited = new Uint8Array(w * h);
+  const prev = new Int32Array(w * h); prev.fill(-1);
+  const q = [sx + sy * w]; visited[sx + sy * w] = 1;
+  const dirs = [[1,0],[-1,0],[0,1],[0,-1]];
+  let found = false;
+  while (q.length) {
+    const i = q.shift();
+    const x = i % w, y = (i / w)|0;
+    if (x === tx && y === ty) { found = true; break; }
+    for (const [dx, dy] of dirs) {
+      const nx = x + dx, ny = y + dy;
+      if (nx < 0 || ny < 0 || nx >= w || ny >= h) continue;
+      const ni = nx + ny * w;
+      if (visited[ni]) continue;
+      const c = map[ny][nx];
+      if (c === '#') continue;
+      if (c === 'D') {
+        const d = doors[nx+","+ny];
+        if (!d || d.t < 0.7) continue;
+      }
+      visited[ni] = 1;
+      prev[ni] = i;
+      q.push(ni);
+    }
+  }
+  if (!found) return [];
+  const path = [];
+  let cur = tx + ty * w;
+  while (cur !== -1 && cur !== sx + sy * w) {
+    path.push([cur % w, (cur / w)|0]);
+    cur = prev[cur];
+  }
+  return path.reverse();
+}
+
+// ============================================================
+// RAYCASTER
+// ============================================================
+const FOV = Math.PI / 3;
+const NUM_RAYS = VW; // one ray per pixel column
+const MAX_DEPTH = 24;
+
+const zBuffer = new Float32Array(NUM_RAYS);
+
+function castRay(g, ang) {
+  // DDA
+  const sx = Math.cos(ang), sy = Math.sin(ang);
+  let mapX = g.px|0, mapY = g.py|0;
+  const deltaX = Math.abs(1 / sx);
+  const deltaY = Math.abs(1 / sy);
+  let stepX, stepY, sideDistX, sideDistY;
+  if (sx < 0) { stepX = -1; sideDistX = (g.px - mapX) * deltaX; }
+  else        { stepX = 1;  sideDistX = (mapX + 1 - g.px) * deltaX; }
+  if (sy < 0) { stepY = -1; sideDistY = (g.py - mapY) * deltaY; }
+  else        { stepY = 1;  sideDistY = (mapY + 1 - g.py) * deltaY; }
+  let side = 0, hit = 0, ch = '#', dist = MAX_DEPTH;
+  for (let i = 0; i < 64; i++) {
+    if (sideDistX < sideDistY) { sideDistX += deltaX; mapX += stepX; side = 0; }
+    else { sideDistY += deltaY; mapY += stepY; side = 1; }
+    if (mapX < 0 || mapY < 0 || mapX >= g.w || mapY >= g.h) break;
+    const c = g.map[mapY][mapX];
+    if (c === '#') { hit = 1; ch = c; break; }
+    if (c === 'D') {
+      const d = g.doors[mapX+","+mapY];
+      const open = d ? d.t : 0;
+      // door is visible if not fully open. We'll treat it as a thin wall offset by open amount.
+      if (open < 0.95) {
+        // fake "sliding" — render door at the cell boundary scaled by (1-open)
+        // For simplicity treat as wall but with door style if not mostly open
+        hit = 1; ch = 'D';
+        break;
+      } else {
+        continue;
+      }
+    }
+    if (c === 'E') { hit = 1; ch = 'E'; break; }
+  }
+  if (hit) {
+    if (side === 0) dist = (mapX - g.px + (1 - stepX) / 2) / sx;
+    else            dist = (mapY - g.py + (1 - stepY) / 2) / sy;
+  }
+  // hit position along wall (for texture column)
+  let wallX;
+  if (side === 0) wallX = g.py + dist * sy;
+  else            wallX = g.px + dist * sx;
+  wallX -= Math.floor(wallX);
+  return { dist, side, ch, mapX, mapY, wallX };
+}
+
+function shadeColor(base, dist, side) {
+  // base: [r,g,b]
+  let f = Math.max(0, 1 - dist / 14);
+  if (side === 1) f *= 0.7;
+  return [base[0]*f|0, base[1]*f|0, base[2]*f|0];
+}
+
+function render(g) {
+  // sky / floor (pure black with subtle gradient and ceiling glow)
+  // ceiling
+  const grad = ctx.createLinearGradient(0, 0, 0, VH/2);
+  grad.addColorStop(0, '#001500');
+  grad.addColorStop(1, '#000300');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, VW, VH/2);
+  // floor: faint horizontal lines
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, VH/2, VW, VH/2);
+  ctx.strokeStyle = 'rgba(51,255,102,0.06)';
+  ctx.lineWidth = 1;
+  for (let y = VH/2 + 4; y < VH; y += 6) {
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(VW, y); ctx.stroke();
+  }
+  // floor distance haze: brighter near center
+  const fgrad = ctx.createLinearGradient(0, VH/2, 0, VH);
+  fgrad.addColorStop(0, 'rgba(51,255,102,0.0)');
+  fgrad.addColorStop(1, 'rgba(51,255,102,0.05)');
+  ctx.fillStyle = fgrad;
+  ctx.fillRect(0, VH/2, VW, VH/2);
+
+  // glitch offset
+  const glitchOffset = g.glitchAmt > 0.4 ? (Math.random() - 0.5) * 6 * g.glitchAmt : 0;
+  // head-bob (vertical pitch offset) — only when moving
+  const bobY = Math.sin(g.bobT * 2) * 3 * g.bobAmt;
+
+  // raycast walls
+  const halfFov = FOV / 2;
+  for (let r = 0; r < NUM_RAYS; r++) {
+    const cameraX = (2 * r) / NUM_RAYS - 1; // -1..1
+    const ang = g.pa + Math.atan(cameraX * Math.tan(halfFov));
+    const hit = castRay(g, ang);
+    // perpendicular distance for fish-eye correction
+    const corrDist = hit.dist * Math.cos(ang - g.pa);
+    zBuffer[r] = corrDist;
+    if (hit.dist >= MAX_DEPTH) continue;
+
+    const wallH = Math.min(VH * 4, (VH / corrDist) | 0);
+    const drawStart = Math.max(0, ((VH - wallH) / 2 + bobY) | 0);
+    const drawEnd = Math.min(VH, ((VH + wallH) / 2 + bobY) | 0);
+
+    let baseColor;
+    if (hit.ch === 'D') baseColor = [120, 255, 180]; // door brighter cyan-green
+    else if (hit.ch === 'E') baseColor = [200, 255, 220]; // exit white-ish
+    else baseColor = [60, 220, 90]; // wall green
+
+    const [rC, gC, bC] = shadeColor(baseColor, corrDist, hit.side);
+
+    // draw wall column
+    ctx.fillStyle = `rgb(${rC},${gC},${bC})`;
+    ctx.fillRect(r + glitchOffset, drawStart, 1, drawEnd - drawStart);
+
+    // overlay digital code-stream pattern on wall
+    // use wallX & y to pick chars deterministically
+    const pat = ((hit.mapX * 73856093) ^ (hit.mapY * 19349663) ^ ((hit.wallX*97)|0)) >>> 0;
+    if ((pat & 7) === 0 && corrDist < 10) {
+      ctx.fillStyle = `rgba(180,255,200,${0.5 * Math.max(0,1-corrDist/10)})`;
+      ctx.fillRect(r + glitchOffset, drawStart, 1, 1);
+    }
+    // edge highlight (vertical lines at cell borders)
+    if (hit.wallX < 0.02 || hit.wallX > 0.98) {
+      ctx.fillStyle = `rgba(180,255,200,${0.6 * Math.max(0,1-corrDist/14)})`;
+      ctx.fillRect(r + glitchOffset, drawStart, 1, drawEnd - drawStart);
+    }
+    // door bright outline
+    if (hit.ch === 'D') {
+      ctx.fillStyle = `rgba(220,255,230,${0.8 * Math.max(0,1-corrDist/14)})`;
+      ctx.fillRect(r + glitchOffset, drawStart, 1, 2);
+      ctx.fillRect(r + glitchOffset, drawEnd - 2, 1, 2);
+    }
+    // exit pulse
+    if (hit.ch === 'E') {
+      const pulse = 0.5 + 0.5 * Math.sin(performance.now()/200);
+      ctx.fillStyle = `rgba(255,255,255,${0.4 * pulse})`;
+      ctx.fillRect(r + glitchOffset, drawStart, 1, drawEnd - drawStart);
+    }
+  }
+
+  // sprites: agents
+  drawSprites(g);
+
+  // hurt overlay
+  if (g.hurtFlash > 0) {
+    ctx.fillStyle = `rgba(255,80,80,${g.hurtFlash * 0.5})`;
+    ctx.fillRect(0,0,VW,VH);
+  }
+
+  // weapon-less hand: subtle hex crosshair + low-fi reticle
+  drawHud(g);
+}
+
+function drawSprites(g) {
+  const items = g.shades.map(a => {
+    const dx = a.x - g.px, dy = a.y - g.py;
+    return { a, dx, dy, d2: dx*dx + dy*dy };
+  }).sort((p, q) => q.d2 - p.d2);
+
+  for (const item of items) {
+    const { a, dx, dy } = item;
+    const cosA = Math.cos(-g.pa), sinA = Math.sin(-g.pa);
+    const tx = dx * cosA - dy * sinA;
+    const ty = dx * sinA + dy * cosA;
+    if (tx <= 0.1) continue;
+    const screenX = (VW / 2) * (1 + (ty / tx) / Math.tan(FOV/2));
+    const size = Math.min(VH * 2, (VH / tx) | 0);
+    const sx0 = (screenX - size/2) | 0;
+    const sy0 = ((VH - size) / 2) | 0;
+    drawAgent(a, sx0, sy0, size, tx, a.alpha);
+  }
+}
+
+function drawAgent(a, x, y, size, dist, alpha) {
+  if (alpha <= 0.01) return;
+  ctx.globalAlpha = alpha;
+  // bob
+  const bob = Math.sin(a.bob) * size * 0.02;
+  // visible portion respects zBuffer
+  const cx = x + size/2;
+  const headR = size * 0.10;
+  const headY = y + size * 0.18 + bob;
+  const bodyTop = y + size * 0.28 + bob;
+  const bodyBot = y + size * 0.85 + bob;
+  const bodyW = size * 0.32;
+
+  // we cull per-column using zBuffer
+  const colStart = Math.max(0, x|0);
+  const colEnd   = Math.min(VW, (x + size)|0);
+
+  // create offscreen path: instead, sample columns
+  // body silhouette: trench coat agent — black with green edge glow
+  const fade = Math.max(0, 1 - dist/14);
+  const edgeAlpha = 0.7 * fade;
+  for (let cx2 = colStart; cx2 < colEnd; cx2++) {
+    if (zBuffer[cx2] < dist) continue;
+    // determine vertical strip extents
+    // body trapezoid widening at bottom
+    const tNorm = (cx2 - x) / size; // 0..1 across sprite
+    const dxFromCenter = Math.abs(tNorm - 0.5) * 2; // 0..1
+    // body width function
+    const inBody = dxFromCenter < (0.45 - 0.05 * (1 - (cx2 - x) / size));
+    // we'll fill body region
+    // head (circle)
+    for (let yy = (y - bob)|0; yy < (y + size)|0; yy++) {
+      if (yy < 0 || yy >= VH) continue;
+      let inside = false;
+      // head circle
+      const dxh = cx2 - cx, dyh = yy - headY;
+      if (dxh*dxh + dyh*dyh < headR*headR) inside = true;
+      // body (trapezoidal)
+      if (yy > bodyTop && yy < bodyBot) {
+        const tt = (yy - bodyTop) / (bodyBot - bodyTop);
+        const halfW = (bodyW * (0.7 + 0.3 * tt)) / 2;
+        if (Math.abs(cx2 - cx) < halfW) inside = true;
+      }
+      // shoulders extension
+      if (yy > bodyTop && yy < bodyTop + size * 0.08) {
+        if (Math.abs(cx2 - cx) < bodyW * 0.7) inside = true;
+      }
+      if (inside) {
+        ctx.fillStyle = '#020a02';
+        ctx.fillRect(cx2, yy, 1, 1);
+      }
+    }
+  }
+  // edge glow + glasses + sunglasses gleam (drawn after body for top)
+  ctx.save();
+  ctx.shadowColor = `rgba(120,255,160,${edgeAlpha})`;
+  ctx.shadowBlur = 8;
+  ctx.strokeStyle = `rgba(120,255,160,${edgeAlpha})`;
+  ctx.lineWidth = Math.max(1, size * 0.015);
+  // head outline
+  ctx.beginPath();
+  ctx.arc(cx, headY, headR, 0, Math.PI*2);
+  ctx.stroke();
+  // body outline (trapezoid)
+  ctx.beginPath();
+  ctx.moveTo(cx - bodyW*0.35, bodyTop);
+  ctx.lineTo(cx + bodyW*0.35, bodyTop);
+  ctx.lineTo(cx + bodyW*0.5,  bodyBot);
+  ctx.lineTo(cx - bodyW*0.5,  bodyBot);
+  ctx.closePath();
+  ctx.stroke();
+  ctx.restore();
+
+  // sunglasses (two bright slits)
+  ctx.fillStyle = `rgba(180,255,200,${0.85 * fade})`;
+  const glassW = headR * 0.7;
+  const glassH = Math.max(1, headR * 0.25);
+  ctx.fillRect(cx - glassW - 1, headY - glassH/2, glassW, glassH);
+  ctx.fillRect(cx + 1,           headY - glassH/2, glassW, glassH);
+  // glow eyes
+  ctx.fillStyle = `rgba(255,255,255,${0.6 * fade})`;
+  ctx.fillRect(cx - glassW - 1, headY - 1, glassW, 1);
+  ctx.fillRect(cx + 1, headY - 1, glassW, 1);
+  ctx.globalAlpha = 1;
+}
+
+function drawHud(g) {
+  // crosshair
+  ctx.strokeStyle = 'rgba(180,255,200,0.6)';
+  ctx.lineWidth = 1;
+  const cx = VW/2, cy = VH/2;
+  ctx.beginPath();
+  ctx.moveTo(cx - 6, cy); ctx.lineTo(cx - 2, cy);
+  ctx.moveTo(cx + 2, cy); ctx.lineTo(cx + 6, cy);
+  ctx.moveTo(cx, cy - 6); ctx.lineTo(cx, cy - 2);
+  ctx.moveTo(cx, cy + 2); ctx.lineTo(cx, cy + 6);
+  ctx.stroke();
+  // small hex
+  ctx.strokeStyle = 'rgba(180,255,200,0.3)';
+  ctx.beginPath();
+  for (let i = 0; i < 6; i++) {
+    const a = i / 6 * Math.PI * 2;
+    const x = cx + Math.cos(a) * 10, y = cy + Math.sin(a) * 10;
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  }
+  ctx.closePath();
+  ctx.stroke();
+}
+
+// ============================================================
+// MINIMAP
+// ============================================================
+function drawMinimap(g) {
+  mctx.fillStyle = 'rgba(0,0,0,0.7)';
+  mctx.fillRect(0, 0, mini.width, mini.height);
+  const cell = Math.min(mini.width / g.w, mini.height / g.h);
+  const offX = (mini.width - cell * g.w) / 2;
+  const offY = (mini.height - cell * g.h) / 2;
+  for (let y = 0; y < g.h; y++) {
+    for (let x = 0; x < g.w; x++) {
+      const c = g.map[y][x];
+      if (c === '#') {
+        mctx.fillStyle = '#0a4015';
+        mctx.fillRect(offX + x*cell, offY + y*cell, cell, cell);
+      } else if (c === 'D') {
+        mctx.fillStyle = '#88ffaa';
+        mctx.fillRect(offX + x*cell, offY + y*cell, cell, cell);
+      } else if (c === 'E') {
+        const pulse = 0.5 + 0.5 * Math.sin(performance.now()/200);
+        mctx.fillStyle = `rgba(255,255,255,${0.4 + 0.6*pulse})`;
+        mctx.fillRect(offX + x*cell, offY + y*cell, cell, cell);
+      }
+    }
+  }
+  // agents
+  for (const a of g.agents) {
+    mctx.fillStyle = '#ff5555';
+    mctx.fillRect(offX + a.x*cell - 1, offY + a.y*cell - 1, 3, 3);
+  }
+  // player
+  mctx.fillStyle = '#aaffbb';
+  mctx.fillRect(offX + g.px*cell - 1.5, offY + g.py*cell - 1.5, 3, 3);
+  // facing
+  mctx.strokeStyle = '#aaffbb';
+  mctx.beginPath();
+  mctx.moveTo(offX + g.px*cell, offY + g.py*cell);
+  mctx.lineTo(offX + (g.px + Math.cos(g.pa)*0.8)*cell,
+              offY + (g.py + Math.sin(g.pa)*0.8)*cell);
+  mctx.stroke();
+}
+
+// ============================================================
+// INPUT
+// ============================================================
+const frameEl = document.getElementById('frame');
+const keys = {};
+function onKeyDown(e) {
+  if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].includes(e.code)) e.preventDefault();
+  keys[e.code] = true;
+  if (e.code === 'Space' && game && !game.over) game.interact();
+}
+function onKeyUp(e) { keys[e.code] = false; }
+// Listen on both the focusable frame and window so keys work whether or not
+// the iframe has focus (e.g. when running inside the Claude.ai artifact preview).
+frameEl.addEventListener('keydown', onKeyDown);
+frameEl.addEventListener('keyup', onKeyUp);
+window.addEventListener('keydown', onKeyDown);
+window.addEventListener('keyup', onKeyUp);
+
+// Make sure clicking anywhere inside the frame gives it focus so keys reach it.
+frameEl.addEventListener('mousedown', () => frameEl.focus());
+
+// mouse-look via pointer lock
+view.addEventListener('click', () => {
+  frameEl.focus();
+  if (game && !game.over) view.requestPointerLock();
+});
+document.addEventListener('mousemove', e => {
+  if (document.pointerLockElement === view && game && !game.over) {
+    game.pa += e.movementX * 0.0028;
+  }
+});
+
+// ============================================================
+// MESSAGES & FLASHES
+// ============================================================
+let msgT = 0;
+function flash(text) {
+  msgEl.textContent = text;
+  msgEl.classList.add('show');
+  msgT = 1.6;
+}
+
+// ============================================================
+// MAIN LOOP
+// ============================================================
+let last = performance.now();
+function loop(now) {
+  try {
+    const dt = Math.min(0.05, (now - last) / 1000);
+    last = now;
+
+    drawRain();
+
+    if (game) {
+      // player movement
+      if (!game.over) {
+        const turn = 3.6;
+        const speed = (keys['ShiftLeft'] || keys['ShiftRight']) ? 4.4 : 2.8;
+
+        let dx = 0, dy = 0;
+        const fx = Math.cos(game.pa), fy = Math.sin(game.pa);
+        const sxv = -fy, syv = fx;
+
+        if (keys['ArrowUp'] || keys['KeyW'])    { dx += fx; dy += fy; }
+        if (keys['ArrowDown'] || keys['KeyS'])  { dx -= fx; dy -= fy; }
+        if (keys['KeyA'])                        { dx += sxv; dy += syv; }
+        if (keys['KeyD'])                        { dx -= sxv; dy -= syv; }
+        if (keys['ArrowLeft']  || keys['KeyQ']) game.pa -= turn * dt;
+        if (keys['ArrowRight'] || keys['KeyE']) game.pa += turn * dt;
+
+        const dl = Math.hypot(dx, dy);
+        if (dl > 0) {
+          dx = dx/dl * speed * dt;
+          dy = dy/dl * speed * dt;
+          const [nx, ny] = game.tryMove(game.px, game.py, dx, dy);
+          game.px = nx; game.py = ny;
+          game.bobT += dt * speed * 1.6;
+          game.bobAmt += (1 - game.bobAmt) * Math.min(1, dt * 6);
+        } else {
+          game.bobAmt += (0 - game.bobAmt) * Math.min(1, dt * 4);
+        }
+
+        // check exit reached automatically
+        const exDx = (game.exitX + 0.5) - game.px;
+        const exDy = (game.exitY + 0.5) - game.py;
+        const exD2 = exDx*exDx + exDy*exDy;
+        if (exD2 < 0.5) { game.won = true; game.over = true; }
+        hudExit.textContent = exD2 < 9 ? 'NEAR' : 'LOCKED';
+      }
+
+      game.update(dt);
+      render(game);
+      drawMinimap(game);
+
+      // hud
+      hudLevel.textContent = String(game.levelIndex+1).padStart(2,'0') + ' / 03';
+      // SIGNAL: time fraction shown as a 5-bar meter
+      const sigFrac = Math.max(0, game.timeLeft / game.levelDef.timeLimit);
+      const bars = Math.ceil(sigFrac * 5);
+      hudAgents.textContent = '|'.repeat(bars) + '.'.repeat(5 - bars);
+      const t = Math.max(0, game.timeLeft);
+      const mm = String(Math.floor(t/60)).padStart(2,'0');
+      const ss = String(Math.floor(t%60)).padStart(2,'0');
+      hudTime.textContent = mm + ':' + ss;
+
+      // flash
+      if (game.glitchAmt > 0.5) {
+        flashEl.style.opacity = (game.glitchAmt - 0.5) * 0.3;
+      } else {
+        flashEl.style.opacity = 0;
+      }
+
+      if (msgT > 0) { msgT -= dt; if (msgT <= 0) msgEl.classList.remove('show'); }
+
+      // game over flow
+      if (game.over) {
+        if (document.pointerLockElement === view) document.exitPointerLock();
+        const lvl = game.levelIndex;
+        const lvlName = game.levelDef.name;
+        if (game.won) {
+          if (lvl < LEVEL_CONFIG.length - 1) {
+            showMenu(`<h2>// FLOOR CLEARED</h2>
+              <h1 style="color:#ffffff">EXIT FOUND</h1>
+              <p>${lvlName} — you slipped through.</p>
+              <p style="opacity:0.6">the corridors keep going. deeper.</p>
+              <button id="btnNext">DESCEND</button>`,
+              () => { startGame(lvl + 1); });
+            game = null;
+          } else {
+            showMenu(`<h2>// SIGNAL RESTORED</h2>
+              <h1 style="color:#ffffff">YOU ARE OUT</h1>
+              <p>three floors. no map. you found it.</p>
+              <p style="opacity:0.5">the matrix has no hold on you.</p>
+              <button id="btnNext">JACK IN AGAIN</button>`,
+              () => { startGame(0); });
+            game = null;
+          }
+        } else {
+          showMenu(`<h2 style="color:#ff8888">// SIGNAL LOST</h2>
+            <h1 style="color:#ff5555" class="glitch">DISCONNECTED</h1>
+            <p>you ran out of time in the dark.</p>
+            <p style="opacity:0.5">the system swallows the lost.</p>
+            <button id="btnNext">RECONNECT</button>`,
+            () => { startGame(lvl); });
+          game = null;
+        }
+      }
+    }
+  } catch (err) {
+    // surface errors instead of letting the loop die silently
+    console.error('loop error:', err);
+  }
+
+  requestAnimationFrame(loop);
+}
+
+// ============================================================
+// MENU
+// ============================================================
+function showMenu(html, onClick) {
+  menuEl.classList.remove('hidden');
+  menuEl.innerHTML = html;
+  const btn = menuEl.querySelector('button');
+  if (btn) btn.addEventListener('click', () => {
+    menuEl.classList.add('hidden');
+    onClick();
+  });
+}
+
+function startGame(levelIndex) {
+  game = new Game(levelIndex);
+  flash(`> ENTERING ${game.levelDef.name}`);
+  last = performance.now();
+  // Make sure keyboard input is captured by the game frame, not the host page.
+  frameEl.focus();
+}
+
+btnStart.addEventListener('click', () => {
+  menuEl.classList.add('hidden');
+  startGame(0);
+});
+
+// init
+resizeBg();
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

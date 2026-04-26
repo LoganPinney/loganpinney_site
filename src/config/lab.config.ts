@@ -66,6 +66,17 @@ export const labGames: LabGame[] = [
     tags: ['simulation', 'operations', 'systems', 'game'],
   },
   {
+    id: 'matrix-escape',
+    title: 'Matrix Escape',
+    slug: 'matrix-escape',
+    route: '/games/matrix-escape/',
+    description: 'A first-person green-screen maze buried under the lab floor.',
+    status: 'live',
+    unlockCommand: 'run matrix-escape',
+    commands: ['run matrix', 'jack in'],
+    tags: ['game', 'maze', 'system'],
+  },
+  {
     id: 'ops-governor',
     title: 'Ops Governor',
     slug: 'ops-governor',

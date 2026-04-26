@@ -76,9 +76,8 @@
   .dim { color: #1a8a1a; }
   .good { color: #aaffaa; }
   .main {
-    display: grid;
-    grid-template-columns: minmax(0, 1.45fr) minmax(250px, .75fr);
-    gap: 10px;
+    position: relative;
+    display: block;
   }
   .panel {
     background: rgba(0,0,0,0.35);
@@ -90,7 +89,13 @@
     justify-content: space-between;
     align-items: center;
     gap: 8px;
-    border-bottom: 1px dashed #1a8a1a66;
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    top: 10px;
+    z-index: 6;
+    border: 1px solid #1a8a1a66;
+    background: rgba(0, 10, 0, .58);
     color: #1a8a1a;
     font-size: 11px;
     letter-spacing: 0.16em;
@@ -98,16 +103,55 @@
   }
   #viewport {
     position: relative;
-    min-height: 410px;
+    min-height: 620px;
+    aspect-ratio: 3 / 2;
     overflow: hidden;
+    border-radius: 6px;
     background:
       radial-gradient(circle at 50% 42%, rgba(51,255,51,.10), transparent 34%),
       linear-gradient(180deg, #001100 0%, #000700 52%, #000 100%);
   }
+  #rain, #dungeon {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  #rain { z-index: 0; opacity: .24; }
+  #dungeon {
+    z-index: 1;
+    image-rendering: pixelated;
+  }
+  #viewport::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    background:
+      repeating-linear-gradient(
+        to bottom,
+        rgba(0,0,0,0) 0px,
+        rgba(0,0,0,0) 2px,
+        rgba(0,0,0,.26) 3px,
+        rgba(0,0,0,0) 4px
+      );
+    mix-blend-mode: multiply;
+  }
+  #viewport::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 52%, rgba(0,0,0,.92) 100%);
+  }
   #scene {
     position: absolute;
     inset: 0;
+    z-index: 4;
     overflow: hidden;
+    pointer-events: none;
   }
   .corridor-frame {
     position: absolute;
@@ -161,18 +205,19 @@
   .object {
     position: absolute;
     left: 50%;
-    top: 48%;
-    width: min(68%, 420px);
-    transform: translate(-50%, -50%);
+    bottom: 48px;
+    width: min(64%, 440px);
+    transform: translateX(-50%);
     border: 1px solid #66ddff;
-    background: rgba(0, 22, 26, .82);
+    background: rgba(0, 12, 0, .68);
     color: #aaeeff;
-    padding: 12px 14px;
+    padding: 9px 12px;
     text-align: center;
     box-shadow: 0 0 28px #66ddff33, inset 0 0 24px #66ddff18;
     white-space: pre-wrap;
-    line-height: 1.45;
-    font-size: 13px;
+    line-height: 1.35;
+    font-size: 12px;
+    letter-spacing: .08em;
   }
   .object.hazard {
     border-color: #ffcc33;
@@ -195,18 +240,35 @@
     left: 10px;
     right: 10px;
     bottom: 9px;
+    z-index: 6;
     display: flex;
     justify-content: space-between;
     gap: 8px;
-    color: #1a8a1a;
+    color: #66ff99;
     font-size: 11px;
     letter-spacing: 0.12em;
   }
   .side {
+    position: absolute;
+    right: 12px;
+    top: 58px;
+    z-index: 7;
+    width: min(270px, 31%);
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
     min-width: 0;
+    pointer-events: none;
+  }
+  .side .panel {
+    background: rgba(0, 8, 0, .72);
+    border-color: #33ff3355;
+    box-shadow: 0 0 18px #33ff3318;
+  }
+  .side .panel-head {
+    position: static;
+    border-width: 0 0 1px;
+    background: transparent;
   }
   #map, #systems, #log {
     padding: 9px 10px;
@@ -214,18 +276,18 @@
     line-height: 1.45;
   }
   #map {
-    min-height: 158px;
+    min-height: 112px;
     white-space: pre;
     color: #88dd88;
     overflow: auto;
   }
   #systems {
     color: #88dd88;
-    min-height: 112px;
+    min-height: 88px;
   }
   #log {
-    min-height: 166px;
-    max-height: 190px;
+    min-height: 126px;
+    max-height: 132px;
     overflow-y: auto;
     color: #88dd88;
   }
@@ -325,8 +387,20 @@
     .topbar { align-items: flex-start; }
     .backlink, .tag { font-size: 10px; letter-spacing: 0.11em; }
     .hud { font-size: 12px; gap: 7px 10px; }
-    .main { grid-template-columns: 1fr; }
-    #viewport { min-height: 300px; }
+    #viewport { min-height: 430px; aspect-ratio: auto; }
+    .panel-head {
+      left: 8px;
+      right: 8px;
+      top: 8px;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+    }
+    .side {
+      position: static;
+      width: 100%;
+      margin-top: 8px;
+      pointer-events: auto;
+    }
     .object, .wall { font-size: 12px; }
     .readout { font-size: 10px; flex-direction: column; align-items: flex-start; }
     #map { min-height: 126px; }
@@ -360,6 +434,8 @@
         <span id="bearing">NORTH</span>
       </div>
       <div id="viewport">
+        <canvas id="rain" width="640" height="420"></canvas>
+        <canvas id="dungeon" width="640" height="420"></canvas>
         <div id="scene"></div>
         <div class="readout">
           <span id="sector">SECTOR 0,0</span>
@@ -434,6 +510,21 @@ const TILE = {
   "G": { scan: "ROOT ACCESS TERMINAL" },
   "X": { scan: "EXIT UPLINK" }
 };
+
+const dungeonCanvas = document.getElementById("dungeon");
+const dungeonCtx = dungeonCanvas.getContext("2d");
+const rainCanvas = document.getElementById("rain");
+const rainCtx = rainCanvas.getContext("2d");
+const VIEW_W = dungeonCanvas.width;
+const VIEW_H = dungeonCanvas.height;
+const FOV = Math.PI / 3;
+const DIR_ANGLES = [-Math.PI / 2, 0, Math.PI / 2, Math.PI];
+const rainDrops = Array.from({ length: 72 }, () => ({
+  x: Math.random() * VIEW_W,
+  y: Math.random() * VIEW_H,
+  speed: 5 + Math.random() * 18,
+  glyph: Math.random() > .5 ? "1" : "0"
+}));
 
 const els = {
   integrity: document.getElementById("integrity"),
@@ -754,30 +845,204 @@ function renderHud() {
 }
 
 function renderScene() {
-  const ahead = frontCell(1);
-  const leftDir = DIRS[(game.dir + 3) % 4];
-  const rightDir = DIRS[(game.dir + 1) % 4];
-  const leftWall = tileAt(game.x + leftDir.dx, game.y + leftDir.dy) === "#";
-  const rightWall = tileAt(game.x + rightDir.dx, game.y + rightDir.dy) === "#";
   const scan = firstVisible();
-  const chunks = [
-    '<div class="floor-grid"></div>'
-  ];
+  drawRain();
+  drawDungeon(scan);
+  els.scene.innerHTML = scan.tile !== "." && scan.tile !== "#" ? objectHtml(scan) : "";
+  els.frontScan.textContent = "FRONT SCAN: " + (TILE[scan.tile] ? TILE[scan.tile].scan : "UNKNOWN");
+}
 
-  if (leftWall) chunks.push('<div class="side-wall left"></div>');
-  if (rightWall) chunks.push('<div class="side-wall right"></div>');
+function drawRain() {
+  rainCtx.fillStyle = "rgba(0, 8, 0, 0.18)";
+  rainCtx.fillRect(0, 0, VIEW_W, VIEW_H);
+  rainCtx.font = "13px Consolas, monospace";
+  rainCtx.textAlign = "center";
 
-  if (tileAt(ahead.x, ahead.y) === "#") {
-    chunks.push('<div class="wall">###########\\n# SERVICE #\\n#  WALL   #\\n###########\\n\\nNO ROUTE THROUGH</div>');
-  } else {
-    chunks.push('<div class="corridor-frame frame-near"></div>');
-    chunks.push('<div class="corridor-frame frame-mid"></div>');
-    chunks.push('<div class="corridor-frame frame-far"></div>');
-    if (scan.tile !== "." && scan.tile !== "#") chunks.push(objectHtml(scan));
+  for (const drop of rainDrops) {
+    drop.y += drop.speed;
+    if (drop.y > VIEW_H + 18) {
+      drop.y = -18;
+      drop.x = Math.random() * VIEW_W;
+      drop.speed = 5 + Math.random() * 18;
+      drop.glyph = Math.random() > .5 ? "1" : "0";
+    }
+
+    rainCtx.fillStyle = Math.random() > .9 ? "#aaffaa" : "#33ff66";
+    rainCtx.globalAlpha = .22 + Math.random() * .24;
+    rainCtx.fillText(drop.glyph, drop.x, drop.y);
   }
 
-  els.scene.innerHTML = chunks.join("");
-  els.frontScan.textContent = "FRONT SCAN: " + (TILE[scan.tile] ? TILE[scan.tile].scan : "UNKNOWN");
+  rainCtx.globalAlpha = 1;
+}
+
+function drawDungeon(scan) {
+  const ctx = dungeonCtx;
+  const angle = DIR_ANGLES[game.dir];
+  const px = game.x + .5;
+  const py = game.y + .5;
+
+  const sky = ctx.createLinearGradient(0, 0, 0, VIEW_H / 2);
+  sky.addColorStop(0, "#000300");
+  sky.addColorStop(1, "#001a09");
+  ctx.fillStyle = sky;
+  ctx.fillRect(0, 0, VIEW_W, VIEW_H / 2);
+
+  const floor = ctx.createLinearGradient(0, VIEW_H / 2, 0, VIEW_H);
+  floor.addColorStop(0, "#001200");
+  floor.addColorStop(1, "#000000");
+  ctx.fillStyle = floor;
+  ctx.fillRect(0, VIEW_H / 2, VIEW_W, VIEW_H / 2);
+
+  drawFloorGrid(ctx);
+
+  for (let x = 0; x < VIEW_W; x += 2) {
+    const rayAngle = angle - FOV / 2 + (x / VIEW_W) * FOV;
+    const hit = castRay(px, py, rayAngle);
+    const corrected = Math.max(.001, hit.dist * Math.cos(rayAngle - angle));
+    const wallH = Math.min(VIEW_H * 1.8, VIEW_H / corrected * .82);
+    const y = (VIEW_H - wallH) / 2;
+    const shade = Math.max(.16, 1 - corrected / 8);
+    const sideDim = hit.side ? .74 : 1;
+    const alpha = shade * sideDim;
+
+    ctx.fillStyle = `rgba(35, 255, 95, ${0.08 + alpha * .62})`;
+    ctx.fillRect(x, y, 2, wallH);
+
+    if (x % 10 === 0) {
+      ctx.fillStyle = `rgba(180, 255, 190, ${alpha * .14})`;
+      ctx.fillRect(x, y, 1, wallH);
+    }
+  }
+
+  drawDistanceFrames(ctx);
+  drawBillboard(ctx, scan);
+  drawCrosshair(ctx);
+}
+
+function drawFloorGrid(ctx) {
+  ctx.strokeStyle = "rgba(51,255,102,.16)";
+  ctx.lineWidth = 1;
+  for (let y = VIEW_H * .55; y < VIEW_H; y += 22) {
+    const spread = (y - VIEW_H * .5) / (VIEW_H * .5);
+    ctx.beginPath();
+    ctx.moveTo(VIEW_W * (.5 - spread * .56), y);
+    ctx.lineTo(VIEW_W * (.5 + spread * .56), y);
+    ctx.stroke();
+  }
+  for (let i = -5; i <= 5; i++) {
+    ctx.beginPath();
+    ctx.moveTo(VIEW_W / 2, VIEW_H * .52);
+    ctx.lineTo(VIEW_W / 2 + i * 78, VIEW_H);
+    ctx.stroke();
+  }
+}
+
+function drawDistanceFrames(ctx) {
+  ctx.strokeStyle = "rgba(170,255,190,.18)";
+  ctx.lineWidth = 1;
+  [[.14, .18], [.24, .28], [.36, .38]].forEach(([xPad, yPad]) => {
+    ctx.strokeRect(VIEW_W * xPad, VIEW_H * yPad, VIEW_W * (1 - xPad * 2), VIEW_H * (1 - yPad * 2));
+  });
+}
+
+function castRay(px, py, angle) {
+  const dx = Math.cos(angle);
+  const dy = Math.sin(angle);
+  let mapX = Math.floor(px);
+  let mapY = Math.floor(py);
+  const deltaX = Math.abs(1 / (dx || .0001));
+  const deltaY = Math.abs(1 / (dy || .0001));
+  let stepX, stepY, sideDistX, sideDistY;
+
+  if (dx < 0) {
+    stepX = -1;
+    sideDistX = (px - mapX) * deltaX;
+  } else {
+    stepX = 1;
+    sideDistX = (mapX + 1 - px) * deltaX;
+  }
+
+  if (dy < 0) {
+    stepY = -1;
+    sideDistY = (py - mapY) * deltaY;
+  } else {
+    stepY = 1;
+    sideDistY = (mapY + 1 - py) * deltaY;
+  }
+
+  let side = 0;
+  let dist = 12;
+  for (let i = 0; i < 32; i++) {
+    if (sideDistX < sideDistY) {
+      sideDistX += deltaX;
+      mapX += stepX;
+      side = 0;
+    } else {
+      sideDistY += deltaY;
+      mapY += stepY;
+      side = 1;
+    }
+
+    if (tileAt(mapX, mapY) === "#") {
+      dist = side === 0 ? sideDistX - deltaX : sideDistY - deltaY;
+      break;
+    }
+  }
+
+  return { dist, side };
+}
+
+function drawBillboard(ctx, scan) {
+  if (scan.tile === "." || scan.tile === "#") return;
+
+  const palette = {
+    T: ["#66ddff", "CORRUPTED BOT HUSK", "0101"],
+    R: ["#aaffaa", "BROKEN RELAY PANEL", "RLY"],
+    H: ["#ffcc33", "STATIC FIELD", "!!!"],
+    D: ["#ffcc33", "ROGUE DAEMON TRACE", "DWN"],
+    G: ["#ffffff", "ROOT ACCESS TERMINAL", "ROOT"],
+    X: [game.exitUnlocked ? "#aaffaa" : "#ff7777", game.exitUnlocked ? "EXIT UPLINK" : "FIREWALL DOOR", game.exitUnlocked ? "UP" : "LOCK"]
+  }[scan.tile] || ["#aaffaa", "UNKNOWN SYSTEM", "???"];
+
+  const dist = Math.max(1, scan.distance);
+  const w = VIEW_W / (dist * 1.65);
+  const h = VIEW_H / (dist * 1.8);
+  const x = VIEW_W / 2 - w / 2;
+  const y = VIEW_H * .48 - h / 2;
+
+  ctx.save();
+  ctx.shadowColor = palette[0];
+  ctx.shadowBlur = 18;
+  ctx.strokeStyle = palette[0];
+  ctx.fillStyle = "rgba(0, 10, 0, .78)";
+  ctx.lineWidth = 2;
+  ctx.fillRect(x, y, w, h);
+  ctx.strokeRect(x, y, w, h);
+  ctx.shadowBlur = 0;
+  ctx.fillStyle = palette[0];
+  ctx.font = Math.max(12, 20 / dist) + "px Consolas, monospace";
+  ctx.textAlign = "center";
+  ctx.fillText(palette[2], VIEW_W / 2, y + h * .45);
+  ctx.font = Math.max(8, 11 / dist) + "px Consolas, monospace";
+  ctx.fillText(palette[1], VIEW_W / 2, y + h + 18 / dist);
+  ctx.restore();
+}
+
+function drawCrosshair(ctx) {
+  const cx = VIEW_W / 2;
+  const cy = VIEW_H / 2;
+  ctx.strokeStyle = "rgba(180,255,200,.58)";
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(cx - 9, cy);
+  ctx.lineTo(cx - 3, cy);
+  ctx.moveTo(cx + 3, cy);
+  ctx.lineTo(cx + 9, cy);
+  ctx.moveTo(cx, cy - 9);
+  ctx.lineTo(cx, cy - 3);
+  ctx.moveTo(cx, cy + 3);
+  ctx.lineTo(cx, cy + 9);
+  ctx.stroke();
 }
 
 function firstVisible() {
