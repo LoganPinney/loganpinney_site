@@ -2,6 +2,7 @@
 
 import { FormEvent, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useSiteEffects } from '@/components/SiteEffectsProvider';
 import {
   findLabGameByCommand,
   findLabGameByRoute,
@@ -65,6 +66,7 @@ function getLabListLines(games: LabGame[]) {
 
 export default function Terminal() {
   const router = useRouter();
+  const { activeEffect, stopEffect, triggerEffect } = useSiteEffects();
 
   const [publicFiles, setPublicFiles] = useState<PublicTerminalFile[]>([]);
   const [manifestLoaded, setManifestLoaded] = useState(false);
@@ -332,6 +334,24 @@ if (command.startsWith('open ')) {
     }
 
     switch (command) {
+      case 'matrix':
+        triggerEffect('matrix', { durationMs: 8000 });
+        addLines([
+          { type: 'system', text: 'visual layer breach detected.' },
+          { type: 'system', text: 'matrix rain active // auto-reset in 8s' },
+        ]);
+        break;
+
+      case 'matrix off':
+      case 'exit matrix':
+        if (activeEffect === 'matrix') {
+          stopEffect('matrix');
+          addLines([{ type: 'system', text: 'matrix rain terminated.' }]);
+        } else {
+          addLines([{ type: 'output', text: 'matrix layer inactive.' }]);
+        }
+        break;
+
       case 'h':
   addLines([
     { type: 'output', text: 'additional commands:' },

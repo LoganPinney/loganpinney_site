@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { Inter, JetBrains_Mono } from 'next/font/google'
 import CornerLogo from '@/components/CornerLogo'
 import Footer from '@/components/Footer'
+import SiteEffectsProvider from '@/components/SiteEffectsProvider'
 import ThemeProvider from '@/components/ThemeProvider'
 import { siteConfig } from '@/config/site.config'
 
@@ -73,9 +74,11 @@ export default function RootLayout({
         <ThemeProvider />
       </head>
       <body className="font-sans antialiased min-h-screen flex flex-col">
-        <CornerLogo />
-        <main className="flex-1">{children}</main>
-        <Footer />
+        <SiteEffectsProvider>
+          <CornerLogo />
+          <main className="flex-1">{children}</main>
+          <Footer />
+        </SiteEffectsProvider>
       </body>
     </html>
   )

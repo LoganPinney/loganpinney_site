@@ -114,6 +114,59 @@ html[data-scanlines="true"] body::before {
   box-shadow: 0 0 14px color-mix(in srgb, var(--accent) 8%, transparent);
 }
 
+.matrix-rain-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  pointer-events: none;
+  opacity: 0.72;
+  mix-blend-mode: screen;
+}
+
+.site-glitch-pulse {
+  animation: site-glitch-pulse 180ms steps(2, end) 5;
+}
+
+.site-glitch-pulse::before,
+.site-glitch-pulse::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 119;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  opacity: 0.18;
+}
+
+.site-glitch-pulse::before {
+  background: rgba(255, 0, 80, 0.18);
+  transform: translateX(-2px);
+}
+
+.site-glitch-pulse::after {
+  background: rgba(0, 210, 255, 0.16);
+  transform: translateX(2px);
+}
+
+@keyframes site-glitch-pulse {
+  0%, 100% {
+    filter: none;
+    transform: translate(0);
+  }
+  25% {
+    filter: contrast(1.12) saturate(1.18) hue-rotate(2deg);
+    transform: translate(1px, 0);
+  }
+  50% {
+    filter: contrast(1.08) saturate(1.14) hue-rotate(-2deg);
+    transform: translate(-1px, 0);
+  }
+  75% {
+    filter: contrast(1.14) saturate(1.2);
+    transform: translate(0, 1px);
+  }
+}
+
 /* Accent tag */
 .tag-accent {
   color: var(--accent);
@@ -174,6 +227,19 @@ html[data-scanlines="true"] body::before {
 }
  
 @media (prefers-reduced-motion: reduce) {
+  .matrix-rain-overlay {
+    display: none;
+  }
+
+  .site-glitch-pulse {
+    animation: none;
+  }
+
+  .site-glitch-pulse::before,
+  .site-glitch-pulse::after {
+    display: none;
+  }
+
   .portrait-radar-sweep,
   .portrait-flicker,
   .portrait-dot {
