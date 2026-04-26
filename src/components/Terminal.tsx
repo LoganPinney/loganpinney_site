@@ -383,14 +383,14 @@ if (command.startsWith('open ')) {
   addLines([
     { type: 'output', text: 'additional commands:' },
     { type: 'output', text: '\u00A0' },
+     { type: 'output', text: '-  riddle' },
     { type: 'output', text: '-  whoami' },
     { type: 'output', text: '-  focus' },
     { type: 'output', text: '-  status' },
     { type: 'output', text: '-  who broke it' },
     { type: 'output', text: '-  scan' },
+    { type: 'output', text: '-  sudo fix' },
     { type: 'output', text: '\u00A0' },
-    { type: 'output', text: '-  ls' },
-    { type: 'output', text: '-  ls -a' },
     { type: 'output', text: '-  ls /lab' },
     { type: 'output', text: '-  ls /lab/simulations' },
     { type: 'output', text: '-  cat <file>' },
@@ -400,8 +400,8 @@ if (command.startsWith('open ')) {
     { type: 'output', text: '-  run matrix-escape' },
     { type: 'output', text: '-  run terminal-maintenance' },
     { type: 'output', text: '-  maint --sector /machine-layer' },
-    { type: 'output', text: '-  riddle' },
-    { type: 'output', text: '-  sudo fix' },
+   
+    
     
     
     { type: 'output', text: '-  cl' },
@@ -416,12 +416,13 @@ if (command.startsWith('open ')) {
     { type: 'output', text: 'work       — selected systems work' },
     { type: 'output', text: 'case       — operational automation case study' },
     { type: 'output', text: 'contact    — email and links' },
-    { type: 'output', text: 'clear      — reset terminal' },
+    { type: 'output', text: 'ls         — .txt archive' },
+    { type: 'output', text: 'ls -a      — .hidden archive' },
+    
     { type: 'output', text: '\u00A0' },
     { type: 'output', text: 'lab        — restricted experiments' },
-    { type: 'output', text: 'ls -a      — hidden terminal archive' },
-    { type: 'output', text: 'run matrix-escape — first-person maze' },
-    { type: 'output', text: 'run terminal-maintenance — machine layer cleanup' },
+    { type: 'output', text: 'clear      — reset terminal' },
+     { type: 'output', text: '\u00A0' },
   ]);
   break;
 
