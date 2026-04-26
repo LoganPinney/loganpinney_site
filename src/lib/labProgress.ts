@@ -2,6 +2,7 @@ export const labProgressGameIds = [
   'beanwars',
   'trace-route',
   'stock-wars',
+  'terminal-maintenance',
   'ops-governor',
   'legacy-system',
 ] as const;
@@ -24,6 +25,8 @@ const gameIdAliases: Record<string, LabProgressGameId> = {
   'trace-route': 'trace-route',
   'stock-wars': 'stock-wars',
   stockwars: 'stock-wars',
+  'terminal-maintenance': 'terminal-maintenance',
+  terminalmaintenance: 'terminal-maintenance',
   'ops-governor': 'ops-governor',
   'legacy-system': 'legacy-system',
 };

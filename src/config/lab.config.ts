@@ -8,6 +8,7 @@ export type LabGame = {
   description: string;
   status: LabGameStatus;
   unlockCommand: string;
+  commands?: string[];
   tags: string[];
 };
 
@@ -51,6 +52,18 @@ export const labGames: LabGame[] = [
     status: 'live',
     unlockCommand: 'play stock-wars',
     tags: ['simulation', 'markets', 'systems', 'arcade'],
+  },
+  {
+    id: 'terminal-maintenance',
+    title: 'Terminal Maintenance',
+    slug: 'terminal-maintenance',
+    route: '/lab/terminal-maintenance',
+    description:
+      'A retrofuture maintenance crawl through corrupted automation residue.',
+    status: 'live',
+    unlockCommand: 'run terminal-maintenance',
+    commands: ['maint --sector /machine-layer', 'run maintenance'],
+    tags: ['simulation', 'operations', 'systems', 'game'],
   },
   {
     id: 'ops-governor',
@@ -99,6 +112,9 @@ export function findLabGameByCommand(command: string) {
   return labGames.find(
     (game) =>
       normalizeLabCommand(game.unlockCommand) === normalizedCommand ||
+      game.commands?.some(
+        (alias) => normalizeLabCommand(alias) === normalizedCommand
+      ) ||
       normalizeLabCommand(game.id) === normalizedCommand ||
       normalizeLabCommand(game.slug) === normalizedCommand ||
       compactLabCommand(game.id) === compactCommand ||

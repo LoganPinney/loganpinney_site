@@ -483,6 +483,7 @@ function freshGame() {
     total,
     exitUnlocked: false,
     rootSigned: false,
+    completionSent: false,
     showMap: true,
     jammed: false,
     log: [
@@ -688,6 +689,7 @@ function interact() {
   } else if (target.tile === "X") {
     if (game.exitUnlocked) {
       game.mode = "win";
+      sendCompletion();
       addLog("good", "Extraction confirmed. Maintenance report sealed.");
     } else {
       addLog("warn", "Exit uplink locked behind cleanup clearance.");
@@ -711,6 +713,21 @@ function interact() {
 
 function interactable(tile) {
   return tile === "T" || tile === "R" || tile === "G" || tile === "X" || tile === "H" || tile === "D";
+}
+
+function sendCompletion() {
+  if (game.completionSent) return;
+  game.completionSent = true;
+
+  if (window.parent && window.parent !== window) {
+    window.parent.postMessage({
+      type: "terminal-maintenance:complete",
+      integrity: game.integrity,
+      cycles: game.cycles,
+      cleaned: game.cleaned,
+      total: game.total
+    }, window.location.origin);
+  }
 }
 
 function render() {
