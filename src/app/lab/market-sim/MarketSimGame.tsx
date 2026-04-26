@@ -31,7 +31,7 @@ const tickers: Ticker[] = [
   { symbol: 'PIPE', name: 'Pipeware Systems', basePrice: 53 },
 ];
 
-const marketDays: MarketDay[] = [
+const headlinePool: MarketDay[] = [
   {
     headlines: [
       'BEAN announces a spreadsheet with two tabs and immediate institutional awe.',
@@ -93,12 +93,89 @@ const marketDays: MarketDay[] = [
   },
   {
     headlines: [
-      'Final bell approaches. Analysts agree the chart was technically a shape.',
+      'Late session chop. Analysts agree the chart was technically a shape.',
       'BEAN closes strong after investors remember lunch exists.',
     ],
     moves: { BEAN: 7, GOBL: -4, RUG: 2, PIPE: 3, VOID: -2, RCKT: -3 },
   },
+  {
+    headlines: [
+      'Anonymous whale exits BEAN with no comment, only a brisket recipe.',
+    ],
+    moves: { BEAN: -10, GOBL: 2 },
+  },
+  {
+    headlines: [
+      'VOID releases an empty press release; analysts call it "tighter than expected."',
+    ],
+    moves: { VOID: 11, RUG: -3 },
+  },
+  {
+    headlines: [
+      'RUG patriarch returns from a yacht and immediately denounces yachts.',
+      'GOBL pivots to "experiences."',
+    ],
+    moves: { RUG: 6, GOBL: -7 },
+  },
+  {
+    headlines: [
+      'PIPE acquired by larger pipe; analysts unsure who is who now.',
+    ],
+    moves: { PIPE: 14, RCKT: -3 },
+  },
+  {
+    headlines: [
+      'BEAN unveils a subscription that costs less but does less.',
+      'RCKT engineer leaks roadmap by hitting reply-all.',
+    ],
+    moves: { BEAN: 4, RCKT: -8 },
+  },
+  {
+    headlines: [
+      'Federal Reserve introduces "vibes-based easing." Nobody asks questions.',
+    ],
+    moves: { GOBL: 7, VOID: 5, RCKT: 4, BEAN: 2 },
+  },
+  {
+    headlines: [
+      'Coffee influencer endorses BEAN; cult forms in three cities by lunch.',
+    ],
+    moves: { BEAN: 12, GOBL: -2 },
+  },
+  {
+    headlines: [
+      'Goblin Union reaches deal nobody can read but everybody approves.',
+      'PIPE hosts industry summit with somehow negative attendance.',
+    ],
+    moves: { GOBL: 9, PIPE: -4 },
+  },
+  {
+    headlines: [
+      'RCKT pivots from rockets to "trajectories."',
+      'RUG boutique opens inside a parking garage. Sales triple.',
+    ],
+    moves: { RCKT: -11, RUG: 8 },
+  },
+  {
+    headlines: [
+      'Quiet day. Charts described as "doing a little dance" by one analyst.',
+    ],
+    moves: { BEAN: 1, GOBL: -1, RUG: 1, VOID: -1, RCKT: 1, PIPE: -1 },
+  },
 ];
+
+function shuffle<T>(arr: readonly T[]): T[] {
+  const out = arr.slice();
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
+}
+
+function makeRunDays() {
+  return shuffle(headlinePool).slice(0, maxTradingDays);
+}
 
 const initialCash = 10000;
 const maxTradingDays = 10;
@@ -125,8 +202,9 @@ function applyMoves(
   return tickers.reduce(
     (nextPrices, ticker) => {
       const move = moves[ticker.symbol] ?? 0;
-      const drift = ticker.symbol.charCodeAt(0) % 3 - 1;
-      const nextPrice = prices[ticker.symbol] * (1 + (move + drift) / 100);
+      // ±2.5% random noise so even repeated headlines never play identically
+      const noise = (Math.random() - 0.5) * 5;
+      const nextPrice = prices[ticker.symbol] * (1 + (move + noise) / 100);
 
       nextPrices[ticker.symbol] = Math.max(2, Math.round(nextPrice));
       return nextPrices;
@@ -135,13 +213,20 @@ function applyMoves(
   );
 }
 
-function getInitialPrices() {
+function getInitialPrices(firstMoves: MarketDay['moves']) {
+  // ±3% drift on opening tape so the starting board varies between runs
   const basePrices = tickers.reduce(
-    (prices, ticker) => ({ ...prices, [ticker.symbol]: ticker.basePrice }),
+    (prices, ticker) => ({
+      ...prices,
+      [ticker.symbol]: Math.max(
+        2,
+        ticker.basePrice * (1 + (Math.random() - 0.5) * 0.06)
+      ),
+    }),
     {} as Record<TickerSymbol, number>
   );
 
-  return applyMoves(basePrices, marketDays[0].moves);
+  return applyMoves(basePrices, firstMoves);
 }
 
 function getRank(value: number) {
@@ -156,7 +241,10 @@ export default function MarketSimGame() {
   const [unlocked, setUnlocked] = useState<boolean | null>(null);
   const [cash, setCash] = useState(initialCash);
   const [dayIndex, setDayIndex] = useState(0);
-  const [prices, setPrices] = useState(getInitialPrices);
+  const [days, setDays] = useState<MarketDay[]>(makeRunDays);
+  const [prices, setPrices] = useState<Record<TickerSymbol, number>>(() =>
+    getInitialPrices(days[0].moves)
+  );
   const [holdings, setHoldings] = useState(getInitialHoldings);
   const [selectedSymbol, setSelectedSymbol] = useState<TickerSymbol>('BEAN');
   const [quantity, setQuantity] = useState(1);
@@ -174,7 +262,7 @@ export default function MarketSimGame() {
     setUnlocked(isUnlocked('market-sim'));
   }, []);
 
-  const currentDay = marketDays[dayIndex];
+  const currentDay = days[dayIndex];
   const portfolioValue = useMemo(
     () =>
       cash +
@@ -258,14 +346,16 @@ export default function MarketSimGame() {
 
     const nextIndex = dayIndex + 1;
     setDayIndex(nextIndex);
-    setPrices((current) => applyMoves(current, marketDays[nextIndex].moves));
+    setPrices((current) => applyMoves(current, days[nextIndex].moves));
     addLog(`advanced to day ${nextIndex + 1} // tape re-priced`);
   }
 
   function reset() {
+    const freshDays = makeRunDays();
+    setDays(freshDays);
     setCash(initialCash);
     setDayIndex(0);
-    setPrices(getInitialPrices());
+    setPrices(getInitialPrices(freshDays[0].moves));
     setHoldings(getInitialHoldings());
     setSelectedSymbol('BEAN');
     setQuantity(1);
@@ -273,7 +363,7 @@ export default function MarketSimGame() {
     setTradeLog([
       {
         id: 0,
-        text: 'market reset // the past has been marked-to-imagination',
+        text: 'market reset // tape reshuffled, the past has been marked-to-imagination',
         tone: 'neutral',
       },
     ]);

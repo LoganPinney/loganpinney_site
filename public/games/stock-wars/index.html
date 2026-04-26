@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>STOCK WARS // 10-DAY DESK</title>
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0; padding: 0;
+    background: #000; color: #33ff33;
+    font-family: "Consolas", "Courier New", "Lucida Console", monospace;
+    overscroll-behavior: none;
+  }
+  body { padding: 16px; }
+  #crt {
+    width: 100%; max-width: 920px;
+    margin: 0 auto;
+    background: #001500;
+    border: 2px solid #33ff33;
+    border-radius: 14px;
+    box-shadow: 0 0 50px #33ff3555, inset 0 0 80px #00aa0022;
+    padding: 16px 22px 14px;
+    position: relative;
+    text-shadow: 0 0 3px #33ff3399;
+    display: flex; flex-direction: column;
+    overflow: hidden;
+  }
+  #crt::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(0,0,0,0) 0px,
+      rgba(0,0,0,0) 2px,
+      rgba(0,0,0,0.18) 3px
+    );
+    z-index: 5;
+  }
+  .topbar {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 8px;
+  }
+  .backlink, .topbar .tag {
+    color: #1a8a1a; font-size: 11px; letter-spacing: 0.18em;
+    text-decoration: none;
+    transition: color .15s;
+  }
+  .backlink:hover { color: #aaffaa; }
+
+  .hud {
+    display: flex; justify-content: space-between; gap: 12px;
+    font-size: 13px; padding: 6px 2px 8px;
+    border-top: 1px dashed #33ff3555;
+    border-bottom: 1px dashed #33ff3555;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+  .hud .label { color: #1a8a1a; margin-right: 4px; }
+  .hud .val   { color: #aaffaa; }
+  .hud .up    { color: #88ff88; }
+  .hud .down  { color: #ff7777; }
+
+  h2.section {
+    margin: 6px 0 6px; font-size: 12px; font-weight: normal;
+    letter-spacing: 0.2em; color: #1a8a1a;
+  }
+
+  .tickers {
+    width: 100%; border-collapse: collapse;
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+  .tickers th, .tickers td {
+    text-align: right; padding: 6px 8px;
+    border-bottom: 1px dashed #1a8a1a44;
+    white-space: nowrap;
+  }
+  .tickers th {
+    color: #1a8a1a; font-weight: normal;
+    letter-spacing: 0.15em; font-size: 11px;
+    text-align: right;
+  }
+  .tickers th.l, .tickers td.l { text-align: left; }
+  .tickers tr.row { cursor: pointer; transition: background .15s; }
+  .tickers tr.row:hover { background: #033b03; }
+  .tickers tr.row.sel  { background: #055505; outline: 1px solid #33ff33; }
+  .ticker-name { color: #aaffaa; font-weight: bold; }
+  .ticker-desc { color: #1a8a1a; font-size: 11px; }
+  .price { color: #aaffaa; }
+  .chg.up   { color: #88ff88; }
+  .chg.down { color: #ff7777; }
+  .chg.flat { color: #1a8a1a; }
+  .spark { color: #1a8a1a; font-size: 11px; letter-spacing: 0; }
+
+  .headlines {
+    background: rgba(0,0,0,0.35);
+    border: 1px solid #1a8a1a;
+    border-radius: 6px;
+    padding: 8px 10px;
+    margin-bottom: 10px;
+    font-size: 13px;
+    line-height: 1.5;
+    min-height: 64px;
+  }
+  .headlines .hl { color: #aaffaa; }
+  .headlines .meta { color: #1a8a1a; font-size: 11px; letter-spacing: 0.1em; }
+
+  .actions {
+    display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+    margin-bottom: 8px;
+  }
+  .actions .qty {
+    background: #001a00; color: #aaffaa;
+    border: 1px solid #33ff33; border-radius: 6px;
+    padding: 8px 10px; font-family: inherit; font-size: 14px;
+    width: 90px; outline: none; text-shadow: inherit;
+  }
+  .actions .qty::-webkit-outer-spin-button,
+  .actions .qty::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .actions .qty[type=number] { -moz-appearance: textfield; }
+
+  button.term {
+    background: #002a00; color: #aaffaa;
+    border: 1px solid #33ff33; border-radius: 6px;
+    font-family: inherit; font-size: 13px; font-weight: bold;
+    padding: 9px 14px;
+    cursor: pointer; text-shadow: inherit;
+    touch-action: manipulation; user-select: none;
+    letter-spacing: 0.05em;
+  }
+  button.term:hover  { background: #044404; }
+  button.term:active { background: #066b06; }
+  button.term:disabled { opacity: 0.35; cursor: not-allowed; }
+  button.term.alt    { border-color: #66ddff; color: #aaeeff; }
+  button.term.danger { border-color: #ff5555; color: #ff9999; }
+  button.term.next   { border-color: #ffcc33; color: #ffe888; }
+
+  .log {
+    background: rgba(0,0,0,0.35);
+    border: 1px dashed #1a8a1a;
+    border-radius: 6px;
+    padding: 6px 10px;
+    margin-top: 4px;
+    font-size: 12px;
+    max-height: 110px; overflow-y: auto;
+    color: #88dd88;
+  }
+  .log::-webkit-scrollbar { width: 6px; }
+  .log::-webkit-scrollbar-thumb { background: #33ff3344; border-radius: 3px; }
+  .log .good { color: #aaffaa; }
+  .log .bad  { color: #ff9999; }
+  .log .info { color: #66ddff; }
+  .log .dim  { color: #1a8a1a; }
+
+  .footer {
+    margin-top: 8px; text-align: center;
+    color: #1a8a1a; font-size: 11px; letter-spacing: 0.15em;
+  }
+
+  /* End screen overlay */
+  #endScreen {
+    position: absolute; inset: 0; z-index: 10;
+    background: rgba(0, 17, 0, 0.94);
+    display: none; align-items: center; justify-content: center;
+    padding: 20px; text-align: center;
+  }
+  #endScreen.show { display: flex; }
+  #endScreen .box {
+    border: 1px solid #33ff33;
+    border-radius: 10px;
+    padding: 20px 24px;
+    max-width: 460px; width: 100%;
+    background: #001500;
+    box-shadow: 0 0 30px #33ff3555;
+  }
+  #endScreen h1 {
+    margin: 0 0 8px; font-size: 22px;
+    color: #ffcc33; letter-spacing: 0.18em;
+  }
+  #endScreen .rank {
+    font-size: 18px; color: #aaffaa;
+    margin: 6px 0 14px; letter-spacing: 0.12em;
+  }
+  #endScreen .stat {
+    display: flex; justify-content: space-between;
+    border-bottom: 1px dashed #1a8a1a44;
+    padding: 4px 0; font-size: 13px;
+  }
+  #endScreen .stat .l { color: #1a8a1a; letter-spacing: 0.1em; }
+  #endScreen .stat .v { color: #aaffaa; }
+  #endScreen .net    { color: #ffcc33 !important; font-weight: bold; }
+
+  @media (max-width: 600px) {
+    body { padding: 8px; }
+    #crt { padding: 12px 14px 10px; border-radius: 10px; }
+    .hud { font-size: 12px; gap: 8px; }
+    .tickers { font-size: 12px; }
+    .tickers th, .tickers td { padding: 5px 4px; }
+    .ticker-desc, .spark { display: none; }
+    .headlines { font-size: 12px; }
+    button.term { padding: 10px 12px; font-size: 12px; }
+    .actions .qty { width: 70px; }
+  }
+</style>
+</head>
+<body>
+<div id="crt">
+  <div class="topbar">
+    <a href="/" target="_top" class="backlink">← BACK TO MAIN SYSTEM</a>
+    <span class="tag">// STOCK.WARS</span>
+  </div>
+
+  <div class="hud">
+    <span><span class="label">DAY</span><span id="hDay" class="val">1/10</span></span>
+    <span><span class="label">CASH</span><span id="hCash" class="val">$10,000</span></span>
+    <span><span class="label">EQUITY</span><span id="hEquity" class="val">$0</span></span>
+    <span><span class="label">NET</span><span id="hNet" class="val">$10,000</span></span>
+    <span><span class="label">P/L</span><span id="hPL" class="val">$0</span></span>
+  </div>
+
+  <h2 class="section">// TICKERS — tap a row to select</h2>
+  <table class="tickers">
+    <thead>
+      <tr>
+        <th class="l">SYM</th>
+        <th>PRICE</th>
+        <th>Δ DAY</th>
+        <th>SHARES</th>
+        <th>VALUE</th>
+        <th class="l">7D</th>
+      </tr>
+    </thead>
+    <tbody id="tBody"></tbody>
+  </table>
+
+  <h2 class="section">// HEADLINES</h2>
+  <div class="headlines" id="headlines">
+    <span class="meta">DAY 1 — </span><span class="hl">Markets open. The bell rings. Nobody knows why anymore.</span>
+  </div>
+
+  <div class="actions">
+    <input id="qty" class="qty" type="number" min="1" step="1" placeholder="qty" inputmode="numeric">
+    <button id="bMax"  class="term">MAX</button>
+    <button id="bBuy"  class="term alt">BUY</button>
+    <button id="bSell" class="term alt">SELL</button>
+    <button id="bNext" class="term next">NEXT DAY ▶</button>
+    <button id="bReset" class="term danger">RESET</button>
+  </div>
+
+  <div class="log" id="log"></div>
+
+  <div class="footer">// STOCK WARS · FAKE TICKERS · NOT FINANCIAL ADVICE · CLIENT-SIDE</div>
+
+  <div id="endScreen"><div class="box">
+    <h1 id="endTitle">STOCK WARS // CLOSING BELL</h1>
+    <div id="endRank" class="rank">RANK</div>
+    <div class="stat"><span class="l">CASH</span><span id="endCash" class="v">$0</span></div>
+    <div class="stat"><span class="l">EQUITY</span><span id="endEq" class="v">$0</span></div>
+    <div class="stat"><span class="l">NET WORTH</span><span id="endNet" class="v net">$0</span></div>
+    <div class="stat"><span class="l">RETURN</span><span id="endReturn" class="v">0%</span></div>
+    <div class="stat"><span class="l">BEST TRADE</span><span id="endBest" class="v">—</span></div>
+    <div style="margin-top:14px; display:flex; gap:8px; justify-content:center; flex-wrap:wrap;">
+      <button class="term next" id="bAgain">PLAY AGAIN</button>
+      <a href="/" target="_top" class="term" style="text-decoration:none; display:inline-block;">EXIT</a>
+    </div>
+  </div></div>
+</div>
+
+<script>
+"use strict";
+
+// ---------- DATA ----------
+const TICKERS = [
+  { sym: "BEAN", name: "Sustainable Coffee Holdings", base: 42.00,  vol: 0.04 },
+  { sym: "GOBL", name: "Goblincore Industries Inc.",  base: 13.40,  vol: 0.08 },
+  { sym: "RUG",  name: "Persian Rug Conglomerate",    base: 156.00, vol: 0.03 },
+  { sym: "VOID", name: "VOID Industries — does nothing", base: 0.69, vol: 0.15 },
+  { sym: "RCKT", name: "Rocket Boots LLC",            base: 88.50,  vol: 0.06 },
+  { sym: "PIPE", name: "Industrial Pipe Solutions",   base: 27.20,  vol: 0.05 }
+];
+
+// each headline: text, plus impact map { SYM: multiplier }
+const HEADLINES = [
+  { t: "Coffee influencer endorses BEAN. Cult forms in Brooklyn.", x: { BEAN: 1.20 } },
+  { t: "Bean blight hits a fictional Andean valley. Supply panic.", x: { BEAN: 0.80 } },
+  { t: "Climate report: best coffee harvest in decades. Oversupply fears.", x: { BEAN: 0.88 } },
+  { t: "Anonymous whale dumps a yacht-sized bag of BEAN.", x: { BEAN: 0.82 } },
+  { t: "BEAN earnings beat expectations. Caffeinated rally.", x: { BEAN: 1.14 } },
+
+  { t: "Goblin Union strikes. GOBL operations halted in 4 caves.", x: { GOBL: 0.74 } },
+  { t: "Federal Reserve hints at goblin-friendly policy.", x: { GOBL: 1.16 } },
+  { t: "GOBL CEO photographed eating rocks. Shares inexplicably surge.", x: { GOBL: 1.22 } },
+  { t: "Goblins discover the gold standard. Inflation fears spread.", x: { GOBL: 1.25 } },
+  { t: "GOBL accused of hoarding shiny things. Regulators uninterested.", x: { GOBL: 0.92 } },
+
+  { t: "Persian aesthetic trends on TikTok. RUG soars.", x: { RUG: 1.18 } },
+  { t: "RUG faces antique fraud probe. Investors fidget.", x: { RUG: 0.84 } },
+  { t: "RUG patriarch resurfaces after 12 years of silence.", x: { RUG: 0.90 } },
+  { t: "RUG wins 'most carpet-like product' award for 7th year.", x: { RUG: 1.09 } },
+  { t: "Allergists denounce all rugs. RUG dips on dust concerns.", x: { RUG: 0.93 } },
+
+  { t: "VOID announces new product: nothing. Investors confused.", x: { VOID: 1.08 } },
+  { t: "VOID stock added to the S&P Nothing Index.", x: { VOID: 1.45 } },
+  { t: "VOID auditor quits. Cited reason: 'there is nothing there.'", x: { VOID: 0.50 } },
+  { t: "Hedge fund manager calls VOID 'spiritually undervalued.'", x: { VOID: 1.32 } },
+  { t: "VOID rebrands to nothing. Logo file is empty.", x: { VOID: 1.18 } },
+
+  { t: "RCKT recall: boots not actually rocket-powered, just loud.", x: { RCKT: 0.72 } },
+  { t: "Influencer wears RCKT on a yacht. Premium spikes.", x: { RCKT: 1.20 } },
+  { t: "RCKT signs deal with Mars colony (unverified, possibly fake).", x: { RCKT: 1.36 } },
+  { t: "Backyard incident sours public on rocket footwear.", x: { RCKT: 0.82 } },
+  { t: "RCKT unveils non-explosive variant. Wall Street yawns.", x: { RCKT: 0.95 } },
+
+  { t: "Pipe shortage hits artisanal scenes nationwide. PIPE rallies.", x: { PIPE: 1.16 } },
+  { t: "PIPE acquires a smaller pipe. Synergies unclear.", x: { PIPE: 1.07 } },
+  { t: "PIPE caught laundering literal pipes. Felony charges loom.", x: { PIPE: 0.70 } },
+  { t: "Pipe goes viral on TikTok ('big pipe energy' takes off).", x: { PIPE: 1.22 } },
+  { t: "Pipeline approved by an anonymous hippie commune.", x: { PIPE: 1.12 } },
+
+  // multi-ticker shocks
+  { t: "Market-wide bull frenzy. Speculative goblin assets lift.", x: { BEAN: 1.08, GOBL: 1.10, RUG: 1.05, VOID: 1.12, RCKT: 1.07, PIPE: 1.06 } },
+  { t: "Crash rumor spreads on a forum. Everything wobbles down.", x: { BEAN: 0.92, GOBL: 0.88, RUG: 0.94, VOID: 0.85, RCKT: 0.90, PIPE: 0.92 } },
+  { t: "Quiet trading day. Markets nap. A breeze passes.", x: {} },
+  { t: "Reserve hikes the rate by 'a vibe.' Risk assets cool.", x: { GOBL: 0.92, VOID: 0.85, RCKT: 0.93, PIPE: 0.97 } },
+  { t: "Surprise stimulus: every retail trader gets a coupon.", x: { BEAN: 1.06, GOBL: 1.08, RUG: 1.04, VOID: 1.20, RCKT: 1.08, PIPE: 1.05 } },
+  { t: "Famous short-seller publishes 80-page deck. Tickers rattle.", x: { GOBL: 0.88, VOID: 0.78, RCKT: 0.92 } },
+  { t: "Two CEOs feud on a podcast. Their stocks both sink.", x: { GOBL: 0.90, RCKT: 0.91 } },
+  { t: "Influencer index pumps speculative names.", x: { GOBL: 1.14, VOID: 1.20, RCKT: 1.10 } }
+];
+
+// ---------- STATE ----------
+let G;
+const HIGH_KEY = "ms_high_v1";
+let highScore = parseInt(localStorage.getItem(HIGH_KEY) || "10000", 10);
+
+function newGame() {
+  G = {
+    day: 1,
+    maxDay: 10,
+    cash: 10000,
+    portfolio: {},   // sym -> { shares, costBasis }
+    prices: {},      // sym -> price
+    history: {},     // sym -> [prices...]
+    selected: TICKERS[0].sym,
+    headlines: [],
+    log: [],
+    over: false,
+    bestTrade: { sym: "—", profit: 0 }
+  };
+  for (const t of TICKERS) {
+    G.portfolio[t.sym] = { shares: 0, costBasis: 0 };
+    G.prices[t.sym] = round2(t.base * (0.95 + Math.random() * 0.10));
+    G.history[t.sym] = [G.prices[t.sym]];
+  }
+  G.headlines = [{ t: "Markets open. The bell rings. Nobody knows why anymore.", x: {} }];
+  pushLog("Day 1 — opening bell. You have $10,000 cash.", "info");
+  hideEnd();
+  render();
+}
+
+// ---------- HELPERS ----------
+function round2(n) { return Math.round(n * 100) / 100; }
+function fmt(n)    { const neg = n < 0; n = Math.abs(n); return (neg?"-":"") + "$" + n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+function fmtInt(n) { return "$" + Math.round(n).toLocaleString("en-US"); }
+function pct(n)    { const s = (n>=0?"+":"") + (n*100).toFixed(1) + "%"; return s; }
+function equity()  { let v = 0; for (const s in G.portfolio) v += G.portfolio[s].shares * G.prices[s]; return v; }
+function netWorth() { return G.cash + equity(); }
+
+function getTicker(sym) { return TICKERS.find(t => t.sym === sym); }
+function pickHeadlines() {
+  // 1 or 2 headlines per day
+  const n = Math.random() < 0.55 ? 1 : 2;
+  const pool = HEADLINES.slice();
+  const out = [];
+  for (let i = 0; i < n && pool.length; i++) {
+    const idx = Math.floor(Math.random() * pool.length);
+    out.push(pool.splice(idx, 1)[0]);
+  }
+  return out;
+}
+
+function pushLog(text, cls) {
+  G.log.push({ text, cls: cls || "" });
+  if (G.log.length > 60) G.log.shift();
+}
+
+function spark(arr) {
+  if (!arr || arr.length < 2) return "·";
+  const last = arr.slice(-7);
+  const min = Math.min(...last), max = Math.max(...last);
+  const range = max - min || 1;
+  const blocks = "▁▂▃▄▅▆▇█";
+  return last.map(v => blocks[Math.min(7, Math.floor((v - min) / range * 7))]).join("");
+}
+
+// ---------- DAY ADVANCE ----------
+function nextDay() {
+  if (G.over) return;
+  // 1) random walk
+  for (const t of TICKERS) {
+    const drift = (Math.random() - 0.5) * 2 * t.vol;
+    G.prices[t.sym] = round2(Math.max(0.01, G.prices[t.sym] * (1 + drift)));
+  }
+  // 2) headlines
+  G.headlines = pickHeadlines();
+  for (const h of G.headlines) {
+    for (const sym in h.x) {
+      G.prices[sym] = round2(Math.max(0.01, G.prices[sym] * h.x[sym]));
+    }
+  }
+  // 3) record history
+  for (const t of TICKERS) G.history[t.sym].push(G.prices[t.sym]);
+
+  G.day++;
+  pushLog(`--- Day ${G.day} ---`, "dim");
+  for (const h of G.headlines) pushLog(h.t, "info");
+
+  if (G.day > G.maxDay) {
+    G.over = true;
+    pushLog(`Closing bell. Final net worth ${fmtInt(netWorth())}.`, "good");
+    showEnd();
+  }
+  render();
+}
+
+// ---------- TRADES ----------
+function buy() {
+  if (G.over) return;
+  const sym = G.selected;
+  const qty = parseInt(document.getElementById("qty").value, 10);
+  if (!qty || qty <= 0) { flashLog("Enter a quantity first.", "bad"); return; }
+  const price = G.prices[sym];
+  const cost = price * qty;
+  if (cost > G.cash) { flashLog(`Need ${fmt(cost)}, only have ${fmt(G.cash)}.`, "bad"); return; }
+  G.cash -= cost;
+  const p = G.portfolio[sym];
+  p.costBasis = (p.costBasis * p.shares + cost) / (p.shares + qty);
+  p.shares += qty;
+  pushLog(`BUY  ${qty.toLocaleString()} ${sym} @ ${fmt(price)}  (-${fmt(cost)})`, "good");
+  document.getElementById("qty").value = "";
+  render();
+}
+
+function sell() {
+  if (G.over) return;
+  const sym = G.selected;
+  const qty = parseInt(document.getElementById("qty").value, 10);
+  if (!qty || qty <= 0) { flashLog("Enter a quantity first.", "bad"); return; }
+  const p = G.portfolio[sym];
+  if (qty > p.shares) { flashLog(`You only own ${p.shares} ${sym}.`, "bad"); return; }
+  const price = G.prices[sym];
+  const proceeds = price * qty;
+  const profit = (price - p.costBasis) * qty;
+  G.cash += proceeds;
+  p.shares -= qty;
+  if (p.shares === 0) p.costBasis = 0;
+  if (profit > G.bestTrade.profit) G.bestTrade = { sym, profit };
+  pushLog(`SELL ${qty.toLocaleString()} ${sym} @ ${fmt(price)}  (+${fmt(proceeds)}, ${profit>=0?"+":""}${fmt(profit)} P/L)`, profit >= 0 ? "good" : "bad");
+  document.getElementById("qty").value = "";
+  render();
+}
+
+function setMax() {
+  const sym = G.selected;
+  const p = G.portfolio[sym];
+  // if you hold any, max = shares (sell). otherwise max = floor(cash / price) (buy).
+  let max;
+  if (p.shares > 0) max = p.shares;
+  else max = Math.floor(G.cash / G.prices[sym]);
+  document.getElementById("qty").value = Math.max(0, max);
+}
+
+function flashLog(text, cls) { pushLog(text, cls); render(); }
+
+// ---------- END SCREEN ----------
+function rank(net) {
+  if (net < 5000)    return "MARGIN CALL VICTIM";
+  if (net < 10000)   return "UNDERPERFORMED CASH";
+  if (net < 12500)   return "BREAK-EVEN BARNACLE";
+  if (net < 18000)   return "RETAIL TRADER";
+  if (net < 30000)   return "SAVVY SPECULATOR";
+  if (net < 60000)   return "HEDGE FUND ASPIRANT";
+  if (net < 100000)  return "MARKET WIZARD";
+  return "GOBLIN OVERLORD";
+}
+
+function showEnd() {
+  const net = netWorth();
+  const eq  = equity();
+  const ret = (net - 10000) / 10000;
+  document.getElementById("endRank").textContent  = rank(net);
+  document.getElementById("endCash").textContent  = fmt(G.cash);
+  document.getElementById("endEq").textContent    = fmt(eq);
+  document.getElementById("endNet").textContent   = fmtInt(net);
+  document.getElementById("endReturn").textContent = pct(ret);
+  document.getElementById("endBest").textContent  = G.bestTrade.profit > 0 ? `${G.bestTrade.sym} +${fmt(G.bestTrade.profit)}` : "—";
+  if (net > highScore) {
+    highScore = Math.round(net);
+    localStorage.setItem(HIGH_KEY, String(highScore));
+  }
+  document.getElementById("endScreen").classList.add("show");
+}
+function hideEnd() { document.getElementById("endScreen").classList.remove("show"); }
+
+// ---------- RENDER ----------
+function render() {
+  // HUD
+  const eq  = equity();
+  const net = netWorth();
+  const pl  = net - 10000;
+  document.getElementById("hDay").textContent    = `${Math.min(G.day, G.maxDay)}/${G.maxDay}`;
+  document.getElementById("hCash").textContent   = fmt(G.cash);
+  document.getElementById("hEquity").textContent = fmt(eq);
+  document.getElementById("hNet").textContent    = fmt(net);
+  const plEl = document.getElementById("hPL");
+  plEl.textContent = (pl>=0?"+":"") + fmt(pl);
+  plEl.className = "val " + (pl > 0 ? "up" : pl < 0 ? "down" : "");
+
+  // Tickers
+  const body = document.getElementById("tBody");
+  body.innerHTML = "";
+  for (const t of TICKERS) {
+    const hist = G.history[t.sym];
+    const prev = hist.length >= 2 ? hist[hist.length - 2] : G.prices[t.sym];
+    const cur  = G.prices[t.sym];
+    const dPct = (cur - prev) / prev;
+    const cls  = dPct > 0.001 ? "up" : dPct < -0.001 ? "down" : "flat";
+    const arrow = dPct > 0.001 ? "▲" : dPct < -0.001 ? "▼" : "·";
+    const p = G.portfolio[t.sym];
+    const value = p.shares * cur;
+    const tr = document.createElement("tr");
+    tr.className = "row" + (G.selected === t.sym ? " sel" : "");
+    tr.innerHTML = `
+      <td class="l">
+        <div class="ticker-name">${t.sym}</div>
+        <div class="ticker-desc">${t.name}</div>
+      </td>
+      <td class="price">${fmt(cur)}</td>
+      <td class="chg ${cls}">${arrow} ${pct(dPct)}</td>
+      <td>${p.shares.toLocaleString()}</td>
+      <td>${fmt(value)}</td>
+      <td class="l spark">${spark(hist)}</td>
+    `;
+    tr.addEventListener("click", () => { G.selected = t.sym; render(); });
+    body.appendChild(tr);
+  }
+
+  // Headlines
+  const hl = document.getElementById("headlines");
+  hl.innerHTML = `<span class="meta">DAY ${Math.min(G.day, G.maxDay)} — </span>` +
+    G.headlines.map(h => `<div class="hl">• ${h.t}</div>`).join("");
+
+  // Buttons enabled/disabled
+  document.getElementById("bBuy").disabled  = G.over;
+  document.getElementById("bSell").disabled = G.over;
+  document.getElementById("bNext").disabled = G.over;
+  document.getElementById("bNext").textContent = G.day >= G.maxDay ? "CLOSING BELL" : "NEXT DAY ▶";
+
+  // Log
+  const logEl = document.getElementById("log");
+  logEl.innerHTML = G.log.slice(-40).map(e => `<div class="${e.cls}">${e.text}</div>`).join("");
+  logEl.scrollTop = logEl.scrollHeight;
+}
+
+// ---------- INPUT ----------
+document.getElementById("bBuy").addEventListener("click", buy);
+document.getElementById("bSell").addEventListener("click", sell);
+document.getElementById("bMax").addEventListener("click", setMax);
+document.getElementById("bNext").addEventListener("click", nextDay);
+document.getElementById("bReset").addEventListener("click", () => {
+  if (confirm("Reset the simulation? Progress is lost.")) newGame();
+});
+document.getElementById("bAgain").addEventListener("click", newGame);
+document.getElementById("qty").addEventListener("keydown", (e) => {
+  if (e.key === "Enter") buy();
+});
+
+// ---------- BOOT ----------
+newGame();
+</script>
+</body>
+</html>
