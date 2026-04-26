@@ -10,6 +10,7 @@ import {
   labGames,
   type LabGame,
 } from '@/config/lab.config';
+import { hasCompleted, isUnlocked } from '@/lib/labProgress';
 
 type TerminalLine = {
   type: 'command' | 'output' | 'error' | 'system';
@@ -50,6 +51,10 @@ const RIDDLES: Riddle[] = [
 ];
 
 function getUnavailableMessage(game: LabGame) {
+  if (isUnlocked(game.id)) {
+    return `${game.slug} unlocked // access layer pending`;
+  }
+
   if (game.status === 'locked') {
     return `${game.slug} locked // access key not issued`;
   }
@@ -59,8 +64,17 @@ function getUnavailableMessage(game: LabGame) {
 
 function getLabListLines(games: LabGame[]) {
   return games.map((game) => ({
-    type: game.status === 'live' ? 'system' : 'output',
-    text: `${game.slug} [${game.status}] // ${game.unlockCommand}`,
+    type:
+      game.status === 'live' || isUnlocked(game.id) || hasCompleted(game.id)
+        ? 'system'
+        : 'output',
+    text: `${game.slug} [${
+      hasCompleted(game.id)
+        ? 'complete'
+        : game.status !== 'live' && isUnlocked(game.id)
+          ? 'unlocked'
+          : game.status
+    }] // ${game.unlockCommand}`,
   })) satisfies TerminalLine[];
 }
 

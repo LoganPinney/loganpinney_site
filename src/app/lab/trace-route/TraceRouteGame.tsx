@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import { markCompleted, unlockGame } from '@/lib/labProgress';
 
 type NodeKind = 'start' | 'control' | 'risk' | 'service' | 'target';
 
@@ -236,7 +237,14 @@ export default function TraceRouteGame() {
     setPath(nextPath);
 
     if (nodeId === scenario.targetId) {
-      setResult(scorePath(scenario, nextPath));
+      const nextResult = scorePath(scenario, nextPath);
+
+      if (nextResult.state === 'success') {
+        markCompleted('trace-route');
+        unlockGame('market-sim');
+      }
+
+      setResult(nextResult);
       return;
     }
 
