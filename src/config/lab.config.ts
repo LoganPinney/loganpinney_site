@@ -48,7 +48,7 @@ export const labGames: LabGame[] = [
     slug: 'market-sim',
     route: '/lab/market-sim',
     description: 'A compact systems model for pricing, demand, and drift.',
-    status: 'planned',
+    status: 'live',
     unlockCommand: 'run market_sim',
     tags: ['simulation', 'markets', 'systems'],
   },

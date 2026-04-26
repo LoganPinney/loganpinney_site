@@ -7,7 +7,8 @@ const config: IConfig = {
   priority: 0.7,                     // default priority
   exclude: [
     '/admin/*',                      // any paths you don’t want indexed
-    '/drafts/*'
+    '/drafts/*',
+    '/lab/*'
   ],
   robotsTxtOptions: {
     additionalSitemaps: [
