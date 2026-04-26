@@ -38,7 +38,7 @@ export const labGames: LabGame[] = [
     slug: 'trace-route',
     route: '/lab/trace-route',
     description: 'A routing and dependency-mapping simulation.',
-    status: 'planned',
+    status: 'live',
     unlockCommand: 'run trace',
     tags: ['simulation', 'systems', 'network'],
   },
