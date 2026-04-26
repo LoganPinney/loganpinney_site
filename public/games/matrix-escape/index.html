@@ -316,6 +316,22 @@ function bfsAll(map, sx, sy) {
   return { dist, farthest: far };
 }
 
+function startFacingAngle(map, sx, sy) {
+  const options = [
+    { dx: 1, dy: 0, angle: 0 },
+    { dx: 0, dy: 1, angle: Math.PI / 2 },
+    { dx: -1, dy: 0, angle: Math.PI },
+    { dx: 0, dy: -1, angle: -Math.PI / 2 },
+  ];
+
+  const open = options.filter(({ dx, dy }) => {
+    const tile = map[sy + dy] && map[sy + dy][sx + dx];
+    return tile && tile !== '#';
+  });
+
+  return (open[0] || options[0]).angle;
+}
+
 // ============================================================
 // GAME STATE
 // ============================================================
@@ -388,7 +404,7 @@ class Game {
     // player
     this.px = this.startX;
     this.py = this.startY;
-    this.pa = 0;
+    this.pa = startFacingAngle(this.map, 1, 1);
     this.bobT = 0;
     this.bobAmt = 0;
 

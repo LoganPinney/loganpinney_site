@@ -502,6 +502,16 @@ const DIRS = [
   { name: "WEST", short: "W", dx: -1, dy: 0 }
 ];
 
+function startFacingDirection(map, sx, sy) {
+  const openIndex = DIRS.findIndex((dir) => {
+    const row = map[sy + dir.dy];
+    const tile = row && row[sx + dir.dx];
+    return tile && tile !== "#";
+  });
+
+  return openIndex === -1 ? 1 : openIndex;
+}
+
 const TILE = {
   "#": { scan: "WALL / SEALED SERVICE DUCT" },
   ".": { scan: "CLEAR FLOOR" },
@@ -568,7 +578,7 @@ function freshGame() {
     map,
     x: startX,
     y: startY,
-    dir: 1,
+    dir: startFacingDirection(map, startX, startY),
     integrity: 100,
     signal: 50,
     cycles: 90,
