@@ -12,6 +12,9 @@ These instructions apply to the entire repository unless overridden by a nested 
 - Emphasize schemas, handoffs, automation pipelines, validation, permissions, orchestration, auditability, and failure handling.
 - Present Riot Games work carefully as current contract work or case-study style operational automation work. Do not overstate tenure or disclose confidential details.
 
+-All playable games live in /public/games/[game-name]/index.html
+-All lab pages in /src/app/lab/[game-name]/page.tsx are wrappers, lore pages, or access gates.
+
 ## Local Workflow
 - Install dependencies with `npm install`.
 - Run the development server with `npm run dev`.

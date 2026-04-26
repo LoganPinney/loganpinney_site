@@ -666,6 +666,15 @@ function showEnd() {
     localStorage.setItem(HIGH_KEY, String(highScore));
   }
   document.getElementById("endScreen").classList.add("show");
+  // Notify the parent (lab progression) that this run finished. Same-origin only.
+  try {
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage(
+        { type: "stock-wars:complete", net: Math.round(net), rank: rank(net) },
+        window.location.origin
+      );
+    }
+  } catch (_) { /* sandbox or cross-origin; ignore */ }
 }
 function hideEnd() { document.getElementById("endScreen").classList.remove("show"); }
 

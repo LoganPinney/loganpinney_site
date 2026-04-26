@@ -1,7 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
-import { isUnlocked, markCompleted } from '@/lib/labProgress';
+import { useMemo, useState } from 'react';
 
 type TickerSymbol = 'BEAN' | 'GOBL' | 'RUG' | 'VOID' | 'RCKT' | 'PIPE';
 
@@ -238,7 +237,6 @@ function getRank(value: number) {
 }
 
 export default function MarketSimGame() {
-  const [unlocked, setUnlocked] = useState<boolean | null>(null);
   const [cash, setCash] = useState(initialCash);
   const [dayIndex, setDayIndex] = useState(0);
   const [days, setDays] = useState<MarketDay[]>(makeRunDays);
@@ -257,10 +255,6 @@ export default function MarketSimGame() {
       tone: 'neutral',
     },
   ]);
-
-  useEffect(() => {
-    setUnlocked(isUnlocked('market-sim'));
-  }, []);
 
   const currentDay = days[dayIndex];
   const portfolioValue = useMemo(
@@ -332,7 +326,6 @@ export default function MarketSimGame() {
 
   function finishGame() {
     setCompleted(true);
-    markCompleted('market-sim');
     addLog('closing bell // lab.market-sim.complete = true', 'good');
   }
 
@@ -368,30 +361,6 @@ export default function MarketSimGame() {
       },
     ]);
     setLogId(1);
-  }
-
-  if (unlocked === null) {
-    return (
-      <TerminalPanel>
-        <p className="text-emerald-300">checking lab access...</p>
-      </TerminalPanel>
-    );
-  }
-
-  if (!unlocked) {
-    return (
-      <TerminalPanel>
-        <p className="mb-3 text-xs uppercase tracking-[0.28em] text-white/35">
-          market_sim access gate
-        </p>
-        <p className="mb-2 text-lg text-red-300">locked // dependency incomplete</p>
-        <p className="max-w-2xl text-sm leading-6 text-white/60">
-          Trace Route must be completed before this simulation opens. The market
-          refuses to price assets until the routing layer can prove it knows
-          where anything goes.
-        </p>
-      </TerminalPanel>
-    );
   }
 
   return (
@@ -571,14 +540,6 @@ export default function MarketSimGame() {
           ))}
         </div>
       </aside>
-    </section>
-  );
-}
-
-function TerminalPanel({ children }: { children: ReactNode }) {
-  return (
-    <section className="rounded-2xl border border-white/10 bg-black p-5 font-mono shadow-2xl shadow-black/40">
-      {children}
     </section>
   );
 }

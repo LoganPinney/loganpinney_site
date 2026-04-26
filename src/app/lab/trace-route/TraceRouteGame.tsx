@@ -287,7 +287,7 @@ export default function TraceRouteGame() {
 
       if (nextResult.state === 'success') {
         markCompleted('trace-route');
-        unlockGame('market-sim');
+        unlockGame('stock-wars');
       }
 
       setResult(nextResult);

@@ -1,7 +1,7 @@
 export const labProgressGameIds = [
   'beanwars',
   'trace-route',
-  'market-sim',
+  'stock-wars',
   'ops-governor',
   'legacy-system',
 ] as const;
@@ -22,7 +22,8 @@ const gameIdAliases: Record<string, LabProgressGameId> = {
   beanwars: 'beanwars',
   'bean-wars': 'beanwars',
   'trace-route': 'trace-route',
-  'market-sim': 'market-sim',
+  'stock-wars': 'stock-wars',
+  stockwars: 'stock-wars',
   'ops-governor': 'ops-governor',
   'legacy-system': 'legacy-system',
 };
@@ -90,7 +91,7 @@ export function isUnlocked(gameId: string) {
     return true;
   }
 
-  if (normalizedGameId === 'market-sim') {
+  if (normalizedGameId === 'stock-wars') {
     return hasCompleted('trace-route');
   }
 

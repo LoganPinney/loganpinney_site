@@ -2,6 +2,7 @@
 
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import StockWarsClient from './StockWarsClient';
 
 export const metadata: Metadata = {
   title: 'Stock Wars | Logan Pinney Lab',
@@ -40,16 +41,7 @@ export default function StockWarsPage() {
           </p>
         </section>
 
-        <div className="mx-auto max-w-[920px]">
-          <div className="overflow-hidden rounded-xl border border-white/10 bg-black shadow-2xl">
-            <iframe
-              src="/games/stock-wars/"
-              className="block h-[88vh] min-h-[640px] w-full sm:min-h-[720px] lg:h-[860px]"
-              title="Stock Wars"
-              allow="fullscreen"
-            />
-          </div>
-        </div>
+        <StockWarsClient />
       </div>
     </main>
   );
