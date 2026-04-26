@@ -157,6 +157,52 @@
     color: #1a8a1a; font-size: 11px; letter-spacing: 0.15em;
   }
 
+  /* Fake Level II ladder */
+  .l2wrap { margin-bottom: 10px; }
+  .l2meta {
+    display: flex; justify-content: space-between; gap: 10px;
+    font-size: 11px; color: #1a8a1a; padding: 0 2px 4px;
+    letter-spacing: 0.12em; flex-wrap: wrap;
+  }
+  .l2meta .v { color: #aaffaa; letter-spacing: 0; }
+  .l2meta .v.up   { color: #88ff88; }
+  .l2meta .v.down { color: #ff7777; }
+  .l2grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    border: 1px solid #1a8a1a;
+    border-radius: 6px;
+    overflow: hidden;
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    background: rgba(0,0,0,0.30);
+  }
+  .l2col { padding: 4px 8px 6px; }
+  .l2col.bids { border-right: 1px dashed #1a8a1a44; }
+  .l2head {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    color: #1a8a1a; font-size: 10px; letter-spacing: 0.18em;
+    padding: 2px 0 4px; margin-bottom: 4px;
+    border-bottom: 1px dashed #1a8a1a44;
+  }
+  .l2col.bids .l2head { text-align: right; }
+  .l2col.asks .l2head { text-align: left; }
+  .l2row {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    padding: 1px 0;
+    transition: background .25s;
+  }
+  .l2col.bids .l2row { text-align: right; }
+  .l2col.asks .l2row { text-align: left; }
+  .l2row .px { letter-spacing: 0; }
+  .l2row .sz { letter-spacing: 0; }
+  .l2row .mm { color: #1a8a1a; font-size: 10px; letter-spacing: 0.05em; }
+  .l2col.bids .l2row .px { color: #88ff88; }
+  .l2col.bids .l2row .sz { color: #66dd66; }
+  .l2col.asks .l2row .px { color: #ff8888; }
+  .l2col.asks .l2row .sz { color: #dd6666; }
+  .l2row.flash-up   { background: rgba(80, 255, 80, 0.18); }
+  .l2row.flash-down { background: rgba(255, 80, 80, 0.18); }
+
   /* End screen overlay */
   #endScreen {
     position: absolute; inset: 0; z-index: 10;
@@ -200,6 +246,9 @@
     .headlines { font-size: 12px; }
     button.term { padding: 10px 12px; font-size: 12px; }
     .actions .qty { width: 70px; }
+    .l2grid { font-size: 11px; }
+    .l2head, .l2row { grid-template-columns: 1fr 1fr; }
+    .l2head .mm, .l2row .mm { display: none; }
   }
 </style>
 </head>
@@ -236,6 +285,27 @@
   <h2 class="section">// HEADLINES</h2>
   <div class="headlines" id="headlines">
     <span class="meta">DAY 1 — </span><span class="hl">Markets open. The bell rings. Nobody knows why anymore.</span>
+  </div>
+
+  <h2 class="section">// LVL II ORDER BOOK — <span id="l2sym" style="color:#aaffaa">BEAN</span></h2>
+  <div class="l2wrap">
+    <div class="l2meta">
+      <span><span class="label" style="color:#1a8a1a; letter-spacing:0.18em;">LAST </span><span id="l2last" class="v">$0.00</span></span>
+      <span><span class="label" style="color:#1a8a1a; letter-spacing:0.18em;">BID </span><span id="l2bid" class="v up">$0.00</span></span>
+      <span><span class="label" style="color:#1a8a1a; letter-spacing:0.18em;">ASK </span><span id="l2ask" class="v down">$0.00</span></span>
+      <span><span class="label" style="color:#1a8a1a; letter-spacing:0.18em;">SPREAD </span><span id="l2spread" class="v">$0.00</span></span>
+      <span><span class="label" style="color:#1a8a1a; letter-spacing:0.18em;">IMB </span><span id="l2imb" class="v">0%</span></span>
+    </div>
+    <div class="l2grid">
+      <div class="l2col bids">
+        <div class="l2head"><span class="mm">MMID</span><span>SIZE</span><span>BID</span></div>
+        <div id="l2bids"></div>
+      </div>
+      <div class="l2col asks">
+        <div class="l2head"><span>ASK</span><span>SIZE</span><span class="mm">MMID</span></div>
+        <div id="l2asks"></div>
+      </div>
+    </div>
   </div>
 
   <div class="actions">
@@ -393,6 +463,101 @@ function spark(arr) {
   return last.map(v => blocks[Math.min(7, Math.floor((v - min) / range * 7))]).join("");
 }
 
+// ---------- LEVEL II (fake) ----------
+const MMIDS = ["ARCA","EDGX","NSDQ","BATS","GOBN","VOID","CULT","CAVE","NULL","MMRR","BREN","FILT","HYPE","KAOS"];
+const L2_LEVELS = 7;
+
+function pickMM() { return MMIDS[Math.floor(Math.random() * MMIDS.length)]; }
+function rndSize() {
+  // log-distributed sizes: lots of 100-500, occasional 5k+ "iceberg"
+  const r = Math.random();
+  if (r < 0.05) return Math.round(5000 + Math.random() * 8000);
+  if (r < 0.30) return Math.round(1000 + Math.random() * 4000);
+  return Math.round(100 + Math.random() * 900);
+}
+function fmtSize(n) {
+  if (n >= 10000) return (n / 1000).toFixed(1).replace(/\.0$/, "") + "k";
+  if (n >= 1000)  return (n / 1000).toFixed(2).replace(/0$/, "").replace(/\.$/, "") + "k";
+  return String(n);
+}
+function makeBook(sym, price) {
+  // tighter spreads on cheaper / more-liquid stocks; wider on volatile names
+  const vol = (getTicker(sym) && getTicker(sym).vol) || 0.05;
+  const tickPct = 0.0015 + vol * 0.04;        // gap between levels
+  const spreadPct = 0.0015 + vol * 0.015;     // half-spread above/below mid
+  const bids = [], asks = [];
+  let bidPx = price * (1 - spreadPct);
+  let askPx = price * (1 + spreadPct);
+  for (let i = 0; i < L2_LEVELS; i++) {
+    bids.push({ px: round2(bidPx), sz: rndSize(), mm: pickMM() });
+    asks.push({ px: round2(askPx), sz: rndSize(), mm: pickMM() });
+    bidPx *= (1 - tickPct * (0.6 + Math.random() * 0.8));
+    askPx *= (1 + tickPct * (0.6 + Math.random() * 0.8));
+  }
+  return { sym, last: round2(price), bids, asks };
+}
+function tickBook(book) {
+  if (!book) return;
+  for (const side of ["bids", "asks"]) {
+    for (const lvl of book[side]) {
+      // ~45% of levels resize each tick
+      if (Math.random() < 0.45) {
+        const delta = Math.round(lvl.sz * (Math.random() * 0.3 - 0.15));
+        lvl.sz = Math.max(50, lvl.sz + delta);
+        lvl._flash = delta > 0 ? "up" : delta < 0 ? "down" : "";
+      } else {
+        lvl._flash = "";
+      }
+      // occasionally a new MM takes the level
+      if (Math.random() < 0.05) lvl.mm = pickMM();
+    }
+  }
+  // tiny last-trade jitter (cosmetic, doesn't affect actual price)
+  const jitter = (Math.random() - 0.5) * 0.001;
+  book.last = round2(Math.max(0.01, book.last * (1 + jitter)));
+}
+function ensureBook() {
+  if (!G || !G.prices) return;
+  if (!G.book || G.book.sym !== G.selected) {
+    G.book = makeBook(G.selected, G.prices[G.selected]);
+  }
+}
+function renderBook() {
+  ensureBook();
+  if (!G.book) return;
+  const sym = G.book.sym;
+  const bestBid = G.book.bids[0].px;
+  const bestAsk = G.book.asks[0].px;
+  const spread  = round2(bestAsk - bestBid);
+  let bidVol = 0, askVol = 0;
+  for (const l of G.book.bids) bidVol += l.sz;
+  for (const l of G.book.asks) askVol += l.sz;
+  const total = bidVol + askVol || 1;
+  const imb   = (bidVol - askVol) / total;
+  document.getElementById("l2sym").textContent    = sym;
+  document.getElementById("l2last").textContent   = fmt(G.book.last);
+  document.getElementById("l2bid").textContent    = fmt(bestBid);
+  document.getElementById("l2ask").textContent    = fmt(bestAsk);
+  document.getElementById("l2spread").textContent = fmt(spread);
+  const imbEl = document.getElementById("l2imb");
+  imbEl.textContent = (imb >= 0 ? "+" : "") + (imb * 100).toFixed(0) + "%";
+  imbEl.className   = "v " + (imb > 0.05 ? "up" : imb < -0.05 ? "down" : "");
+  // bids: MM | SIZE | PRICE  (right-aligned, highest bid at top)
+  let bh = "";
+  for (const lvl of G.book.bids) {
+    const fl = lvl._flash ? "flash-" + lvl._flash : "";
+    bh += `<div class="l2row ${fl}"><span class="mm">${lvl.mm}</span><span class="sz">${fmtSize(lvl.sz)}</span><span class="px">${fmt(lvl.px)}</span></div>`;
+  }
+  document.getElementById("l2bids").innerHTML = bh;
+  // asks: PRICE | SIZE | MM (left-aligned, lowest ask at top)
+  let ah = "";
+  for (const lvl of G.book.asks) {
+    const fl = lvl._flash ? "flash-" + lvl._flash : "";
+    ah += `<div class="l2row ${fl}"><span class="px">${fmt(lvl.px)}</span><span class="sz">${fmtSize(lvl.sz)}</span><span class="mm">${lvl.mm}</span></div>`;
+  }
+  document.getElementById("l2asks").innerHTML = ah;
+}
+
 // ---------- DAY ADVANCE ----------
 function nextDay() {
   if (G.over) return;
@@ -420,6 +585,8 @@ function nextDay() {
     pushLog(`Closing bell. Final net worth ${fmtInt(netWorth())}.`, "good");
     showEnd();
   }
+  // regenerate the book around the new price
+  G.book = makeBook(G.selected, G.prices[G.selected]);
   render();
 }
 
@@ -560,6 +727,9 @@ function render() {
   const logEl = document.getElementById("log");
   logEl.innerHTML = G.log.slice(-40).map(e => `<div class="${e.cls}">${e.text}</div>`).join("");
   logEl.scrollTop = logEl.scrollHeight;
+
+  // Level II ladder (regenerates if selected ticker changed)
+  renderBook();
 }
 
 // ---------- INPUT ----------
@@ -577,6 +747,16 @@ document.getElementById("qty").addEventListener("keydown", (e) => {
 
 // ---------- BOOT ----------
 newGame();
+
+// Live tape: tick the order book ~1.4×/sec so the ladder feels alive.
+// Pauses when the tab is hidden to avoid wasting cycles.
+setInterval(() => {
+  if (document.hidden) return;
+  if (!G || G.over) return;
+  ensureBook();
+  tickBook(G.book);
+  renderBook();
+}, 700);
 </script>
 </body>
 </html>
