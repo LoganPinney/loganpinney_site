@@ -69,7 +69,7 @@ export const labGames: LabGame[] = [
     id: 'matrix-escape',
     title: 'Matrix Escape',
     slug: 'matrix-escape',
-    route: '/games/matrix-escape/',
+    route: '/lab/matrix-escape',
     description: 'A first-person green-screen maze buried under the lab floor.',
     status: 'live',
     unlockCommand: 'run matrix-escape',

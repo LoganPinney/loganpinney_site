@@ -447,9 +447,11 @@
       </div>
       <div class="controls" aria-label="Touch controls">
         <button data-act="turnLeft">Turn Left</button>
-        <button data-act="forward" class="wide">Forward</button>
+        <button data-act="forward">Forward</button>
         <button data-act="turnRight">Turn Right</button>
+        <button data-act="strafeLeft">Strafe Left</button>
         <button data-act="back">Back</button>
+        <button data-act="strafeRight">Strafe Right</button>
         <button data-act="interact" class="amber">Interact</button>
         <button data-act="map">Map</button>
       </div>
@@ -693,6 +695,8 @@ function act(command) {
     spendCycle();
   } else if (command === "forward" || command === "back") {
     move(command === "forward" ? 1 : -1);
+  } else if (command === "strafeLeft" || command === "strafeRight") {
+    strafe(command === "strafeLeft" ? -1 : 1);
   } else if (command === "interact") {
     interact();
   }
@@ -718,6 +722,38 @@ function move(step) {
   game.y = ny;
   markVisited();
   addLog("dim", "Moved to sector " + game.x + "," + game.y + ".");
+  if (tile === "H") {
+    game.integrity -= 12;
+    game.signal = Math.max(0, game.signal - 5);
+    addLog("bad", "Static bloom damaged operator integrity.");
+  } else if (tile === "D") {
+    daemonEvent();
+    setTile(game.x, game.y, ".");
+  } else if (tile === "X" && game.exitUnlocked) {
+    addLog("good", "Exit uplink underfoot. Trigger extraction.");
+  }
+  spendCycle();
+}
+
+function strafe(step) {
+  const sideDir = DIRS[(game.dir + (step < 0 ? 3 : 1)) % 4];
+  const nx = game.x + sideDir.dx;
+  const ny = game.y + sideDir.dy;
+  const tile = tileAt(nx, ny);
+  if (tile === "#") {
+    addLog("warn", "Service wall blocks lateral movement.");
+    spendCycle();
+    return;
+  }
+  if (tile === "X" && !game.exitUnlocked) {
+    addLog("warn", "Firewall door rejects insufficient cleanup clearance.");
+    spendCycle();
+    return;
+  }
+  game.x = nx;
+  game.y = ny;
+  markVisited();
+  addLog("dim", "Strafed to sector " + game.x + "," + game.y + ".");
   if (tile === "H") {
     game.integrity -= 12;
     game.signal = Math.max(0, game.signal - 5);
@@ -1108,7 +1144,7 @@ function renderSystems() {
     '<div><span class="label">CLEARANCE</span><span class="info">' + clearance + '</span></div>' +
     '<div><span class="label">ROOT</span><span class="val">' + root + '</span></div>' +
     '<div><span class="label">COMMAND</span><span class="warn">run terminal-maintenance</span></div>' +
-    '<div class="dim">W/S move. A/D turn. Space/Enter interact. R restart.</div>';
+    '<div class="dim">W/S move. A/D strafe. Q/E or arrows turn. Space interact.</div>';
 }
 
 function renderLog() {
@@ -1127,6 +1163,7 @@ function renderOverlay() {
       '<p>They optimized nothing.</p>' +
       '<p>They left corrupted nodes, daemon residue, and broken relays.</p>' +
       '<p>Human maintenance has been requested.</p>' +
+      '<p class="dim">W/S move. A/D strafe. Q/E or arrows turn. Space interact.</p>' +
       '<p class="prompt">[ PRESS ENTER TO BOOT ] <span class="blink">_</span></p>' +
       '<button data-act="interact">BOOT INTERFACE</button>';
   } else if (game.mode === "win") {
@@ -1154,8 +1191,10 @@ function keyToCommand(event) {
   const key = event.key.toLowerCase();
   if (key === "w" || event.key === "ArrowUp") return "forward";
   if (key === "s" || event.key === "ArrowDown") return "back";
-  if (key === "a" || event.key === "ArrowLeft") return "turnLeft";
-  if (key === "d" || event.key === "ArrowRight") return "turnRight";
+  if (key === "a") return "strafeLeft";
+  if (key === "d") return "strafeRight";
+  if (key === "q" || event.key === "ArrowLeft") return "turnLeft";
+  if (key === "e" || event.key === "ArrowRight") return "turnRight";
   if (key === " " || event.key === "Enter") return "interact";
   if (key === "m") return "map";
   if (key === "r") return "restart";
