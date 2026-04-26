@@ -8,6 +8,7 @@ const config: IConfig = {
   exclude: [
     '/admin/*',                      // any paths you don’t want indexed
     '/drafts/*',
+    '/lab',
     '/lab/*'
   ],
   robotsTxtOptions: {
