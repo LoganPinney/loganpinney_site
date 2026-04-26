@@ -1,0 +1,23 @@
+PROTOCOL: 404_SHOOTER
+STATUS: LIVE
+ROUTE: /games/error-404/
+COMMAND: run 404
+
+Purpose:
+turn missing routes into target practice.
+
+Operational read:
+broken paths are signals.
+good systems do not pretend errors are empty space.
+they catch, label, and route failure into something useful.
+
+Player read:
+shoot the errors before they become noise.
+
+Terminal aliases:
+run 404
+404-shooter
+error-404
+
+Protocol note:
+A good fallback page is failure handling with a better attitude.

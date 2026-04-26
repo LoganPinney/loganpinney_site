@@ -1,0 +1,23 @@
+PROTOCOL: MATRIX_ESCAPE
+STATUS: LIVE
+ROUTE: /lab/matrix-escape
+COMMAND: run matrix-escape
+
+Purpose:
+escape a green-screen maze buried under the lab floor.
+
+Operational read:
+interfaces can trap people when states are unclear.
+every maze is a workflow with poor affordances.
+
+Player read:
+move, turn, test the walls, find the exit.
+
+Terminal aliases:
+run matrix-escape
+run matrix
+jack in
+matrix
+
+Protocol note:
+If the user cannot find the exit, the system is making a decision for them.

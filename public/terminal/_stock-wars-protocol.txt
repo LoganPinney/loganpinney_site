@@ -1,0 +1,23 @@
+PROTOCOL: STOCK_WARS
+STATUS: LIVE
+ROUTE: /lab/stock-wars
+COMMAND: play stock-wars
+
+Purpose:
+make fast decisions with incomplete signals.
+
+Operational read:
+markets, queues, and staffing systems all punish stale state.
+the question is not whether the data changes.
+the question is whether the system admits it changed.
+
+Player read:
+trade for ten days and try to leave with more than you brought in.
+
+Terminal aliases:
+play stock-wars
+stock-wars
+stockwars
+
+Protocol note:
+Live state without validation is just confidence with a timestamp.

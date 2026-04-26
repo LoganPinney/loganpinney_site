@@ -1,0 +1,25 @@
+DEV_LOG_006
+TITLE: THE LAB IS A SIDE CHANNEL
+STATUS: PUBLIC_BREADCRUMB
+
+The homepage has one job.
+Say the work clearly.
+
+I fix broken operational systems.
+
+The lab has a different job.
+Reward the person who tests the edges.
+
+The right visitor will notice the terminal.
+The right visitor will try help.
+The right visitor will try ls -a.
+The right visitor will read the breadcrumbs.
+
+That visitor is allowed to find the backdoor.
+
+The directive is not real security.
+It is an invitation to look closer.
+
+Do not confuse the two.
+
+END LOG

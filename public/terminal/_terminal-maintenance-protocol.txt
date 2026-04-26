@@ -1,0 +1,28 @@
+PROTOCOL: TERMINAL_MAINTENANCE
+STATUS: LIVE
+ROUTE: /lab/terminal-maintenance
+COMMAND: run terminal-maintenance
+
+Purpose:
+clean corrupted automation residue from the machine layer.
+
+Operational read:
+maintenance is ownership made visible.
+
+old flags
+bad states
+stale assumptions
+silent failures
+
+They all need a sweep.
+
+Player read:
+run the maintenance crawl and clear the system noise.
+
+Terminal aliases:
+run terminal-maintenance
+run maintenance
+maint --sector /machine-layer
+
+Protocol note:
+If nobody owns cleanup, cleanup becomes the next incident.

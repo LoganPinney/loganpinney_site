@@ -1,0 +1,26 @@
+PROTOCOL: OPS_GOVERNOR
+STATUS: PLANNED
+ROUTE: /lab/ops-governor
+COMMAND: open ops-governor
+
+Purpose:
+simulate approvals, owners, permissions, and failure paths.
+
+Operational read:
+governance should not mean delay.
+good governance makes the next action obvious.
+
+who can approve
+who must review
+what evidence is required
+what happens when something fails
+
+Player read:
+balance speed, risk, and accountability.
+
+Terminal aliases:
+open ops-governor
+ops-governor
+
+Protocol note:
+An approval process without ownership is only a waiting room.

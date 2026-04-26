@@ -112,6 +112,11 @@ export default function LabAccessClient({ games }: LabAccessClientProps) {
                 access denied
               </p>
             )}
+
+            <p className="mt-5 font-mono text-xs leading-6 text-[var(--text-faint)]">
+              hint: the terminal archive keeps the directive in plain sight.
+              start with ls -a, then cat .breadcrumbs.txt.
+            </p>
           </form>
         </section>
       ) : (

@@ -1,0 +1,25 @@
+DEV_LOG_004
+TITLE: ACCESS SHOULD LEAVE A TRAIL
+STATUS: PUBLIC_BREADCRUMB
+
+The first lab gate worked.
+It was also too blunt.
+
+A code without a trail is just a locked door.
+A code with a trail becomes part of the system.
+
+So the directive moved into the terminal archive.
+
+Not hidden behind mystery.
+Not printed in a hero section.
+Placed where curious people already look:
+ls -a
+cat .breadcrumbs.txt
+
+Access is not only permission.
+Access is documentation.
+Access is recoverability.
+
+The directive is order66.
+
+END LOG

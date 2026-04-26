@@ -15,33 +15,88 @@
     "hidden": true
   },
   {
+    "name": ".future-self.txt",
+    "path": "/terminal/_future-self.txt",
+    "hidden": true,
+    "route": "/lab/memos/future-self"
+  },
+  {
+    "name": ".dev-log-001.txt",
+    "path": "/terminal/_dev-log-001.txt",
+    "hidden": true,
+    "route": "/lab/memos/dev-log-001"
+  },
+  {
+    "name": ".dev-log-002.txt",
+    "path": "/terminal/_dev-log-002.txt",
+    "hidden": true,
+    "route": "/lab/memos/dev-log-002"
+  },
+  {
+    "name": ".dev-log-003.txt",
+    "path": "/terminal/_dev-log-003.txt",
+    "hidden": true,
+    "route": "/lab/memos/dev-log-003"
+  },
+  {
+    "name": ".dev-log-004.txt",
+    "path": "/terminal/_dev-log-004.txt",
+    "hidden": true
+  },
+  {
+    "name": ".dev-log-005.txt",
+    "path": "/terminal/_dev-log-005.txt",
+    "hidden": true
+  },
+  {
+    "name": ".dev-log-006.txt",
+    "path": "/terminal/_dev-log-006.txt",
+    "hidden": true
+  },
+  {
     "name": ".bean-protocol.txt",
     "path": "/terminal/_bean-protocol.txt",
     "hidden": true,
     "route": "/lab/memos/bean-protocol"
   },
-{
-  "name": ".dev-log-001.txt",
-  "path": "/terminal/_dev-log-001.txt",
-  "hidden": true,
-  "route": "/lab/memos/dev-log-001"
-},
-{
-  "name": ".dev-log-002.txt",
-  "path": "/terminal/_dev-log-002.txt",
-  "hidden": true,
-  "route": "/lab/memos/dev-log-002"
-},
-{
-  "name": ".dev-log-003.txt",
-  "path": "/terminal/_dev-log-003.txt",
-  "hidden": true,
-  "route": "/lab/memos/dev-log-003"
-},
- {
-  "name": ".future-self.txt",
-  "path": "/terminal/_future-self.txt",
-  "hidden": true,
-  "route": "/lab/memos/future-self"
-}  
+  {
+    "name": ".404-protocol.txt",
+    "path": "/terminal/_404-protocol.txt",
+    "hidden": true
+  },
+  {
+    "name": ".trace-route-protocol.txt",
+    "path": "/terminal/_trace-route-protocol.txt",
+    "hidden": true
+  },
+  {
+    "name": ".stock-wars-protocol.txt",
+    "path": "/terminal/_stock-wars-protocol.txt",
+    "hidden": true
+  },
+  {
+    "name": ".terminal-maintenance-protocol.txt",
+    "path": "/terminal/_terminal-maintenance-protocol.txt",
+    "hidden": true
+  },
+  {
+    "name": ".matrix-escape-protocol.txt",
+    "path": "/terminal/_matrix-escape-protocol.txt",
+    "hidden": true
+  },
+  {
+    "name": ".ops-governor-protocol.txt",
+    "path": "/terminal/_ops-governor-protocol.txt",
+    "hidden": true
+  },
+  {
+    "name": ".404-maze-protocol.txt",
+    "path": "/terminal/_404-maze-protocol.txt",
+    "hidden": true
+  },
+  {
+    "name": ".legacy-system-protocol.txt",
+    "path": "/terminal/_legacy-system-protocol.txt",
+    "hidden": true
+  }
 ]

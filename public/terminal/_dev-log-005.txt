@@ -1,0 +1,22 @@
+DEV_LOG_005
+TITLE: EVERY GAME NEEDS A PROTOCOL
+STATUS: PUBLIC_BREADCRUMB
+
+The lab started as loose experiments.
+Loose experiments are fine until they become a system.
+
+Now each entry gets a protocol.
+
+A protocol answers four questions:
+what is it
+where does it live
+how do you launch it
+what operational idea is hiding under the joke
+
+That makes the archive maintainable.
+It also makes the games feel intentional.
+
+Games can be weird.
+The registry cannot be vague.
+
+END LOG

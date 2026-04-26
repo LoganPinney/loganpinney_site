@@ -10,7 +10,7 @@ import {
   labGames,
   type LabGame,
 } from '@/config/lab.config';
-import { hasCompleted, isUnlocked } from '@/lib/labProgress';
+import { hasCompleted, isUnlocked, unlockGame } from '@/lib/labProgress';
 
 type TerminalLine = {
   type: 'command' | 'output' | 'error' | 'system';
@@ -32,6 +32,7 @@ type PublicTerminalFile = {
 };
 
 const initialLines: TerminalLine[] = [];
+const labAdminAccessFlag = 'lab.admin.unlocked';
 
 const RIDDLES: Riddle[] = [
   {
@@ -76,6 +77,18 @@ function getLabListLines(games: LabGame[]) {
           : game.status
     }] // ${game.unlockCommand}`,
   })) satisfies TerminalLine[];
+}
+
+function unlockLabAdminAccess() {
+  try {
+    window.localStorage.setItem(labAdminAccessFlag, 'true');
+  } catch {
+    // Hidden lab state is best-effort and still works for this session.
+  }
+
+  labGames
+    .filter((game) => game.status === 'live')
+    .forEach((game) => unlockGame(game.id));
 }
 
 export default function Terminal() {
@@ -383,6 +396,7 @@ if (command.startsWith('open ')) {
     { type: 'output', text: '-  cat <file>' },
     { type: 'output', text: '-  open <file>' },
     { type: 'output', text: '-  run <protocol>' },
+    { type: 'output', text: '-  cat .breadcrumbs.txt' },
     { type: 'output', text: '-  run matrix-escape' },
     { type: 'output', text: '-  run terminal-maintenance' },
     { type: 'output', text: '-  maint --sector /machine-layer' },
@@ -405,6 +419,7 @@ if (command.startsWith('open ')) {
     { type: 'output', text: 'clear      — reset terminal' },
     { type: 'output', text: '\u00A0' },
     { type: 'output', text: 'lab        — restricted experiments' },
+    { type: 'output', text: 'ls -a      — hidden terminal archive' },
     { type: 'output', text: 'run matrix-escape — first-person maze' },
     { type: 'output', text: 'run terminal-maintenance — machine layer cleanup' },
   ]);
@@ -447,11 +462,21 @@ case 'lab':
   addTemporaryLine(
     {
       type: 'error',
-      text: 'restricted;  type h',
+      text: 'restricted; type h, then read the breadcrumbs',
     },
     900
   );
   break;
+
+      case 'order66':
+        unlockLabAdminAccess();
+        addLines([
+          { type: 'system', text: 'directive accepted.' },
+          { type: 'system', text: 'lab.admin.unlocked = true' },
+          { type: 'system', text: 'access granted.' },
+        ]);
+        launchRoute('/lab');
+        break;
 
 
       case 'ls /lab':

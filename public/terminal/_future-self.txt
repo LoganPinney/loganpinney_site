@@ -3,3 +3,49 @@ FUTURE SELF NOTE
 Ship the useful thing first.
 Hide the weird thing second.
 Do not make the weird thing harder to maintain than the useful thing.
+
+CURRENT STATE
+
+The public site says the real thing:
+broken operational systems get fixed by structure, not by another tool.
+
+The lab now has a front door at /lab.
+It is gated by the directive order66.
+The same directive works inside the terminal.
+
+The terminal archive is the trail:
+ls -a
+cat .breadcrumbs.txt
+cat the dev logs
+cat the protocols
+
+The lab games currently include:
+Bean Wars
+404 Shooter
+Trace Route
+Stock Wars
+Terminal Maintenance
+Matrix Escape
+
+Planned systems:
+Ops Governor
+404 Maze
+Legacy System
+
+UPCOMING CHANGES
+
+Make every lab wrapper feel intentional.
+Give each game a small operational lesson.
+Keep the play path short.
+Keep the archive readable on mobile.
+Do not let hidden content compete with the contract-work message.
+
+When adding a new game:
+add the public game under /public/games/[game-name]/index.html
+add the wrapper under /src/app/lab/[game-name]/page.tsx
+add the protocol memo here
+add the terminal command
+add the breadcrumb
+
+The weird layer should reward curiosity.
+It should not require a maintenance calendar.

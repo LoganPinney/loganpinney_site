@@ -1,5 +1,23 @@
-DEV LOG 003
+DEV_LOG_003
+TITLE: THE MAP IS NOT THE TERRITORY
+STATUS: PUBLIC_BREADCRUMB
 
-The map is not the territory.
+A clean workflow map can lie.
 
-open .dev-log-003.txt
+The real process may still depend on memory, side messages, and one person who knows which column nobody is allowed to touch.
+
+The fix is not to insult the old system.
+The old system probably carried the business longer than it should have.
+
+The fix is to respect what it was trying to do, then replace the fragile parts with structure.
+
+Names.
+States.
+Rules.
+Logs.
+Ownership.
+Failure paths.
+
+A system should not need folklore to explain how it works.
+
+END LOG

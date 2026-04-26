@@ -1,0 +1,25 @@
+PROTOCOL: TRACE_ROUTE
+STATUS: LIVE
+ROUTE: /lab/trace-route
+COMMAND: run trace
+
+Purpose:
+map dependencies before trusting the path.
+
+Operational read:
+handoffs fail when nobody can see the route.
+trace the dependency chain.
+name the owner.
+mark the risk.
+then move.
+
+Player read:
+connect the path without losing the signal.
+
+Terminal aliases:
+run trace
+trace-route
+open trace-route
+
+Protocol note:
+If the route is not visible, the failure will look random.

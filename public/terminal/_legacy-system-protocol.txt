@@ -1,0 +1,29 @@
+PROTOCOL: LEGACY_SYSTEM
+STATUS: PLANNED
+ROUTE: /lab/legacy-system
+COMMAND: run legacy_system
+
+Purpose:
+model brittle workflows and hidden dependencies.
+
+Operational read:
+legacy does not mean bad.
+legacy means the system survived long enough to become load-bearing.
+
+replace carefully.
+observe first.
+name the dependencies.
+preserve what works.
+remove what breaks.
+
+Player read:
+repair the old machine without pretending it never worked.
+
+Terminal aliases:
+run legacy_system
+run legacy-system
+legacy-system
+
+Protocol note:
+Respect the old system.
+Then stop making humans compensate for it.

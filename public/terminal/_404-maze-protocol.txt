@@ -1,0 +1,23 @@
+PROTOCOL: 404_MAZE
+STATUS: PLANNED
+ROUTE: /lab/404-maze
+COMMAND: run 404_maze
+
+Purpose:
+turn broken navigation into a puzzle about false exits.
+
+Operational read:
+dead ends teach users not to trust the map.
+every broken path should either recover, redirect, or explain itself.
+
+Player read:
+find the real exit in a system full of bad links.
+
+Terminal aliases:
+run 404_maze
+run 404-maze
+404-maze
+
+Protocol note:
+Navigation is a promise.
+Broken navigation is broken trust.

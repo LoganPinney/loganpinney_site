@@ -1,5 +1,22 @@
-DEV LOG 002
+DEV_LOG_002
+TITLE: MANUAL WORK HAS A SMELL
+STATUS: PUBLIC_BREADCRUMB
 
 Manual work has a smell.
 
-open .dev-log-002.txt
+It smells like copy paste.
+It smells like three people checking the same sheet.
+It smells like someone saying: just ping me if it breaks.
+
+That sentence is where the structure failed.
+
+Real automation knows what good looks like.
+It knows what bad looks like.
+It knows when to stop.
+It knows who owns the next step.
+It leaves evidence.
+
+If a system fails silently, it is not automated.
+It is just moving faster than accountability.
+
+END LOG

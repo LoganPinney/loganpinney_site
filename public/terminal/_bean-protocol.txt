@@ -1,9 +1,24 @@
-BEAN PROTOCOL // INTERNAL MEMO
+PROTOCOL: BEAN_WARS
+STATUS: LIVE
+ROUTE: /lab/bean-wars
+COMMAND: play bean-wars
 
-Status: unstable
-Access phrase: beans
+Purpose:
+small units create large conflicts when nobody defines the rules.
 
-This system was never supposed to be serious all the way down.
+Operational read:
+tiny exceptions become queue pressure.
+queue pressure becomes coordination drag.
+coordination drag becomes the actual system.
 
-Relevant endpoint:
-/lab/bean-wars
+Player read:
+move fast, make choices, survive the small chaos.
+
+Terminal aliases:
+beans
+beanwars
+play bean-wars
+
+Protocol note:
+If a problem looks too small to model, it is usually already being handled by memory.
+Memory does not scale.

@@ -1,0 +1,13 @@
+STATUS
+
+selective contract availability
+high-impact systems work only
+
+Current focus:
+schemas
+handoffs
+automation pipelines
+validation
+permissions
+orchestration
+auditability

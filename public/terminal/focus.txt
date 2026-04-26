@@ -1,0 +1,10 @@
+FOCUS
+
+workflow automation
+systems integration
+data governance
+reliability
+failure handling
+
+Most operational mess is not a tooling problem.
+It is a structure problem.

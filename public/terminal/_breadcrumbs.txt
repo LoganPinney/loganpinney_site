@@ -4,4 +4,42 @@ help gives you the official map.
 ls gives you the visible map.
 ls -a gives you the real map.
 
+Read the archive in this order:
+.dev-log-001.txt
+.dev-log-002.txt
+.dev-log-003.txt
+.dev-log-004.txt
+.dev-log-005.txt
+.dev-log-006.txt
+
+Then read the protocols:
+.bean-protocol.txt
+.404-protocol.txt
+.trace-route-protocol.txt
+.stock-wars-protocol.txt
+.terminal-maintenance-protocol.txt
+.matrix-escape-protocol.txt
+.ops-governor-protocol.txt
+.404-maze-protocol.txt
+.legacy-system-protocol.txt
+
+Known eggs:
+matrix
+riddle
+beans
+play bean-wars
+run 404
+run trace
+play stock-wars
+run terminal-maintenance
+maint --sector /machine-layer
+run matrix-escape
+open .future-self.txt
+/lab/memos/future-self
+
+The backdoor directive is not a password.
+It is a joke with routing privileges.
+
+If the lab asks for the directive, execute order66.
+
 Not all doors need buttons.

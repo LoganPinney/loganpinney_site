@@ -1,5 +1,21 @@
-DEV LOG 001
+DEV_LOG_001
+TITLE: THE SURFACE IS NOT THE SYSTEM
+STATUS: PUBLIC_BREADCRUMB
 
-The surface is not the system.
+The surface has one job.
+Say what the work is.
 
-open .dev-log-001.txt
+I fix broken operational systems.
+
+The hidden layer has a different job.
+Reward curiosity without confusing the main message.
+
+The terminal is not the product.
+The lab is not the pitch.
+They are proof that the system has edges, memory, and a sense of play.
+
+Read the files.
+Follow the commands.
+Do not mistake the button for the architecture underneath it.
+
+END LOG
