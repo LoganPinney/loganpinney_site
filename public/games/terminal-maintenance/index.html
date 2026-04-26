@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TERMINAL MAINTENANCE</title>
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: #000;
+    color: #33ff33;
+    font-family: "Consolas", "Courier New", "Lucida Console", monospace;
+    overscroll-behavior: none;
+  }
+  body { padding: 16px; }
+  button { font: inherit; }
+  #crt {
+    width: 100%;
+    max-width: 980px;
+    margin: 0 auto;
+    background: #001500;
+    border: 2px solid #33ff33;
+    border-radius: 14px;
+    box-shadow: 0 0 50px #33ff3355, inset 0 0 80px #00aa0022;
+    padding: 16px 22px 14px;
+    position: relative;
+    overflow: hidden;
+    text-shadow: 0 0 3px #33ff3399;
+  }
+  #crt::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 20;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(0,0,0,0) 0px,
+      rgba(0,0,0,0) 2px,
+      rgba(0,0,0,0.18) 3px
+    );
+  }
+  .topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  .backlink, .tag {
+    color: #1a8a1a;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-decoration: none;
+    transition: color .15s, text-shadow .15s;
+  }
+  .backlink:hover { color: #aaffaa; text-shadow: 0 0 8px #33ff33aa; }
+  .hud {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 10px 14px;
+    font-size: 13px;
+    padding: 6px 2px 8px;
+    border-top: 1px dashed #33ff3555;
+    border-bottom: 1px dashed #33ff3555;
+    margin-bottom: 10px;
+  }
+  .label { color: #1a8a1a; margin-right: 4px; }
+  .val { color: #aaffaa; }
+  .warn { color: #ffcc33; }
+  .bad { color: #ff7777; }
+  .info { color: #66ddff; }
+  .dim { color: #1a8a1a; }
+  .good { color: #aaffaa; }
+  .main {
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(250px, .75fr);
+    gap: 10px;
+  }
+  .panel {
+    background: rgba(0,0,0,0.35);
+    border: 1px solid #1a8a1a;
+    border-radius: 6px;
+  }
+  .panel-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px dashed #1a8a1a66;
+    color: #1a8a1a;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    padding: 7px 9px;
+  }
+  #viewport {
+    position: relative;
+    min-height: 410px;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 50% 42%, rgba(51,255,51,.10), transparent 34%),
+      linear-gradient(180deg, #001100 0%, #000700 52%, #000 100%);
+  }
+  #scene {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+  .corridor-frame {
+    position: absolute;
+    border: 1px solid #33ff3380;
+    box-shadow: 0 0 16px #33ff3325, inset 0 0 24px #33ff3315;
+  }
+  .frame-far { inset: 31% 36% 31% 36%; opacity: .55; }
+  .frame-mid { inset: 22% 24% 22% 24%; opacity: .72; }
+  .frame-near { inset: 10% 9% 10% 9%; opacity: .92; }
+  .wall {
+    position: absolute;
+    inset: 9% 8%;
+    display: grid;
+    place-items: center;
+    border: 2px solid #33ff33;
+    background:
+      repeating-linear-gradient(90deg, rgba(51,255,51,.08) 0 10px, rgba(0,0,0,.24) 10px 18px),
+      #001b00;
+    box-shadow: inset 0 0 60px #000, 0 0 22px #33ff3344;
+    color: #aaffaa;
+    text-align: center;
+    font-size: 13px;
+    line-height: 1.55;
+    letter-spacing: 0.08em;
+    padding: 14px;
+    white-space: pre-wrap;
+  }
+  .side-wall {
+    position: absolute;
+    top: 12%;
+    bottom: 12%;
+    width: 18%;
+    border: 1px solid #1a8a1a;
+    background: linear-gradient(90deg, rgba(51,255,51,.16), rgba(0,0,0,.18));
+    opacity: .52;
+  }
+  .side-wall.left { left: 0; transform: skewY(15deg); }
+  .side-wall.right { right: 0; transform: skewY(-15deg); }
+  .floor-grid {
+    position: absolute;
+    left: 7%;
+    right: 7%;
+    bottom: 0;
+    height: 45%;
+    opacity: .42;
+    background:
+      linear-gradient(to right, transparent 0 48%, #33ff334d 49% 51%, transparent 52%),
+      repeating-linear-gradient(to top, #33ff3338 0 1px, transparent 1px 34px);
+    clip-path: polygon(18% 0, 82% 0, 100% 100%, 0 100%);
+  }
+  .object {
+    position: absolute;
+    left: 50%;
+    top: 48%;
+    width: min(68%, 420px);
+    transform: translate(-50%, -50%);
+    border: 1px solid #66ddff;
+    background: rgba(0, 22, 26, .82);
+    color: #aaeeff;
+    padding: 12px 14px;
+    text-align: center;
+    box-shadow: 0 0 28px #66ddff33, inset 0 0 24px #66ddff18;
+    white-space: pre-wrap;
+    line-height: 1.45;
+    font-size: 13px;
+  }
+  .object.hazard {
+    border-color: #ffcc33;
+    color: #ffe888;
+    background: rgba(28, 20, 0, .85);
+    box-shadow: 0 0 28px #ffcc3333, inset 0 0 24px #ffcc3318;
+  }
+  .object.exit {
+    border-color: #aaffaa;
+    color: #aaffaa;
+    background: rgba(0, 34, 0, .88);
+  }
+  .object.locked {
+    border-color: #ff7777;
+    color: #ffaaa0;
+    background: rgba(32, 0, 0, .82);
+  }
+  .readout {
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    bottom: 9px;
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    color: #1a8a1a;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+  }
+  .side {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 0;
+  }
+  #map, #systems, #log {
+    padding: 9px 10px;
+    font-size: 12px;
+    line-height: 1.45;
+  }
+  #map {
+    min-height: 158px;
+    white-space: pre;
+    color: #88dd88;
+    overflow: auto;
+  }
+  #systems {
+    color: #88dd88;
+    min-height: 112px;
+  }
+  #log {
+    min-height: 166px;
+    max-height: 190px;
+    overflow-y: auto;
+    color: #88dd88;
+  }
+  #log::-webkit-scrollbar, #map::-webkit-scrollbar { width: 6px; }
+  #log::-webkit-scrollbar-thumb, #map::-webkit-scrollbar-thumb {
+    background: #33ff3344;
+    border-radius: 3px;
+  }
+  .controls {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .controls button, .overlay button {
+    background: #002a00;
+    color: #aaffaa;
+    border: 1px solid #33ff33;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: bold;
+    padding: 11px 9px;
+    cursor: pointer;
+    touch-action: manipulation;
+    user-select: none;
+    text-shadow: inherit;
+    transition: background .15s, box-shadow .15s, border-color .15s;
+  }
+  .controls button:hover, .overlay button:hover {
+    background: #044404;
+    box-shadow: 0 0 14px #33ff3344;
+  }
+  .controls button:active, .overlay button:active { background: #066b06; }
+  .controls .wide { grid-column: span 2; border-color: #66ddff; color: #aaeeff; }
+  .controls .amber { border-color: #ffcc33; color: #ffe888; }
+  .footer {
+    margin-top: 9px;
+    text-align: center;
+    color: #1a8a1a;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+  }
+  .overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 18px;
+    background: rgba(0, 17, 0, .94);
+    text-align: center;
+  }
+  .overlay.show { display: flex; }
+  .overlay .box {
+    width: min(560px, 100%);
+    border: 1px solid #33ff33;
+    border-radius: 10px;
+    background: #001500;
+    box-shadow: 0 0 32px #33ff3355;
+    padding: 22px 24px;
+  }
+  .overlay h1 {
+    margin: 0 0 8px;
+    color: #aaffaa;
+    font-size: 27px;
+    letter-spacing: 0.18em;
+  }
+  .overlay h2 {
+    margin: 0 0 14px;
+    color: #66ddff;
+    font-size: 13px;
+    letter-spacing: 0.16em;
+    font-weight: normal;
+  }
+  .overlay p {
+    margin: 8px 0;
+    color: #88dd88;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .overlay .prompt {
+    color: #ffcc33;
+    letter-spacing: 0.1em;
+    margin-top: 14px;
+  }
+  .overlay button {
+    margin-top: 12px;
+    min-width: 190px;
+  }
+  .blink { animation: blink 1s steps(2) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  @media (max-width: 760px) {
+    body { padding: 8px; }
+    #crt { padding: 10px 12px 10px; border-radius: 10px; }
+    .topbar { align-items: flex-start; }
+    .backlink, .tag { font-size: 10px; letter-spacing: 0.11em; }
+    .hud { font-size: 12px; gap: 7px 10px; }
+    .main { grid-template-columns: 1fr; }
+    #viewport { min-height: 300px; }
+    .object, .wall { font-size: 12px; }
+    .readout { font-size: 10px; flex-direction: column; align-items: flex-start; }
+    #map { min-height: 126px; }
+    #log { max-height: 132px; min-height: 132px; }
+    .controls { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .controls .wide { grid-column: span 1; }
+    .overlay h1 { font-size: 20px; letter-spacing: 0.12em; }
+    .overlay .box { padding: 18px 16px; }
+  }
+</style>
+</head>
+<body>
+<div id="crt">
+  <div class="topbar">
+    <a href="/" target="_top" class="backlink">&lt; BACK TO MAIN SYSTEM</a>
+    <span class="tag">// maint --sector /machine-layer</span>
+  </div>
+
+  <div class="hud">
+    <span><span class="label">INTEGRITY</span><span id="integrity" class="val">100</span></span>
+    <span><span class="label">SIGNAL</span><span id="signal" class="val">50</span></span>
+    <span><span class="label">CLEANED</span><span id="cleaned" class="val">0/0</span></span>
+    <span><span class="label">CORRUPTION</span><span id="corruption" class="val">100%</span></span>
+    <span><span class="label">CYCLES</span><span id="cycles" class="val">90</span></span>
+  </div>
+
+  <div class="main">
+    <section class="panel">
+      <div class="panel-head">
+        <span>FIRST-PERSON MAINTENANCE VIEW</span>
+        <span id="bearing">NORTH</span>
+      </div>
+      <div id="viewport">
+        <div id="scene"></div>
+        <div class="readout">
+          <span id="sector">SECTOR 0,0</span>
+          <span id="frontScan">FRONT SCAN: WAITING</span>
+        </div>
+        <div id="overlay" class="overlay show">
+          <div class="box" id="overlayBox"></div>
+        </div>
+      </div>
+      <div class="controls" aria-label="Touch controls">
+        <button data-act="turnLeft">Turn Left</button>
+        <button data-act="forward" class="wide">Forward</button>
+        <button data-act="turnRight">Turn Right</button>
+        <button data-act="back">Back</button>
+        <button data-act="interact" class="amber">Interact</button>
+        <button data-act="map">Map</button>
+      </div>
+    </section>
+
+    <aside class="side">
+      <section class="panel">
+        <div class="panel-head">
+          <span>LOCAL MAP</span>
+          <span id="mapState">M: ON</span>
+        </div>
+        <pre id="map"></pre>
+      </section>
+      <section class="panel">
+        <div class="panel-head"><span>SYSTEMS</span><span>MAINT OPS</span></div>
+        <div id="systems"></div>
+      </section>
+      <section class="panel">
+        <div class="panel-head"><span>EVENT LOG</span><span>TAIL -8</span></div>
+        <div id="log"></div>
+      </section>
+    </aside>
+  </div>
+
+  <div class="footer">// RUN TERMINAL-MAINTENANCE // CLEANUP WORK ORDER TM-0314</div>
+</div>
+
+<script>
+"use strict";
+
+// A small, handcrafted machine layer. All game data stays in this file.
+const BASE_MAP = [
+  "#########",
+  "#S..T..X#",
+  "#.##.#.##",
+  "#..H.D..#",
+  "#.#.##..#",
+  "#T..R.H.#",
+  "##.#..T.#",
+  "#..D.RG.#",
+  "#########"
+];
+
+const DIRS = [
+  { name: "NORTH", short: "N", dx: 0, dy: -1 },
+  { name: "EAST", short: "E", dx: 1, dy: 0 },
+  { name: "SOUTH", short: "S", dx: 0, dy: 1 },
+  { name: "WEST", short: "W", dx: -1, dy: 0 }
+];
+
+const TILE = {
+  "#": { scan: "WALL / SEALED SERVICE DUCT" },
+  ".": { scan: "CLEAR FLOOR" },
+  "T": { scan: "CORRUPTED BOT HUSK", verb: "scrubbed" },
+  "R": { scan: "BROKEN RELAY PANEL", verb: "re-indexed" },
+  "H": { scan: "STATIC FIELD" },
+  "D": { scan: "ROGUE DAEMON TRACE" },
+  "G": { scan: "ROOT ACCESS TERMINAL" },
+  "X": { scan: "EXIT UPLINK" }
+};
+
+const els = {
+  integrity: document.getElementById("integrity"),
+  signal: document.getElementById("signal"),
+  cleaned: document.getElementById("cleaned"),
+  corruption: document.getElementById("corruption"),
+  cycles: document.getElementById("cycles"),
+  bearing: document.getElementById("bearing"),
+  sector: document.getElementById("sector"),
+  frontScan: document.getElementById("frontScan"),
+  scene: document.getElementById("scene"),
+  overlay: document.getElementById("overlay"),
+  overlayBox: document.getElementById("overlayBox"),
+  map: document.getElementById("map"),
+  mapState: document.getElementById("mapState"),
+  systems: document.getElementById("systems"),
+  log: document.getElementById("log")
+};
+
+let game;
+
+function freshGame() {
+  const map = BASE_MAP.map((row) => row.split(""));
+  let startX = 1;
+  let startY = 1;
+  let total = 0;
+  for (let y = 0; y < map.length; y++) {
+    for (let x = 0; x < map[y].length; x++) {
+      if (map[y][x] === "S") {
+        startX = x;
+        startY = y;
+        map[y][x] = ".";
+      }
+      if (map[y][x] === "T" || map[y][x] === "R") total++;
+    }
+  }
+  game = {
+    mode: "title",
+    map,
+    x: startX,
+    y: startY,
+    dir: 1,
+    integrity: 100,
+    signal: 50,
+    cycles: 90,
+    cleaned: 0,
+    total,
+    exitUnlocked: false,
+    rootSigned: false,
+    showMap: true,
+    jammed: false,
+    log: [
+      ["info", "Work order loaded: machine layer cleanup."],
+      ["dim", "The bots made the mess. You get the invoice."]
+    ],
+    visited: map.map((row) => row.map(() => false))
+  };
+  markVisited();
+}
+
+function boot() {
+  freshGame();
+  game.mode = "play";
+  addLog("good", "Operator link established. Human oversight online.");
+  addLog("dim", "Autonomous residue detected across sector 03:14.");
+  render();
+}
+
+function addLog(kind, text) {
+  game.log.push([kind, text]);
+  if (game.log.length > 28) game.log.shift();
+}
+
+function tileAt(x, y) {
+  if (!game.map[y] || game.map[y][x] === undefined) return "#";
+  return game.map[y][x];
+}
+
+function setTile(x, y, tile) {
+  if (game.map[y] && game.map[y][x] !== undefined) game.map[y][x] = tile;
+}
+
+function frontCell(distance) {
+  const d = DIRS[game.dir];
+  return { x: game.x + d.dx * distance, y: game.y + d.dy * distance };
+}
+
+function markVisited() {
+  for (let yy = -1; yy <= 1; yy++) {
+    for (let xx = -1; xx <= 1; xx++) {
+      const y = game.y + yy;
+      const x = game.x + xx;
+      if (game.visited[y] && game.visited[y][x] !== undefined) game.visited[y][x] = true;
+    }
+  }
+}
+
+function revealNearby() {
+  for (let yy = -2; yy <= 2; yy++) {
+    for (let xx = -2; xx <= 2; xx++) {
+      const y = game.y + yy;
+      const x = game.x + xx;
+      if (game.visited[y] && game.visited[y][x] !== undefined) game.visited[y][x] = true;
+    }
+  }
+}
+
+function spendCycle() {
+  if (game.mode !== "play") return;
+  game.cycles -= 1;
+  if (game.signal <= 0) {
+    game.integrity -= 2;
+    addLog("bad", "Noisy signal bleeds into operator integrity.");
+  }
+  checkFailure();
+}
+
+function checkFailure() {
+  if (game.mode !== "play") return;
+  if (game.integrity <= 0) {
+    game.integrity = 0;
+    game.mode = "loss";
+    addLog("bad", "Operator signal collapsed.");
+  } else if (game.cycles <= 0) {
+    game.cycles = 0;
+    game.mode = "loss";
+    addLog("bad", "Audit cycles exhausted. Automated recovery failed.");
+  }
+}
+
+function act(command) {
+  if (game.mode === "title") {
+    if (command === "interact" || command === "restart") boot();
+    return;
+  }
+  if (game.mode === "win" || game.mode === "loss") {
+    if (command === "restart") boot();
+    return;
+  }
+  if (command === "map") {
+    game.showMap = !game.showMap;
+    addLog("dim", game.showMap ? "Local map restored." : "Local map collapsed to blind mode.");
+    render();
+    return;
+  }
+  if (command === "restart") {
+    boot();
+    return;
+  }
+  if (game.jammed) {
+    game.jammed = false;
+    addLog("warn", "Control buffer jammed. Input swallowed.");
+    spendCycle();
+    render();
+    return;
+  }
+
+  if (command === "turnLeft") {
+    game.dir = (game.dir + 3) % 4;
+    addLog("dim", "Facing " + DIRS[game.dir].name + ".");
+    spendCycle();
+  } else if (command === "turnRight") {
+    game.dir = (game.dir + 1) % 4;
+    addLog("dim", "Facing " + DIRS[game.dir].name + ".");
+    spendCycle();
+  } else if (command === "forward" || command === "back") {
+    move(command === "forward" ? 1 : -1);
+  } else if (command === "interact") {
+    interact();
+  }
+  render();
+}
+
+function move(step) {
+  const d = DIRS[game.dir];
+  const nx = game.x + d.dx * step;
+  const ny = game.y + d.dy * step;
+  const tile = tileAt(nx, ny);
+  if (tile === "#") {
+    addLog("warn", "Sealed service duct blocks movement.");
+    spendCycle();
+    return;
+  }
+  if (tile === "X" && !game.exitUnlocked) {
+    addLog("warn", "Firewall door rejects insufficient cleanup clearance.");
+    spendCycle();
+    return;
+  }
+  game.x = nx;
+  game.y = ny;
+  markVisited();
+  addLog("dim", "Moved to sector " + game.x + "," + game.y + ".");
+  if (tile === "H") {
+    game.integrity -= 12;
+    game.signal = Math.max(0, game.signal - 5);
+    addLog("bad", "Static bloom damaged operator integrity.");
+  } else if (tile === "D") {
+    daemonEvent();
+    setTile(game.x, game.y, ".");
+  } else if (tile === "X" && game.exitUnlocked) {
+    addLog("good", "Exit uplink underfoot. Trigger extraction.");
+  }
+  spendCycle();
+}
+
+function daemonEvent() {
+  const roll = Math.floor(Math.random() * 4);
+  addLog("warn", "Rogue daemon residue detected.");
+  if (roll === 0) {
+    game.integrity -= 9;
+    addLog("bad", "Daemon trace scraped the operator channel.");
+  } else if (roll === 1) {
+    game.signal = Math.max(0, game.signal - 12);
+    addLog("warn", "Signal budget drained by orphan automation.");
+  } else if (roll === 2) {
+    revealNearby();
+    addLog("info", "Traceback exposed nearby service tiles.");
+  } else {
+    game.jammed = true;
+    addLog("warn", "Input queue contaminated. Next command may jam.");
+  }
+}
+
+function interact() {
+  const current = { x: game.x, y: game.y, tile: tileAt(game.x, game.y) };
+  const front = frontCell(1);
+  const ahead = { x: front.x, y: front.y, tile: tileAt(front.x, front.y) };
+  const target = interactable(current.tile) ? current : ahead;
+
+  if (target.tile === "T") {
+    setTile(target.x, target.y, ".");
+    game.cleaned++;
+    game.signal = Math.min(75, game.signal + 3);
+    addLog("good", "Agent shell scrubbed from node.");
+    spendCycle();
+  } else if (target.tile === "R") {
+    setTile(target.x, target.y, ".");
+    game.cleaned++;
+    game.signal = Math.min(75, game.signal + 14);
+    addLog("good", "Relay panel re-indexed. Signal restored.");
+    spendCycle();
+  } else if (target.tile === "G") {
+    if (game.cleaned >= game.total) {
+      game.rootSigned = true;
+      game.exitUnlocked = true;
+      addLog("good", "Root terminal accepts maintenance signature.");
+      addLog("info", "Exit uplink firewall released.");
+    } else {
+      addLog("warn", "Root terminal rejects incomplete cleanup report.");
+    }
+    spendCycle();
+  } else if (target.tile === "X") {
+    if (game.exitUnlocked) {
+      game.mode = "win";
+      addLog("good", "Extraction confirmed. Maintenance report sealed.");
+    } else {
+      addLog("warn", "Exit uplink locked behind cleanup clearance.");
+    }
+    spendCycle();
+  } else if (target.tile === "H") {
+    setTile(target.x, target.y, ".");
+    game.integrity = Math.max(1, game.integrity - 5);
+    addLog("good", "Static field grounded with a manual shunt.");
+    spendCycle();
+  } else if (target.tile === "D") {
+    setTile(target.x, target.y, ".");
+    game.signal = Math.min(75, game.signal + 6);
+    addLog("good", "Rogue daemon trace quarantined.");
+    spendCycle();
+  } else {
+    addLog("dim", "No repairable system in reach.");
+    spendCycle();
+  }
+}
+
+function interactable(tile) {
+  return tile === "T" || tile === "R" || tile === "G" || tile === "X" || tile === "H" || tile === "D";
+}
+
+function render() {
+  renderHud();
+  renderScene();
+  renderMap();
+  renderSystems();
+  renderLog();
+  renderOverlay();
+}
+
+function renderHud() {
+  const corruption = Math.max(0, Math.round(((game.total - game.cleaned) / game.total) * 100));
+  els.integrity.textContent = game.integrity;
+  els.integrity.className = game.integrity <= 30 ? "bad" : "val";
+  els.signal.textContent = game.signal;
+  els.signal.className = game.signal <= 15 ? "warn" : "val";
+  els.cleaned.textContent = game.cleaned + "/" + game.total;
+  els.corruption.textContent = corruption + "%";
+  els.cycles.textContent = game.cycles;
+  els.cycles.className = game.cycles <= 15 ? "warn" : "val";
+  els.bearing.textContent = DIRS[game.dir].name;
+  els.sector.textContent = "SECTOR " + game.x + "," + game.y;
+}
+
+function renderScene() {
+  const ahead = frontCell(1);
+  const leftDir = DIRS[(game.dir + 3) % 4];
+  const rightDir = DIRS[(game.dir + 1) % 4];
+  const leftWall = tileAt(game.x + leftDir.dx, game.y + leftDir.dy) === "#";
+  const rightWall = tileAt(game.x + rightDir.dx, game.y + rightDir.dy) === "#";
+  const scan = firstVisible();
+  const chunks = [
+    '<div class="floor-grid"></div>'
+  ];
+
+  if (leftWall) chunks.push('<div class="side-wall left"></div>');
+  if (rightWall) chunks.push('<div class="side-wall right"></div>');
+
+  if (tileAt(ahead.x, ahead.y) === "#") {
+    chunks.push('<div class="wall">###########\\n# SERVICE #\\n#  WALL   #\\n###########\\n\\nNO ROUTE THROUGH</div>');
+  } else {
+    chunks.push('<div class="corridor-frame frame-near"></div>');
+    chunks.push('<div class="corridor-frame frame-mid"></div>');
+    chunks.push('<div class="corridor-frame frame-far"></div>');
+    if (scan.tile !== "." && scan.tile !== "#") chunks.push(objectHtml(scan));
+  }
+
+  els.scene.innerHTML = chunks.join("");
+  els.frontScan.textContent = "FRONT SCAN: " + (TILE[scan.tile] ? TILE[scan.tile].scan : "UNKNOWN");
+}
+
+function firstVisible() {
+  for (let i = 1; i <= 3; i++) {
+    const c = frontCell(i);
+    const tile = tileAt(c.x, c.y);
+    if (tile !== ".") return { tile, distance: i };
+  }
+  return { tile: ".", distance: 3 };
+}
+
+function objectHtml(scan) {
+  const locked = scan.tile === "X" && !game.exitUnlocked;
+  let cls = "object";
+  if (scan.tile === "H" || scan.tile === "D") cls += " hazard";
+  if (scan.tile === "X") cls += locked ? " locked" : " exit";
+  const label = {
+    T: "[ CORRUPTED BOT HUSK ]\\n0101 residue in maintenance lane\\nINTERACT: scrub node",
+    R: "[ BROKEN RELAY PANEL ]\\nsignal index drift detected\\nINTERACT: re-index relay",
+    H: "[ STATIC FIELD ]\\noperator insulation warning\\nINTERACT: ground field",
+    D: "[ ROGUE DAEMON TRACE ]\\nautomation echo still executing\\nINTERACT: quarantine trace",
+    G: "[ ROOT ACCESS TERMINAL ]\\nrequires complete cleanup report\\nINTERACT: submit signature",
+    X: locked ? "[ FIREWALL DOOR ]\\ncleanup clearance required" : "[ EXIT UPLINK ]\\nINTERACT: extract operator"
+  }[scan.tile] || "[ UNKNOWN SYSTEM ]";
+  const scale = scan.distance === 1 ? "" : "\\n\\nDISTANCE: " + scan.distance + " TILES";
+  return '<div class="' + cls + '">' + label + scale + '</div>';
+}
+
+function renderMap() {
+  els.mapState.textContent = game.showMap ? "M: ON" : "M: OFF";
+  if (!game.showMap) {
+    els.map.textContent = "?????????\\n?????????\\n????@????\\n?????????\\n?????????\\n\\nMAP BUFFER HIDDEN";
+    return;
+  }
+  const lines = [];
+  for (let y = 0; y < game.map.length; y++) {
+    let line = "";
+    for (let x = 0; x < game.map[y].length; x++) {
+      if (x === game.x && y === game.y) {
+        line += "@";
+      } else if (!game.visited[y][x]) {
+        line += "?";
+      } else {
+        const tile = tileAt(x, y);
+        if (tile === "T" || tile === "R") line += "*";
+        else if (tile === "H" || tile === "D") line += "!";
+        else if (tile === "G") line += "G";
+        else if (tile === "X") line += "X";
+        else line += tile;
+      }
+    }
+    lines.push(line);
+  }
+  els.map.textContent = lines.join("\\n") + "\\n\\n# wall  . visited  ? unknown\\n@ operator  * target  ! hazard  X exit";
+}
+
+function renderSystems() {
+  const current = TILE[tileAt(game.x, game.y)] ? TILE[tileAt(game.x, game.y)].scan : "UNKNOWN";
+  const clearance = game.exitUnlocked ? "EXIT RELEASED" : game.cleaned + "/" + game.total + " TARGETS";
+  const root = game.rootSigned ? "SIGNED" : "PENDING";
+  els.systems.innerHTML =
+    '<div><span class="label">CURRENT</span><span class="val">' + current + '</span></div>' +
+    '<div><span class="label">CLEARANCE</span><span class="info">' + clearance + '</span></div>' +
+    '<div><span class="label">ROOT</span><span class="val">' + root + '</span></div>' +
+    '<div><span class="label">COMMAND</span><span class="warn">run terminal-maintenance</span></div>' +
+    '<div class="dim">W/S move. A/D turn. Space/Enter interact. R restart.</div>';
+}
+
+function renderLog() {
+  const recent = game.log.slice(-8);
+  els.log.innerHTML = recent.map(([kind, text]) => '<div class="' + kind + '">' + text + '</div>').join("");
+  els.log.scrollTop = els.log.scrollHeight;
+}
+
+function renderOverlay() {
+  if (game.mode === "title") {
+    els.overlay.classList.add("show");
+    els.overlayBox.innerHTML =
+      '<h1>TERMINAL MAINTENANCE</h1>' +
+      '<h2>RETROFUTURE SYSTEMS CLEANUP INTERFACE</h2>' +
+      '<p>Autonomous agents entered the machine layer at 03:14.</p>' +
+      '<p>They optimized nothing.</p>' +
+      '<p>They left corrupted nodes, daemon residue, and broken relays.</p>' +
+      '<p>Human maintenance has been requested.</p>' +
+      '<p class="prompt">[ PRESS ENTER TO BOOT ] <span class="blink">_</span></p>' +
+      '<button data-act="interact">BOOT INTERFACE</button>';
+  } else if (game.mode === "win") {
+    els.overlay.classList.add("show");
+    els.overlayBox.innerHTML =
+      '<h1>MAINTENANCE COMPLETE</h1>' +
+      '<h2>AUTONOMOUS DAMAGE CONTAINED</h2>' +
+      '<p>HUMAN OVERSIGHT STILL REQUIRED</p>' +
+      '<p class="dim">Cleanup report: ' + game.cleaned + '/' + game.total + ' targets cleared. Integrity ' + game.integrity + '.</p>' +
+      '<button data-act="restart">RESTART / R</button>';
+  } else if (game.mode === "loss") {
+    els.overlay.classList.add("show");
+    els.overlayBox.innerHTML =
+      '<h1>OPERATOR SIGNAL LOST</h1>' +
+      '<h2>AUTOMATED RECOVERY FAILED</h2>' +
+      '<p>Machine layer remains unstable. Manual oversight queue reopened.</p>' +
+      '<button data-act="restart">RESTART / R</button>';
+  } else {
+    els.overlay.classList.remove("show");
+    els.overlayBox.innerHTML = "";
+  }
+}
+
+function keyToCommand(event) {
+  const key = event.key.toLowerCase();
+  if (key === "w" || event.key === "ArrowUp") return "forward";
+  if (key === "s" || event.key === "ArrowDown") return "back";
+  if (key === "a" || event.key === "ArrowLeft") return "turnLeft";
+  if (key === "d" || event.key === "ArrowRight") return "turnRight";
+  if (key === " " || event.key === "Enter") return "interact";
+  if (key === "m") return "map";
+  if (key === "r") return "restart";
+  return null;
+}
+
+document.addEventListener("keydown", (event) => {
+  const command = keyToCommand(event);
+  if (!command) return;
+  event.preventDefault();
+  act(command);
+});
+
+document.addEventListener("click", (event) => {
+  const button = event.target.closest("button[data-act]");
+  if (!button) return;
+  act(button.dataset.act);
+});
+
+freshGame();
+render();
+</script>
+</body>
+</html>
