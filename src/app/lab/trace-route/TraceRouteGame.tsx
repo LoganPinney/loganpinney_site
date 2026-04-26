@@ -22,12 +22,21 @@ type RouteLink = {
 };
 
 type Scenario = {
+  id: string;
   title: string;
-  brief: string;
+  description: string;
   targetId: string;
-  requiredIds: string[];
+  validPaths: string[][];
+  requiredControls: string[];
+  decoyNodes: string[];
+  successMessage: string;
+  failureMessages: {
+    missingControls: string;
+    decoyNode: string;
+    invalidPath: string;
+  };
   nodes: RouteNode[];
-  links: RouteLink[];
+  edges: RouteLink[];
 };
 
 type RouteResult = {
@@ -37,90 +46,118 @@ type RouteResult = {
 
 const scenarios: Scenario[] = [
   {
-    title: 'Event Intake',
-    brief: 'Get participant changes from intake to the roster source of truth.',
-    targetId: 'roster',
-    requiredIds: ['schema', 'validate', 'audit'],
+    id: 'intake-validation',
+    title: 'Intake Validation',
+    description: 'A messy intake enters the system and must be normalized before delivery.',
+    targetId: 'delivery',
+    validPaths: [['intake', 'schema', 'dedupe', 'sync', 'delivery']],
+    requiredControls: ['schema', 'dedupe', 'delivery'],
+    decoyNodes: ['manual', 'direct', 'stale'],
+    successMessage: 'route accepted // normalized intake delivered with controls intact',
+    failureMessages: {
+      missingControls: 'packet rejected // intake reached delivery without required controls',
+      decoyNode: 'packet rejected // fragile intake shortcut bypassed normalization',
+      invalidPath: 'packet rejected // delivery path does not match the intake control route',
+    },
     nodes: [
-      node('intake', 'intake', 'start', 7, 49, 'packet received', 1, 0),
-      node('sheet', 'shared sheet', 'risk', 25, 24, 'unowned manual edit zone', 1, 4),
-      node('schema', 'schema gate', 'control', 28, 62, 'shape and required fields checked', 2, 0),
-      node('dm', 'direct message', 'risk', 48, 15, 'private side channel', 1, 5),
-      node('validate', 'validator', 'control', 52, 52, 'duplicates and missing values rejected', 2, 0),
-      node('sync', 'sync worker', 'service', 71, 37, 'controlled write to destination', 3, 1),
-      node('audit', 'audit log', 'control', 72, 68, 'change trail recorded', 1, 0),
-      node('roster', 'roster db', 'target', 92, 52, 'source of truth updated', 1, 0),
+      node('intake', 'intake', 'start', 8, 34, 'messy packet received', 1, 0),
+      node('manual', 'manual copy', 'risk', 25, 18, 'hand-entered duplicate surface', 1, 5),
+      node('schema', 'schema check', 'control', 28, 47, 'shape and required fields checked', 2, 0),
+      node('direct', 'direct push', 'risk', 48, 22, 'destination write without guardrails', 1, 5),
+      node('dedupe', 'dedupe', 'control', 49, 62, 'duplicate records collapsed', 2, 0),
+      node('stale', 'stale row', 'risk', 64, 40, 'old state can overwrite current data', 1, 4),
+      node('sync', 'sync queue', 'service', 72, 67, 'controlled write is queued', 3, 0),
+      node('delivery', 'delivery log', 'target', 91, 48, 'delivery recorded and reviewable', 1, 0),
     ],
-    links: [
-      link('intake', 'sheet'),
+    edges: [
+      link('intake', 'manual'),
       link('intake', 'schema'),
-      link('sheet', 'dm'),
-      link('sheet', 'validate'),
-      link('schema', 'validate'),
-      link('dm', 'sync'),
-      link('validate', 'sync'),
-      link('validate', 'audit'),
-      link('audit', 'roster'),
-      link('sync', 'roster'),
-      link('sync', 'audit'),
+      link('manual', 'direct'),
+      link('manual', 'dedupe'),
+      link('schema', 'dedupe'),
+      link('schema', 'stale'),
+      link('direct', 'delivery'),
+      link('dedupe', 'sync'),
+      link('stale', 'delivery'),
+      link('sync', 'delivery'),
     ],
   },
   {
+    id: 'approval-handoff',
     title: 'Approval Handoff',
-    brief: 'Move an exception through approvals without losing accountability.',
+    description: 'Move an exception through approvals without losing accountability.',
     targetId: 'resolved',
-    requiredIds: ['owner', 'policy', 'audit'],
+    validPaths: [['ticket', 'owner', 'policy', 'audit', 'resolved']],
+    requiredControls: ['owner', 'policy', 'audit'],
+    decoyNodes: ['chat', 'verbal', 'queue'],
+    successMessage: 'route accepted // exception resolved with ownership and policy trail',
+    failureMessages: {
+      missingControls: 'handoff rejected // accountability or policy evidence is missing',
+      decoyNode: 'handoff rejected // informal approval path lost durable accountability',
+      invalidPath: 'handoff rejected // resolution path does not match approval controls',
+    },
     nodes: [
-      node('ticket', 'ticket', 'start', 7, 50, 'exception opened', 1, 0),
-      node('chat', 'chat thread', 'risk', 27, 22, 'decision context decays fast', 1, 4),
-      node('owner', 'owner map', 'control', 27, 67, 'accountable approver selected', 2, 0),
-      node('policy', 'policy check', 'control', 49, 48, 'approval rule evaluated', 2, 0),
-      node('shortcut', 'verbal ok', 'risk', 51, 18, 'no durable permission record', 1, 5),
-      node('queue', 'work queue', 'service', 70, 35, 'approved work is sequenced', 3, 1),
-      node('audit', 'audit log', 'control', 72, 69, 'decision trail preserved', 1, 0),
-      node('resolved', 'resolved', 'target', 92, 51, 'exception closed cleanly', 1, 0),
+      node('ticket', 'ticket', 'start', 12, 78, 'exception opened', 1, 0),
+      node('chat', 'chat thread', 'risk', 18, 34, 'decision context decays fast', 1, 4),
+      node('owner', 'owner map', 'control', 36, 69, 'accountable approver selected', 2, 0),
+      node('verbal', 'verbal ok', 'risk', 43, 28, 'no durable permission record', 1, 5),
+      node('policy', 'policy check', 'control', 56, 58, 'approval rule evaluated', 2, 0),
+      node('queue', 'work queue', 'risk', 72, 31, 'work moves without a decision trail', 2, 4),
+      node('audit', 'audit log', 'control', 77, 70, 'decision trail preserved', 1, 0),
+      node('resolved', 'resolved', 'target', 91, 43, 'exception closed cleanly', 1, 0),
     ],
-    links: [
+    edges: [
       link('ticket', 'chat'),
       link('ticket', 'owner'),
-      link('chat', 'shortcut'),
+      link('chat', 'verbal'),
       link('chat', 'policy'),
       link('owner', 'policy'),
-      link('policy', 'queue'),
+      link('owner', 'queue'),
       link('policy', 'audit'),
-      link('shortcut', 'queue'),
+      link('verbal', 'queue'),
       link('queue', 'resolved'),
       link('queue', 'audit'),
       link('audit', 'resolved'),
     ],
   },
   {
-    title: 'Data Repair',
-    brief: 'Patch a bad record while keeping the system reproducible.',
-    targetId: 'warehouse',
-    requiredIds: ['snapshot', 'transform', 'audit'],
+    id: 'token-gate',
+    title: 'Token Gate',
+    description: 'A recipient needs access through a controlled one-time form link.',
+    targetId: 'used',
+    validPaths: [['recipient', 'authority', 'token', 'expiry', 'form', 'used']],
+    requiredControls: ['authority', 'expiry', 'used'],
+    decoyNodes: ['public', 'forwarded', 'bypass'],
+    successMessage: 'route accepted // one-time access granted and consumption recorded',
+    failureMessages: {
+      missingControls: 'access rejected // authority, expiry, or use tracking is missing',
+      decoyNode: 'access rejected // uncontrolled link path can be shared or reused',
+      invalidPath: 'access rejected // access route does not match the token gate',
+    },
     nodes: [
-      node('alert', 'alert', 'start', 7, 52, 'drift detected', 1, 0),
-      node('hotfix', 'hotfix', 'risk', 26, 25, 'silent one-off change', 1, 5),
-      node('snapshot', 'snapshot', 'control', 27, 66, 'before state captured', 2, 0),
-      node('manual', 'manual edit', 'risk', 49, 19, 'cannot be replayed safely', 1, 5),
-      node('transform', 'transform job', 'control', 51, 52, 'repair can be rerun', 3, 0),
-      node('review', 'review queue', 'service', 70, 35, 'human check before publish', 2, 1),
-      node('audit', 'audit log', 'control', 71, 70, 'repair reason recorded', 1, 0),
-      node('warehouse', 'warehouse', 'target', 92, 52, 'clean record published', 1, 0),
+      node('recipient', 'recipient', 'start', 11, 47, 'access request starts with a person', 1, 0),
+      node('public', 'public link', 'risk', 24, 16, 'anyone with the URL can enter', 1, 5),
+      node('forwarded', 'forwarded email', 'risk', 27, 72, 'identity context can drift', 1, 4),
+      node('authority', 'email authority check', 'control', 38, 45, 'recipient domain and sender are verified', 2, 0),
+      node('bypass', 'bypass approval', 'risk', 53, 83, 'manual override skips gatekeeping', 1, 5),
+      node('token', 'token issue', 'service', 55, 35, 'single-use token is generated', 2, 0),
+      node('expiry', 'expiry check', 'control', 69, 49, 'token lifetime is enforced', 1, 0),
+      node('form', 'form access', 'service', 82, 31, 'controlled form opens', 2, 0),
+      node('used', 'used flag', 'target', 91, 61, 'token consumption is recorded', 1, 0),
     ],
-    links: [
-      link('alert', 'hotfix'),
-      link('alert', 'snapshot'),
-      link('hotfix', 'manual'),
-      link('hotfix', 'transform'),
-      link('snapshot', 'transform'),
-      link('manual', 'review'),
-      link('transform', 'review'),
-      link('transform', 'audit'),
-      link('review', 'warehouse'),
-      link('review', 'audit'),
-      link('audit', 'warehouse'),
+    edges: [
+      link('recipient', 'public'),
+      link('recipient', 'forwarded'),
+      link('recipient', 'authority'),
+      link('public', 'form'),
+      link('forwarded', 'bypass'),
+      link('forwarded', 'authority'),
+      link('authority', 'token'),
+      link('token', 'expiry'),
+      link('token', 'bypass'),
+      link('bypass', 'form'),
+      link('expiry', 'form'),
+      link('form', 'used'),
     ],
   },
 ];
@@ -159,7 +196,7 @@ function canMove(scenario: Scenario, path: string[], nodeId: string) {
 
   if (path.includes(nodeId)) return false;
 
-  return scenario.links.some(
+  return scenario.edges.some(
     (routeLink) =>
       (routeLink.from === currentId && routeLink.to === nodeId) ||
       (routeLink.to === currentId && routeLink.from === nodeId)
@@ -167,29 +204,38 @@ function canMove(scenario: Scenario, path: string[], nodeId: string) {
 }
 
 function scorePath(scenario: Scenario, path: string[]): RouteResult {
-  const missing = scenario.requiredIds.filter((nodeId) => !path.includes(nodeId));
-  const nodes = path
-    .map((nodeId) => getNode(scenario, nodeId))
-    .filter((routeNode): routeNode is RouteNode => Boolean(routeNode));
-  const risk = nodes.reduce((total, routeNode) => total + routeNode.risk, 0);
+  const missing = scenario.requiredControls.filter((nodeId) => !path.includes(nodeId));
+  const hitDecoys = scenario.decoyNodes.filter((nodeId) => path.includes(nodeId));
+  const followsValidPath = scenario.validPaths.some(
+    (validPath) =>
+      validPath.length === path.length &&
+      validPath.every((nodeId, index) => path[index] === nodeId)
+  );
 
   if (missing.length > 0) {
     return {
       state: 'failed',
-      text: `packet rejected // missing ${missing.join(', ')}`,
+      text: `${scenario.failureMessages.missingControls}: ${missing.join(', ')}`,
     };
   }
 
-  if (risk >= 5) {
+  if (hitDecoys.length > 0) {
     return {
       state: 'failed',
-      text: 'packet rejected // fragile shortcut left too much operational risk',
+      text: `${scenario.failureMessages.decoyNode}: ${hitDecoys.join(', ')}`,
+    };
+  }
+
+  if (!followsValidPath) {
+    return {
+      state: 'failed',
+      text: scenario.failureMessages.invalidPath,
     };
   }
 
   return {
     state: 'success',
-    text: 'route accepted // validation and audit trail intact',
+    text: scenario.successMessage,
   };
 }
 
@@ -273,7 +319,7 @@ export default function TraceRouteGame() {
             preserveAspectRatio="none"
             aria-hidden="true"
           >
-            {scenario.links.map((routeLink) => {
+            {scenario.edges.map((routeLink) => {
               const from = getNode(scenario, routeLink.from);
               const to = getNode(scenario, routeLink.to);
               if (!from || !to) return null;
@@ -332,7 +378,7 @@ export default function TraceRouteGame() {
           {scenario.title}
         </h2>
 
-        <p className="mb-4 text-sm leading-6 text-white/55">{scenario.brief}</p>
+        <p className="mb-4 text-sm leading-6 text-white/55">{scenario.description}</p>
 
         <div className="mb-4 grid grid-cols-3 gap-2 text-center text-xs">
           <Metric label="hops" value={metrics.hops} />
@@ -359,7 +405,7 @@ export default function TraceRouteGame() {
             required controls
           </p>
           <div className="space-y-2">
-            {scenario.requiredIds.map((nodeId) => {
+            {scenario.requiredControls.map((nodeId) => {
               const routeNode = getNode(scenario, nodeId);
               const complete = path.includes(nodeId);
 
