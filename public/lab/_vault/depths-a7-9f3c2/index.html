@@ -44,6 +44,9 @@
     background: #000;
     filter: contrast(1.05) saturate(1.15);
   }
+  #game:focus {
+    outline: none;
+  }
   #scanlines {
     position: absolute; inset: 0; pointer-events: none; z-index: 5;
     background: repeating-linear-gradient(
@@ -339,6 +342,9 @@
     margin-bottom: 14px;
   }
   .overlay p { font-size: 15px; max-width: 540px; margin: 4px 0; line-height: 1.5; }
+  #title.overlay {
+    pointer-events: none;
+  }
   #end-text {
     width: min(520px, calc(100vw - 36px));
     padding: 12px 14px;
@@ -442,12 +448,12 @@
     .terminal-button { min-width: 92px; font-size: 13px; padding: 7px 10px; }
   }
 </style>
-  <script type="module" crossorigin src="./assets/index-D8VA5dE0.js"></script>
+  <script type="module" crossorigin src="/lab/_vault/depths-a7-9f3c2/assets/index-D8VA5dE0.js"></script>
 </head>
 <body>
 <div id="shell">
   <div id="screen">
-    <canvas id="game"></canvas>
+    <canvas id="game" tabindex="0" aria-label="AXIOM-7 Maintenance Depths viewport"></canvas>
     <div id="hud">
       <div id="hud-top" class="hud-bar">
         <div class="hud-cell">HP <span id="hp-val">100</span>
@@ -528,5 +534,32 @@ The doors are not locked to keep you out. They are locked to keep the earlier ve
     </div>
   </div>
 </div>
+<script>
+  (() => {
+    const canvas = document.getElementById("game");
+    if (!(canvas instanceof HTMLCanvasElement)) return;
+
+    const focusCanvas = () => {
+      if (document.activeElement !== canvas) {
+        canvas.focus({ preventScroll: true });
+      }
+    };
+
+    const focusFromPointer = (event) => {
+      const target = event.target;
+      if (target instanceof HTMLElement && target.closest("button, a, input, textarea, select, [role='button']")) {
+        return;
+      }
+      focusCanvas();
+    };
+
+    canvas.addEventListener("click", focusCanvas);
+    window.addEventListener("pointerdown", focusFromPointer, { capture: true });
+    window.addEventListener("mousedown", focusFromPointer, { capture: true });
+    window.addEventListener("touchstart", focusFromPointer, { capture: true, passive: true });
+    window.addEventListener("keydown", focusFromPointer, { capture: true });
+    window.addEventListener("load", focusCanvas);
+  })();
+</script>
 </body>
 </html>
