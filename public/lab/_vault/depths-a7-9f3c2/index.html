@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#000000" />
+<meta name="robots" content="noindex, nofollow, noarchive" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%23050a08'/%3E%3Cpath d='M3 8h10M8 3v10' stroke='%237fff9c'/%3E%3C/svg%3E" />
+<title>AXIOM-7: Maintenance Depths</title>
+<style>
+  :root {
+    --term-green: #7fff9c;
+    --term-green-dim: #2a6a36;
+    --term-amber: #ffb14a;
+    --term-amber-dim: #6a4a18;
+    --term-red: #ff6a4a;
+    --term-bg: #050a08;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    width: 100%; height: 100%;
+    overflow: hidden;
+    background: #000;
+    color: var(--term-green);
+    font-family: "VT323", "Courier New", monospace;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none; user-select: none;
+    touch-action: none;
+  }
+  #shell {
+    position: fixed; inset: 0;
+    background: radial-gradient(ellipse at center, #061410 0%, #000 100%);
+  }
+  #screen {
+    position: absolute; inset: 0;
+    overflow: hidden;
+  }
+  #game {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    display: block;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    background: #000;
+    filter: contrast(1.05) saturate(1.15);
+  }
+  #scanlines {
+    position: absolute; inset: 0; pointer-events: none; z-index: 5;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(0,0,0,0) 0px,
+      rgba(0,0,0,0) 2px,
+      rgba(0,0,0,0.42) 3px,
+      rgba(0,0,0,0.42) 4px
+    );
+    mix-blend-mode: multiply;
+  }
+  #vignette {
+    position: absolute; inset: 0; pointer-events: none; z-index: 6;
+    background: radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,0.85) 100%);
+  }
+  #flicker {
+    position: absolute; inset: 0; pointer-events: none; z-index: 7;
+    --flicker-high: 1;
+    --flicker-low: 0.6;
+    background: rgba(127,255,156,0.02);
+    animation: flicker 3s infinite;
+  }
+  @keyframes flicker {
+    0%,100% { opacity: var(--flicker-high); }
+    47% { opacity: var(--flicker-high); }
+    48% { opacity: var(--flicker-low); }
+    49% { opacity: var(--flicker-high); }
+    72% { opacity: var(--flicker-high); }
+    73% { opacity: calc((var(--flicker-high) + var(--flicker-low)) / 2); }
+    74% { opacity: var(--flicker-high); }
+  }
+  #hud {
+    position: absolute; inset: 0;
+    pointer-events: none;
+    z-index: 10;
+    font-size: 14px;
+    line-height: 1.3;
+    text-shadow: 0 0 4px var(--term-green-dim), 0 0 1px #000;
+  }
+  .hud-bar {
+    position: absolute;
+    left: 12px; right: 12px;
+    display: flex; justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 12px;
+    color: var(--term-green);
+    font-size: 13px;
+    letter-spacing: 0.05em;
+  }
+  #hud-top { top: 8px; }
+  #hud-bot { bottom: 8px; flex-direction: column; align-items: flex-start; }
+  .hud-cell {
+    background: rgba(0,20,8,0.55);
+    border: 1px solid var(--term-green-dim);
+    padding: 4px 8px;
+    text-transform: uppercase;
+  }
+  .hud-cell.amber { color: var(--term-amber); border-color: var(--term-amber-dim); text-shadow: 0 0 4px var(--term-amber-dim); }
+  .hud-cell.warn { color: var(--term-red); border-color: #5a1a18; text-shadow: 0 0 4px #5a1a18; }
+  #objective {
+    width: 100%;
+    background: rgba(0,20,8,0.55);
+    border: 1px solid var(--term-green-dim);
+    padding: 4px 8px;
+    color: var(--term-amber);
+    font-size: 13px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  #log-feed {
+    width: 100%;
+    background: rgba(0,20,8,0.55);
+    border: 1px solid var(--term-green-dim);
+    padding: 4px 8px;
+    color: var(--term-green);
+    font-size: 12px;
+    min-height: 1.4em;
+    max-height: 4.4em;
+    overflow: hidden;
+    white-space: pre-wrap;
+  }
+  #crosshair {
+    position: absolute; left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--term-green);
+    font-size: 18px;
+    opacity: 0.55;
+    pointer-events: none;
+    z-index: 10;
+  }
+  #prompt {
+    position: absolute; left: 50%; top: calc(50% + 22px);
+    transform: translateX(-50%);
+    color: var(--term-amber);
+    background: rgba(0,20,8,0.65);
+    border: 1px solid var(--term-amber-dim);
+    padding: 2px 8px;
+    font-size: 13px;
+    text-transform: uppercase;
+    pointer-events: none;
+    z-index: 10;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    white-space: nowrap;
+  }
+  #prompt.show { opacity: 1; }
+  #collapse-warning {
+    position: absolute;
+    top: 58px;
+    right: 12px;
+    width: min(280px, calc(100vw - 24px));
+    background: rgba(32, 0, 0, 0.72);
+    border: 1px solid rgba(255, 74, 50, 0.9);
+    color: var(--term-red);
+    padding: 7px 10px;
+    text-transform: uppercase;
+    pointer-events: none;
+    z-index: 13;
+    opacity: 0;
+    transform: translateY(-4px);
+    transition: opacity 0.12s ease, transform 0.12s ease;
+    box-shadow: 0 0 16px rgba(255, 38, 28, 0.32), inset 0 0 12px rgba(255, 38, 28, 0.12);
+  }
+  #collapse-warning.show {
+    opacity: 1;
+    transform: translateY(0);
+    animation: collapseBlink 0.9s steps(2) infinite;
+  }
+  #collapse-warning-title {
+    font-size: 16px;
+    letter-spacing: 0.04em;
+    text-shadow: 0 0 9px rgba(255, 74, 50, 0.8);
+  }
+  #collapse-warning-body {
+    margin-top: 2px;
+    color: var(--term-amber);
+    font-size: 12px;
+    letter-spacing: 0.05em;
+  }
+  #hud.corruption-mid {
+    text-shadow: 1px 0 0 rgba(255, 74, 50, 0.28), -1px 0 0 rgba(127,255,156,0.2), 0 0 5px var(--term-green-dim);
+  }
+  #hud.corruption-high #corrupt-cell {
+    animation: corruptionPulse 0.72s steps(2) infinite;
+    background: rgba(40, 0, 0, 0.66);
+  }
+  #hud.corruption-critical #log-feed,
+  #hud.corruption-critical #objective {
+    border-color: rgba(255, 74, 50, 0.72);
+    box-shadow: inset 0 0 10px rgba(255, 38, 28, 0.12);
+  }
+  #hud.collapse-active #corrupt-cell {
+    color: #ffb0a0;
+    border-color: var(--term-red);
+    box-shadow: 0 0 14px rgba(255, 74, 50, 0.55), inset 0 0 12px rgba(255, 38, 28, 0.22);
+  }
+  #hud.anomaly-pressure {
+    animation: anomalyHudFlicker 0.2s steps(2) infinite;
+  }
+  #hud.anomaly-pressure .hud-cell,
+  #hud.anomaly-pressure #objective,
+  #hud.anomaly-pressure #log-feed {
+    border-color: rgba(255, 74, 50, 0.55);
+    box-shadow: inset 0 0 9px rgba(255, 38, 28, 0.12);
+  }
+  @keyframes corruptionPulse {
+    0%, 100% { filter: brightness(1); }
+    50% { filter: brightness(1.55); }
+  }
+  @keyframes anomalyHudFlicker {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(1px, 0); }
+  }
+  @keyframes collapseBlink {
+    0%, 100% { border-color: rgba(255, 74, 50, 1); }
+    50% { border-color: rgba(255, 177, 74, 0.9); }
+  }
+  #center-message {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: min(68vw, 620px);
+    max-width: calc(100vw - 28px);
+    background: rgba(2, 10, 6, 0.86);
+    border: 1px solid var(--term-green-dim);
+    box-shadow: 0 0 18px rgba(42,106,54,0.45), inset 0 0 18px rgba(0,0,0,0.75);
+    color: var(--term-green);
+    padding: 14px 16px;
+    opacity: 0;
+    transition: opacity 0.16s ease;
+    pointer-events: none;
+    z-index: 11;
+    text-shadow: 0 0 5px var(--term-green-dim), 0 0 1px #000;
+    white-space: pre-wrap;
+  }
+  #center-message.show { opacity: 1; pointer-events: auto; }
+  #terminal-close {
+    position: absolute;
+    top: 6px;
+    right: 7px;
+    width: 24px;
+    height: 22px;
+    border: 1px solid var(--term-green-dim);
+    background: rgba(0,20,8,0.8);
+    color: var(--term-green);
+    font: 18px/1 "Courier New", monospace;
+    text-shadow: 0 0 5px var(--term-green-dim);
+    cursor: pointer;
+  }
+  #terminal-close:hover, #terminal-close:focus {
+    color: var(--term-amber);
+    border-color: var(--term-amber-dim);
+    outline: none;
+  }
+  #center-message-title {
+    color: var(--term-amber);
+    font-size: 15px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+  #center-message-body {
+    font-size: 14px;
+    line-height: 1.45;
+  }
+  #level-intro {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 14;
+    pointer-events: none;
+    opacity: 0;
+    transform: scale(1.04);
+    transition: opacity 0.42s ease, transform 0.42s ease;
+    text-align: center;
+    color: var(--term-green);
+    background: radial-gradient(ellipse at center, rgba(0, 24, 10, 0.22), rgba(0, 0, 0, 0));
+    text-shadow: 0 0 14px var(--term-green-dim), 0 0 2px #000;
+  }
+  #level-intro.show {
+    opacity: 1;
+    transform: scale(1);
+  }
+  #level-intro-title {
+    color: var(--term-amber);
+    font-size: clamp(64px, 18vw, 140px);
+    line-height: 0.86;
+    letter-spacing: 0;
+    text-shadow: 0 0 18px var(--term-amber-dim), 0 0 3px #000;
+  }
+  #level-intro-subtitle {
+    margin-top: 18px;
+    font-size: clamp(18px, 4.5vw, 32px);
+    letter-spacing: 0.08em;
+    color: var(--term-green);
+  }
+  .meter {
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  .meter .bar {
+    width: 80px; height: 8px;
+    border: 1px solid var(--term-green-dim);
+    background: rgba(0,0,0,0.5);
+    position: relative;
+  }
+  .meter .fill {
+    position: absolute; top: 0; left: 0; bottom: 0;
+    background: var(--term-green);
+    transition: width 0.15s ease;
+  }
+  .meter.amber .fill { background: var(--term-amber); }
+  .meter.warn .fill { background: var(--term-red); }
+  .overlay {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    background: rgba(0,0,0,0.85);
+    color: var(--term-green);
+    text-align: center;
+    z-index: 20;
+    padding: 20px;
+    text-shadow: 0 0 6px var(--term-green-dim);
+  }
+  .overlay h1 {
+    font-size: 28px;
+    letter-spacing: 0.2em;
+    color: var(--term-amber);
+    text-shadow: 0 0 10px var(--term-amber-dim);
+    margin-bottom: 14px;
+  }
+  .overlay p { font-size: 15px; max-width: 540px; margin: 4px 0; line-height: 1.5; }
+  #end-text {
+    width: min(520px, calc(100vw - 36px));
+    padding: 12px 14px;
+    border: 1px solid var(--term-green-dim);
+    background: rgba(0,20,8,0.56);
+    text-align: left;
+    white-space: pre-wrap;
+  }
+  .overlay .blink { animation: blink 1s steps(2) infinite; margin-top: 18px; color: var(--term-amber); }
+  @keyframes blink { 50% { opacity: 0; } }
+  .menu-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin: 18px 0 10px;
+  }
+  .terminal-button {
+    min-width: 112px;
+    border: 1px solid var(--term-green-dim);
+    background: rgba(0,20,8,0.72);
+    color: var(--term-green);
+    padding: 8px 12px;
+    font: 15px/1 "Courier New", monospace;
+    text-transform: uppercase;
+    text-shadow: 0 0 5px var(--term-green-dim);
+    cursor: pointer;
+  }
+  .terminal-button:hover, .terminal-button:focus {
+    color: var(--term-amber);
+    border-color: var(--term-amber-dim);
+    outline: none;
+  }
+  #pause-info-panel {
+    display: none;
+    width: min(520px, calc(100vw - 36px));
+    margin-top: 10px;
+    padding: 12px 14px;
+    border: 1px solid var(--term-green-dim);
+    background: rgba(0,20,8,0.64);
+    text-align: left;
+    white-space: pre-wrap;
+  }
+  #pause-info-panel p {
+    font-size: 14px;
+    margin: 0;
+  }
+  #touch {
+    position: absolute; inset: 0;
+    z-index: 12;
+    display: none;
+    pointer-events: none;
+  }
+  body.touch #touch { display: block; }
+  body.touch #crosshair { font-size: 22px; }
+  .pad {
+    position: absolute; bottom: 24px;
+    width: 130px; height: 130px;
+    border: 2px solid var(--term-green-dim);
+    border-radius: 50%;
+    background: rgba(0,20,8,0.35);
+    pointer-events: auto;
+    touch-action: none;
+  }
+  .pad .stick {
+    position: absolute; left: 50%; top: 50%;
+    width: 56px; height: 56px;
+    margin-left: -28px; margin-top: -28px;
+    border-radius: 50%;
+    background: rgba(127,255,156,0.25);
+    border: 2px solid var(--term-green);
+    transition: background 0.1s;
+  }
+  #pad-move { left: 18px; }
+  #pad-look { right: 18px; }
+  #btn-action {
+    position: absolute; right: 168px; bottom: 50px;
+    width: 72px; height: 72px;
+    border: 2px solid var(--term-amber);
+    color: var(--term-amber);
+    background: rgba(40,20,0,0.4);
+    border-radius: 50%;
+    font-size: 22px;
+    pointer-events: auto;
+    text-shadow: 0 0 6px var(--term-amber-dim);
+    touch-action: none;
+  }
+  #btn-action:active { background: rgba(255,177,74,0.25); }
+  @media (max-width: 520px) {
+    .hud-cell, #objective, #log-feed { font-size: 11px; padding: 3px 6px; }
+    .meter .bar { width: 60px; }
+    .pad { width: 110px; height: 110px; }
+    .pad .stick { width: 46px; height: 46px; margin-left: -23px; margin-top: -23px; }
+    #btn-action { width: 60px; height: 60px; right: 142px; }
+    #collapse-warning { top: 92px; left: 12px; right: 12px; width: auto; }
+    #collapse-warning-title { font-size: 14px; }
+    #center-message { width: calc(100vw - 28px); padding: 12px; }
+    #center-message-title { font-size: 13px; }
+    #center-message-body { font-size: 12px; }
+    #level-intro-subtitle { letter-spacing: 0.03em; }
+    .terminal-button { min-width: 92px; font-size: 13px; padding: 7px 10px; }
+  }
+</style>
+  <script type="module" crossorigin src="./assets/index-D8VA5dE0.js"></script>
+</head>
+<body>
+<div id="shell">
+  <div id="screen">
+    <canvas id="game"></canvas>
+    <div id="hud">
+      <div id="hud-top" class="hud-bar">
+        <div class="hud-cell">HP <span id="hp-val">100</span>
+          <span class="meter"><span class="bar"><span id="hp-fill" class="fill" style="width:100%"></span></span></span>
+        </div>
+        <div class="hud-cell" id="stam-cell">SPRINT <span id="stam-val">100</span>
+          <span class="meter"><span class="bar"><span id="stam-fill" class="fill" style="width:100%"></span></span></span>
+        </div>
+        <div class="hud-cell">DEPTH <span id="depth-val">01</span></div>
+        <div class="hud-cell amber">KEY <span id="key-val">0</span>/1</div>
+        <div class="hud-cell" id="nodes-cell">NODES <span id="nodes-val">0</span>/<span id="nodes-total">3</span></div>
+        <div class="hud-cell warn" id="corrupt-cell">CORRUPTION <span id="corrupt-val">12</span>%
+          <span class="meter warn"><span class="bar"><span id="corrupt-fill" class="fill" style="width:12%"></span></span></span>
+        </div>
+      </div>
+      <div id="crosshair">+</div>
+      <div id="prompt">[E] USE</div>
+      <div id="collapse-warning" aria-hidden="true">
+        <div id="collapse-warning-title">SIGNAL COLLAPSE IN <span id="collapse-timer">30</span></div>
+        <div id="collapse-warning-body">RESTORE NODE OR EXTRACT</div>
+      </div>
+      <div id="center-message" aria-hidden="true">
+        <div id="center-message-title"></div>
+        <div id="center-message-body"></div>
+      </div>
+      <div id="level-intro" aria-hidden="true">
+        <div id="level-intro-title"></div>
+        <div id="level-intro-subtitle"></div>
+      </div>
+      <div id="hud-bot" class="hud-bar">
+        <div id="objective">OBJECTIVE: RESTORE THREE CORRUPTED NODES</div>
+        <div id="log-feed">> AXIOM-7 MAINTENANCE TERMINAL :: SESSION ACTIVE</div>
+      </div>
+    </div>
+    <div id="touch">
+      <div id="pad-move" class="pad"><div class="stick" id="stick-move"></div></div>
+      <div id="pad-look" class="pad"><div class="stick" id="stick-look"></div></div>
+      <button id="btn-action" type="button">USE</button>
+    </div>
+    <div id="scanlines"></div>
+    <div id="vignette"></div>
+    <div id="flicker"></div>
+    <div id="title" class="overlay">
+      <h1>AXIOM-7</h1>
+      <h1 style="font-size:18px;letter-spacing:0.4em;margin-top:-6px;">MAINTENANCE&nbsp;DEPTHS</h1>
+      <p>UNAUTHORIZED PERSONNEL DETECTED IN SECTOR 7.</p>
+      <p>THREE CORRUPTION NODES REQUIRE MANUAL RESTORATION.</p>
+      <p>PROCEED WITH STANDARD MAINTENANCE PROTOCOL.</p>
+      <p style="opacity:0.7;margin-top:14px;">WASD MOVE &nbsp;&middot;&nbsp; SHIFT SPRINT &nbsp;&middot;&nbsp; ARROWS / MOUSE LOOK &nbsp;&middot;&nbsp; E USE</p>
+      <p class="blink">&gt; PRESS ANY KEY TO BEGIN_</p>
+    </div>
+    <div id="end" class="overlay" style="display:none;">
+      <h1 id="end-title">EXIT REACHED</h1>
+      <p id="end-text"></p>
+      <div class="menu-actions">
+        <button id="end-restart" class="terminal-button" type="button">Restart</button>
+        <button id="end-quit" class="terminal-button" type="button">Quit</button>
+      </div>
+      <p class="blink">&gt; PRESS R TO RESTART_</p>
+    </div>
+    <div id="pause" class="overlay" style="display:none;">
+      <h1>PAUSED</h1>
+      <p>MAINTENANCE SESSION SUSPENDED.</p>
+      <div class="menu-actions">
+        <button id="pause-restart" class="terminal-button" type="button">Restart</button>
+        <button id="pause-quit" class="terminal-button" type="button">Quit</button>
+        <button id="pause-info" class="terminal-button" type="button">Info / Controls</button>
+      </div>
+      <div id="pause-info-panel">
+        <p>Controls:
+- WASD / Arrow Keys: Move
+- E: Interact / Close terminal
+- Shift: Sprint
+- Q: Pause
+
+The doors are not locked to keep you out. They are locked to keep the earlier versions of you in.</p>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

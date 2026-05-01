@@ -1,0 +1,1591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#000000" />
+<title>AXIOM-7: Maintenance Depths</title>
+<style>
+  :root {
+    --term-green: #7fff9c;
+    --term-green-dim: #2a6a36;
+    --term-amber: #ffb14a;
+    --term-amber-dim: #6a4a18;
+    --term-red: #ff6a4a;
+    --term-bg: #050a08;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    width: 100%; height: 100%;
+    overflow: hidden;
+    background: #000;
+    color: var(--term-green);
+    font-family: "VT323", "Courier New", monospace;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none; user-select: none;
+    touch-action: none;
+  }
+
+  /* ============ Main shell + CRT effect ============ */
+  #shell {
+    position: fixed; inset: 0;
+    background: radial-gradient(ellipse at center, #061410 0%, #000 100%);
+  }
+  #screen {
+    position: absolute; inset: 0;
+    overflow: hidden;
+  }
+  #game {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    display: block;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    background: #000;
+    /* slight green tint */
+    filter: contrast(1.05) saturate(1.15);
+  }
+  /* CRT scanline overlay */
+  #scanlines {
+    position: absolute; inset: 0; pointer-events: none; z-index: 5;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(0,0,0,0)   0px,
+      rgba(0,0,0,0)   2px,
+      rgba(0,0,0,0.42) 3px,
+      rgba(0,0,0,0.42) 4px
+    );
+    mix-blend-mode: multiply;
+  }
+  #vignette {
+    position: absolute; inset: 0; pointer-events: none; z-index: 6;
+    background: radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,0.85) 100%);
+  }
+  #flicker {
+    position: absolute; inset: 0; pointer-events: none; z-index: 7;
+    background: rgba(127,255,156,0.02);
+    animation: flicker 3s infinite;
+  }
+  @keyframes flicker {
+    0%,100% { opacity: 1; }
+    47% { opacity: 1; }
+    48% { opacity: 0.6; }
+    49% { opacity: 1; }
+    72% { opacity: 1; }
+    73% { opacity: 0.7; }
+    74% { opacity: 1; }
+  }
+
+  /* ============ Terminal HUD ============ */
+  #hud {
+    position: absolute; inset: 0;
+    pointer-events: none;
+    z-index: 10;
+    font-size: 14px;
+    line-height: 1.3;
+    text-shadow: 0 0 4px var(--term-green-dim), 0 0 1px #000;
+  }
+  .hud-bar {
+    position: absolute;
+    left: 12px; right: 12px;
+    display: flex; justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    color: var(--term-green);
+    font-size: 13px;
+    letter-spacing: 0.05em;
+  }
+  #hud-top { top: 8px; }
+  #hud-bot { bottom: 8px; flex-direction: column; align-items: flex-start; }
+  .hud-cell {
+    background: rgba(0,20,8,0.55);
+    border: 1px solid var(--term-green-dim);
+    padding: 4px 8px;
+    text-transform: uppercase;
+  }
+  .hud-cell.amber { color: var(--term-amber); border-color: var(--term-amber-dim); text-shadow: 0 0 4px var(--term-amber-dim); }
+  .hud-cell.warn { color: var(--term-red); border-color: #5a1a18; text-shadow: 0 0 4px #5a1a18; }
+  #objective {
+    width: 100%;
+    background: rgba(0,20,8,0.55);
+    border: 1px solid var(--term-green-dim);
+    padding: 4px 8px;
+    color: var(--term-amber);
+    font-size: 13px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  #log-feed {
+    width: 100%;
+    background: rgba(0,20,8,0.55);
+    border: 1px solid var(--term-green-dim);
+    padding: 4px 8px;
+    color: var(--term-green);
+    font-size: 12px;
+    min-height: 1.4em;
+    max-height: 4.4em;
+    overflow: hidden;
+    white-space: pre-wrap;
+  }
+  #crosshair {
+    position: absolute; left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--term-green);
+    font-size: 18px;
+    opacity: 0.55;
+    pointer-events: none;
+    z-index: 10;
+  }
+  #prompt {
+    position: absolute; left: 50%; top: calc(50% + 22px);
+    transform: translateX(-50%);
+    color: var(--term-amber);
+    background: rgba(0,20,8,0.65);
+    border: 1px solid var(--term-amber-dim);
+    padding: 2px 8px;
+    font-size: 13px;
+    text-transform: uppercase;
+    pointer-events: none;
+    z-index: 10;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    white-space: nowrap;
+  }
+  #prompt.show { opacity: 1; }
+
+  /* corruption bar */
+  .meter {
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  .meter .bar {
+    width: 80px; height: 8px;
+    border: 1px solid var(--term-green-dim);
+    background: rgba(0,0,0,0.5);
+    position: relative;
+  }
+  .meter .fill {
+    position: absolute; top: 0; left: 0; bottom: 0;
+    background: var(--term-green);
+    transition: width 0.15s ease;
+  }
+  .meter.amber .fill { background: var(--term-amber); }
+  .meter.warn .fill { background: var(--term-red); }
+
+  /* ============ Title / End screens ============ */
+  .overlay {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    background: rgba(0,0,0,0.85);
+    color: var(--term-green);
+    text-align: center;
+    z-index: 20;
+    padding: 20px;
+    text-shadow: 0 0 6px var(--term-green-dim);
+  }
+  .overlay h1 {
+    font-size: 28px;
+    letter-spacing: 0.2em;
+    color: var(--term-amber);
+    text-shadow: 0 0 10px var(--term-amber-dim);
+    margin-bottom: 14px;
+  }
+  .overlay p { font-size: 15px; max-width: 540px; margin: 4px 0; line-height: 1.5; }
+  .overlay .blink { animation: blink 1s steps(2) infinite; margin-top: 18px; color: var(--term-amber); }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* ============ Touch controls ============ */
+  #touch {
+    position: absolute; inset: 0;
+    z-index: 12;
+    display: none;
+    pointer-events: none;
+  }
+  body.touch #touch { display: block; }
+  body.touch #crosshair { font-size: 22px; }
+  .pad {
+    position: absolute; bottom: 24px;
+    width: 130px; height: 130px;
+    border: 2px solid var(--term-green-dim);
+    border-radius: 50%;
+    background: rgba(0,20,8,0.35);
+    pointer-events: auto;
+    touch-action: none;
+  }
+  .pad .stick {
+    position: absolute; left: 50%; top: 50%;
+    width: 56px; height: 56px;
+    margin-left: -28px; margin-top: -28px;
+    border-radius: 50%;
+    background: rgba(127,255,156,0.25);
+    border: 2px solid var(--term-green);
+    transition: background 0.1s;
+  }
+  #pad-move { left: 18px; }
+  #pad-look { right: 18px; }
+  #btn-action {
+    position: absolute; right: 168px; bottom: 50px;
+    width: 72px; height: 72px;
+    border: 2px solid var(--term-amber);
+    color: var(--term-amber);
+    background: rgba(40,20,0,0.4);
+    border-radius: 50%;
+    font-size: 22px;
+    pointer-events: auto;
+    text-shadow: 0 0 6px var(--term-amber-dim);
+    touch-action: none;
+  }
+  #btn-action:active { background: rgba(255,177,74,0.25); }
+
+  /* hide HUD on small screens (phones) but keep readable */
+  @media (max-width: 520px) {
+    .hud-cell, #objective, #log-feed { font-size: 11px; padding: 3px 6px; }
+    .meter .bar { width: 60px; }
+    .pad { width: 110px; height: 110px; }
+    .pad .stick { width: 46px; height: 46px; margin-left: -23px; margin-top: -23px; }
+    #btn-action { width: 60px; height: 60px; right: 142px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="shell">
+  <div id="screen">
+    <canvas id="game"></canvas>
+
+    <div id="hud">
+      <div id="hud-top" class="hud-bar">
+        <div class="hud-cell">HP <span id="hp-val">100</span>
+          <span class="meter"><span class="bar"><span id="hp-fill" class="fill" style="width:100%"></span></span></span>
+        </div>
+        <div class="hud-cell amber">KEY <span id="key-val">0</span>/1</div>
+        <div class="hud-cell" id="nodes-cell">NODES <span id="nodes-val">0</span>/3</div>
+        <div class="hud-cell warn" id="corrupt-cell">CORRUPTION <span id="corrupt-val">12</span>%
+          <span class="meter warn"><span class="bar"><span id="corrupt-fill" class="fill" style="width:12%"></span></span></span>
+        </div>
+      </div>
+
+      <div id="crosshair">+</div>
+      <div id="prompt">[E] USE</div>
+
+      <div id="hud-bot" class="hud-bar">
+        <div id="objective">OBJECTIVE: RESTORE THREE CORRUPTED NODES</div>
+        <div id="log-feed">> AXIOM-7 MAINTENANCE TERMINAL :: SESSION ACTIVE</div>
+      </div>
+    </div>
+
+    <div id="touch">
+      <div id="pad-move" class="pad"><div class="stick" id="stick-move"></div></div>
+      <div id="pad-look" class="pad"><div class="stick" id="stick-look"></div></div>
+      <button id="btn-action" type="button">USE</button>
+    </div>
+
+    <div id="scanlines"></div>
+    <div id="vignette"></div>
+    <div id="flicker"></div>
+
+    <div id="title" class="overlay">
+      <h1>AXIOM-7</h1>
+      <h1 style="font-size:18px;letter-spacing:0.4em;margin-top:-6px;">MAINTENANCE&nbsp;DEPTHS</h1>
+      <p>UNAUTHORIZED PERSONNEL DETECTED IN SECTOR 7.</p>
+      <p>THREE CORRUPTION NODES REQUIRE MANUAL RESTORATION.</p>
+      <p>PROCEED WITH STANDARD MAINTENANCE PROTOCOL.</p>
+      <p style="opacity:0.7;margin-top:14px;">WASD MOVE &nbsp;&middot;&nbsp; ARROWS / MOUSE LOOK &nbsp;&middot;&nbsp; E USE</p>
+      <p class="blink">&gt; PRESS ANY KEY TO BEGIN_</p>
+    </div>
+
+    <div id="end" class="overlay" style="display:none;">
+      <h1 id="end-title">EXIT REACHED</h1>
+      <p id="end-text"></p>
+      <p class="blink">&gt; PRESS R TO RESTART_</p>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+(() => {
+
+// ============================================================
+// AUDIO  (procedural — Web Audio oscillators + filtered noise)
+// ============================================================
+// All SFX are synthesised at runtime so the game stays asset-free.
+// User gesture is required to start the AudioContext; ensureAudio() is
+// called from the keyboard / pointer-lock / touch action handlers.
+let audioCtx = null;
+let masterGain = null;
+let ambientNodes = null;
+
+function initAudio() {
+  if (audioCtx) return;
+  try {
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    audioCtx = new Ctx();
+    masterGain = audioCtx.createGain();
+    masterGain.gain.value = 0.55;
+    masterGain.connect(audioCtx.destination);
+    startAmbient();
+  } catch (e) { audioCtx = null; }
+}
+function ensureAudio() {
+  if (!audioCtx) initAudio();
+  if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+// Simple oscillator tone with optional pitch slide and lowpass colouring.
+function tone(opts) {
+  if (!audioCtx) return;
+  const t0 = audioCtx.currentTime;
+  const dur = opts.dur || 0.2;
+  const vol = opts.vol || 0.18;
+  const o = audioCtx.createOscillator();
+  o.type = opts.type || 'square';
+  o.frequency.setValueAtTime(opts.f0, t0);
+  if (opts.f1) o.frequency.exponentialRampToValueAtTime(Math.max(20, opts.f1), t0 + dur);
+  const f = audioCtx.createBiquadFilter();
+  f.type = 'lowpass'; f.frequency.value = opts.cutoff || 4000;
+  const g = audioCtx.createGain();
+  g.gain.setValueAtTime(0, t0);
+  g.gain.linearRampToValueAtTime(vol, t0 + 0.005);
+  g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+  o.connect(f); f.connect(g); g.connect(masterGain);
+  o.start(t0); o.stop(t0 + dur + 0.05);
+}
+
+// Filtered noise burst — used for impacts and damage hits.
+function noiseBurst(opts) {
+  if (!audioCtx) return;
+  const t0 = audioCtx.currentTime;
+  const dur = opts.dur || 0.2;
+  const sr = audioCtx.sampleRate;
+  const n = (dur * sr) | 0;
+  const buf = audioCtx.createBuffer(1, n, sr);
+  const data = buf.getChannelData(0);
+  for (let i = 0; i < n; i++) data[i] = Math.random() * 2 - 1;
+  const src = audioCtx.createBufferSource();
+  src.buffer = buf;
+  const f = audioCtx.createBiquadFilter();
+  f.type = opts.filter || 'bandpass';
+  f.frequency.value = opts.freq || 800;
+  f.Q.value = opts.q || 1.2;
+  const g = audioCtx.createGain();
+  g.gain.setValueAtTime(0, t0);
+  g.gain.linearRampToValueAtTime(opts.vol || 0.18, t0 + 0.005);
+  g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur);
+  src.connect(f); f.connect(g); g.connect(masterGain);
+  src.start(t0); src.stop(t0 + dur);
+}
+
+// Continuous low rumble + faint detuned drone for atmosphere.
+function startAmbient() {
+  if (!audioCtx || ambientNodes) return;
+  const o1 = audioCtx.createOscillator(); o1.type = 'sine'; o1.frequency.value = 48;
+  const o2 = audioCtx.createOscillator(); o2.type = 'sine'; o2.frequency.value = 73.2;
+  const lf = audioCtx.createBiquadFilter(); lf.type = 'lowpass'; lf.frequency.value = 220;
+  const g  = audioCtx.createGain(); g.gain.value = 0.05;
+  o1.connect(lf); o2.connect(lf); lf.connect(g); g.connect(masterGain);
+  o1.start(); o2.start();
+  ambientNodes = { o1, o2, g, lf };
+}
+
+const SFX = {
+  doorOpen:    () => tone({ f0: 220, f1: 540, type: 'square',   dur: 0.45, vol: 0.18, cutoff: 1800 }),
+  doorClose:   () => tone({ f0: 480, f1: 160, type: 'square',   dur: 0.40, vol: 0.18, cutoff: 1500 }),
+  doorLocked:  () => tone({ f0: 130, f1: 80,  type: 'sawtooth', dur: 0.20, vol: 0.22, cutoff: 600  }),
+  pickupKey:   () => { tone({ f0: 880, type: 'square', dur: 0.08, vol: 0.18 });
+                       setTimeout(() => tone({ f0: 1320, type: 'square', dur: 0.14, vol: 0.18 }), 70); },
+  pickupHeal:  () => tone({ f0: 660, f1: 990, type: 'sine', dur: 0.28, vol: 0.20 }),
+  log:         () => { tone({ f0: 1400, type: 'square', dur: 0.04, vol: 0.10 });
+                       setTimeout(() => tone({ f0: 980,  type: 'square', dur: 0.04, vol: 0.10 }), 55); },
+  nodeRestore: () => { tone({ f0: 220, f1: 880, type: 'sawtooth', dur: 0.55, vol: 0.20, cutoff: 2400 });
+                       setTimeout(() => tone({ f0: 1100, f1: 1320, type: 'sine', dur: 0.5, vol: 0.16 }), 220); },
+  hurt:        () => { noiseBurst({ filter: 'bandpass', freq: 600, q: 1.6, dur: 0.18, vol: 0.28 });
+                       tone({ f0: 200, f1: 90, type: 'sawtooth', dur: 0.18, vol: 0.18 }); },
+  teleport:    () => { tone({ f0: 1200, f1: 60, type: 'sawtooth', dur: 0.7, vol: 0.20, cutoff: 1500 });
+                       noiseBurst({ filter: 'highpass', freq: 1500, dur: 0.45, vol: 0.14 }); },
+  exitWin:     () => { tone({ f0: 440, f1: 880,  type: 'square', dur: 0.4, vol: 0.22 });
+                       setTimeout(() => tone({ f0: 660, f1: 1320, type: 'square', dur: 0.5, vol: 0.22 }), 180); },
+  death:       () => { tone({ f0: 220, f1: 60, type: 'sawtooth', dur: 1.0, vol: 0.30, cutoff: 1000 });
+                       noiseBurst({ filter: 'lowpass', freq: 400, dur: 0.8, vol: 0.20 }); },
+  step:        () => noiseBurst({ filter: 'lowpass', freq: 220, dur: 0.05, vol: 0.05 }),
+};
+
+// ============================================================
+// CONSTANTS
+// ============================================================
+const RENDER_W = 320;
+const RENDER_H = 200;
+const FOV = Math.PI / 3;          // 60 deg
+const HALF_FOV = FOV / 2;
+const MOVE_SPEED = 2.6;           // tiles per second
+const TURN_SPEED = 2.4;           // radians per second
+const MOUSE_SENS = 0.0024;
+const PLAYER_RADIUS = 0.17;       // collision radius (smaller = easier doorway clearance)
+const DOOR_SNAP_RANGE = 0.42;     // perpendicular pull-to-center range when entering open door
+const INTERACT_DIST = 1.15;       // how close to interact
+const DOOR_OPEN_TIME = 0.7;       // sec to open
+const SPRITE_DRAW_DIST = 14;
+const ANOMALY_SPEED = 0.55;
+const ANOMALY_HURT = 8;           // dmg per second on contact
+const CORRUPT_GAIN = 0.4;         // % per sec idle
+const CORRUPT_GAIN_NEAR = 2.4;    // % per sec near anomaly
+const CORRUPT_LOSS_NODE = 18;     // % loss per node restored
+
+// ============================================================
+// ASSETS / COLORS
+// ============================================================
+// Tile codes
+const T = {
+  EMPTY: 0,
+  WALL_CONCRETE: 1,
+  WALL_PANEL: 2,
+  WALL_GRATE: 3,
+  DOOR: 4,
+  LOCKED: 5,
+  TELEPORT: 6,    // visually identical to a normal door
+  EXIT: 7,
+  WALL_DEEP: 8,   // appears after mutations (impossible-space room)
+};
+
+// Colors per tile type. NS = north/south face, EW = east/west face.
+// Theme: muted greens with amber highlights, "old terminal" feel.
+const WALL_COLORS = {
+  1: { ns: '#3a8a4a', ew: '#256a30' },
+  2: { ns: '#7a8a3a', ew: '#525e22' },
+  3: { ns: '#2c4a36', ew: '#1c3424' },
+  4: { ns: '#aaff7a', ew: '#7acc5a' },   // open-able door
+  5: { ns: '#ffb14a', ew: '#a06820' },   // locked door (amber)
+  6: { ns: '#aaff7a', ew: '#7acc5a' },   // teleport door (visually same as normal)
+  7: { ns: '#ffd66a', ew: '#a07820' },   // exit door (gold)
+  8: { ns: '#5a3a8a', ew: '#3a226a' },   // impossible room: violet, off-palette
+};
+// Door frame trim + center indicator light by tile type. Teleport door
+// intentionally shares colours with the normal door so the player cannot
+// distinguish them visually.
+const DOOR_TRIM = {
+  4: '#aaffbb',  5: '#ffd66a',  6: '#aaffbb',  7: '#ffe98a',
+};
+const DOOR_LIGHT = {
+  4: '#e8ffe8',  5: '#ff9a30',  6: '#e8ffe8',  7: '#ffd66a',
+};
+const CEIL_COLOR  = '#0a1a12';
+const FLOOR_COLOR = '#0e2418';
+const SKY_BAND    = '#08140e';
+
+// ============================================================
+// MAP DATA
+// ============================================================
+// v3 keeps v2's rendering/audio/HUD shell, but uses the larger v1 topology:
+// repeated corridors, staged map rewrites, and the impossible exit room.
+const MAP_W = 40;
+const MAP_H = 30;
+
+const BASE_ROOMS = [
+  { id: 'start-corridor', x: 1, y: 3, w: 13, h: 3 },
+  { id: 'node-one-room', x: 3, y: 7, w: 8, h: 4 },
+  { id: 'repeat-corridor', x: 20, y: 14, w: 13, h: 3 },
+  { id: 'node-two-room', x: 23, y: 18, w: 8, h: 4 },
+];
+
+const BASE_DOORS = [
+  { x: 6, y: 6, tile: T.DOOR, kind: 'normal' },
+  { x: 26, y: 17, tile: T.LOCKED, kind: 'locked', locked: true },
+  {
+    x: 19, y: 15, tile: T.TELEPORT, kind: 'teleport',
+    teleport: { tx: 12.25, ty: 4.5, dir: Math.PI, activeMin: 1, activeMax: 99, message: 'THE WEST DOOR RETURNS YOU TO THE FIRST CORRIDOR.' },
+  },
+];
+
+const BASE_ENTITIES = [
+  { id: 'key-alpha', kind: 'key', x: 11.6, y: 4.5 },
+  { id: 'med-start', kind: 'health', x: 4.4, y: 9.35, amount: 35 },
+  { id: 'node-1', kind: 'node', x: 7.0, y: 8.85, nodeId: 0, restored: false },
+  { id: 'node-2', kind: 'node', x: 27.0, y: 20.1, nodeId: 1, restored: false },
+  { id: 'log-start', kind: 'log', x: 2.4, y: 4.55, logId: 'start' },
+  { id: 'log-one', kind: 'log', x: 4.75, y: 8.8, logId: 'one' },
+  { id: 'log-two', kind: 'log', x: 24.2, y: 15.45, logId: 'two' },
+  { id: 'anomaly-repeat', kind: 'anomaly', x: 31.1, y: 15.6, phase: 0 },
+];
+
+const DEFERRED_ENTITIES = [
+  { id: 'node-3', kind: 'node', x: 29.2, y: 23.75, nodeId: 2, restored: false },
+  { id: 'log-three', kind: 'log', x: 28.1, y: 23.0, logId: 'three' },
+  { id: 'log-exit', kind: 'log', x: 16.6, y: 4.45, logId: 'exit' },
+  { id: 'anomaly-shift', kind: 'anomaly', x: 36.4, y: 23.8, phase: 1.7 },
+];
+
+// Mutable structures populated in initWorld()
+let map = [];                 // map[y][x] = tile code
+let doors = {};               // "x,y" -> { open, opening, locked, kind }
+let teleports = {};           // "x,y" -> { tx, ty, dir }
+let entities = [];            // sprite-billboard pickups / enemies / nodes
+let logsCollected = new Set();
+let mutationStage = 0;        // how many mutations applied
+let nodesRestored = 0;
+let keysHeld = 0;
+let corruption = 12;
+let gameState = 'title';      // title | playing | won | lost
+let logMessages = [];         // recent on-screen log text
+let logTimer = 0;
+
+const LOG_TEXTS = {
+  start: "LOG 7-A: Maintenance simulation booted with an unapproved floor plan.\nRestore node 1 before the structure notices you.",
+  one: "LOG 7-C: A door may repeat a corridor without repeating your coordinates.\nTrust the frame, not the map.",
+  two: "LOG 12-F: The west door returns to the first corridor.\nMeasurements disagree. Staff are advised to stop measuring.",
+  three: "LOG ??: Node 3 is not restoring the building.\nIt is teaching the building how to pretend.",
+  exit: "LOG FINAL: The impossible room was not added.\nThe rest of the facility was subtracted around it.",
+};
+
+// Mutations applied after restoring node 1, 2, 3. These are v1's stronger
+// progression beats adapted to v2's tile, door, audio, and prompt systems.
+const MUTATIONS = [
+  {
+    desc: "[NODE 01 RESTORED] A service panel unlocks into a corridor that should have ended in brick.",
+    objective: "WALK THROUGH THE REPEATED SERVICE DOOR :: RESTORE NODE 2",
+    changes: [
+      {
+        kind: 'door', x: 14, y: 4, tile: T.TELEPORT, doorKind: 'teleport',
+        teleport: { tx: 21.45, ty: 15.45, dir: 0, activeMin: 1, activeMax: 2, message: 'NO LOADING. NO SOUND. THE DOOR FRAME REPEATS.' },
+      },
+    ],
+  },
+  {
+    desc: "[NODE 02 RESTORED] The familiar corridor edits itself. The upper lane remembers a path that was not there.",
+    objective: "FIND THE CHANGED CORRIDOR :: RESTORE NODE 3",
+    changes: [
+      { kind: 'tile', x: 23, y: 14, tile: T.WALL_DEEP },
+      { kind: 'tile', x: 24, y: 14, tile: T.WALL_DEEP },
+      { kind: 'tile', x: 25, y: 14, tile: T.WALL_DEEP },
+      { kind: 'tile', x: 26, y: 14, tile: T.WALL_DEEP },
+      { kind: 'tile', x: 27, y: 14, tile: T.WALL_DEEP },
+      { kind: 'tile', x: 28, y: 14, tile: T.WALL_DEEP },
+      { kind: 'rect', x: 23, y: 13, w: 7, h: 1 },
+      { kind: 'rect', x: 33, y: 15, w: 5, h: 1 },
+      { kind: 'rect', x: 37, y: 15, w: 1, h: 10 },
+      { kind: 'rect', x: 33, y: 24, w: 5, h: 1 },
+      { kind: 'rect', x: 26, y: 22, w: 7, h: 4 },
+      { kind: 'door', x: 33, y: 24, tile: T.DOOR, doorKind: 'normal' },
+      { kind: 'spawn', id: 'node-3' },
+      { kind: 'spawn', id: 'log-three' },
+      { kind: 'spawn', id: 'anomaly-shift' },
+    ],
+  },
+  {
+    desc: "[NODE 03 RESTORED] A room blooms inside the first corridor's footprint. The map refuses to conserve area.",
+    objective: "RETURN TO THE FIRST CORRIDOR :: REACH THE IMPOSSIBLE EXIT",
+    changes: [
+      { kind: 'rect', x: 14, y: 1, w: 12, h: 8 },
+      { kind: 'tile', x: 18, y: 4, tile: T.WALL_DEEP },
+      { kind: 'tile', x: 21, y: 6, tile: T.WALL_PANEL },
+      { kind: 'door', x: 24, y: 4, tile: T.EXIT, doorKind: 'exit', locked: false },
+      { kind: 'spawn', id: 'log-exit' },
+    ],
+  },
+];
+
+// ============================================================
+// PLAYER STATE
+// ============================================================
+const player = {
+  x: 1.5, y: 1.5,   // world position (tiles)
+  dir: 0,           // facing angle (radians, 0 = east)
+  hp: 100,
+  movX: 0, movY: 0, // input movement vector
+  turn: 0,          // input turn rate
+  teleportCooldown: 0,
+};
+
+// ============================================================
+// BUILD MAP
+// ============================================================
+function initWorld() {
+  map = []; doors = {}; teleports = {}; entities = [];
+  logsCollected.clear();
+  mutationStage = 0; nodesRestored = 0; keysHeld = 0;
+  corruption = 12;
+  player.x = 3.4; player.y = 4.45;
+  player.hp = 100; player.dir = 0;
+  player.movX = 0; player.movY = 0; player.turn = 0;
+  player.teleportCooldown = 0;
+  logMessages = []; logTimer = 0;
+
+  for (let y = 0; y < MAP_H; y++) {
+    const row = [];
+    for (let x = 0; x < MAP_W; x++) row.push(wallVariant(x, y));
+    map.push(row);
+  }
+  for (const room of BASE_ROOMS) carveRect(room.x, room.y, room.w, room.h);
+  for (const door of BASE_DOORS) addDoor(door);
+  for (const def of BASE_ENTITIES) addEntity(def);
+
+  setObjective("RESTORE NODE 1 IN THE MAINTENANCE ROOM");
+  pushLog("AXIOM-7 MAINT TERMINAL :: SESSION ACTIVE");
+  pushLog("PROTOCOL 04-12 ENGAGED");
+}
+
+function wallVariant(x, y) {
+  const h = (x * 7 + y * 13) % 11;
+  return (h < 7) ? T.WALL_CONCRETE
+       : (h < 10) ? T.WALL_PANEL
+       : T.WALL_GRATE;
+}
+
+function carveRect(x, y, w, h) {
+  for (let yy = y; yy < y + h; yy++) {
+    for (let xx = x; xx < x + w; xx++) setTile(xx, yy, T.EMPTY);
+  }
+}
+
+function setTile(x, y, tile) {
+  if (!inBoundsCell(x, y)) return;
+  map[y][x] = tile;
+  if (!isDoorTile(tile)) {
+    delete doors[x+','+y];
+    delete teleports[x+','+y];
+  }
+}
+
+function addDoor(def) {
+  if (!inBoundsCell(def.x, def.y)) return;
+  const k = def.x + ',' + def.y;
+  map[def.y][def.x] = def.tile;
+  doors[k] = {
+    open: def.open || 0,
+    opening: !!def.opening,
+    locked: !!def.locked,
+    kind: def.doorKind || def.kind || 'normal',
+  };
+  if (def.teleport) teleports[k] = { ...def.teleport };
+  else delete teleports[k];
+}
+
+function addEntity(def) {
+  if (def.id && entities.some((e) => e.id === def.id)) return;
+  const entity = { alive: true, active: true, ...def };
+  if (entity.kind === 'anomaly') {
+    entity.hurtCool = 0;
+    entity.wanderTimer = 0;
+    entity.wanderDir = Math.random() * Math.PI * 2;
+  }
+  entities.push(entity);
+}
+
+function spawnEntity(id) {
+  const def = DEFERRED_ENTITIES.find((item) => item.id === id);
+  if (def) addEntity(def);
+}
+
+function entityIsActive(entity) {
+  return entity.alive && entity.active !== false;
+}
+
+function inBoundsCell(x, y) {
+  return x >= 0 && y >= 0 && x < MAP_W && y < MAP_H;
+}
+
+function tileAt(x, y) {
+  if (x < 0 || y < 0 || x >= MAP_W || y >= MAP_H) return T.WALL_CONCRETE;
+  return map[y|0][x|0];
+}
+
+const isDoorTile = (t) =>
+  t === T.DOOR || t === T.LOCKED || t === T.TELEPORT || t === T.EXIT;
+
+// True if the cell at integer (cx,cy) blocks player movement and rays.
+function isSolid(cx, cy) {
+  const t = tileAt(cx, cy);
+  if (t === T.EMPTY) return false;
+  if (isDoorTile(t)) {
+    const d = doors[cx+','+cy];
+    if (d && d.open >= 0.85) return false;  // open door: passable
+    return true;
+  }
+  return true;
+}
+
+// ============================================================
+// INPUT
+// ============================================================
+const keys = {};
+window.addEventListener('keydown', (e) => {
+  ensureAudio();
+  if (gameState === 'title') {
+    startGame(); e.preventDefault(); return;
+  }
+  if (gameState === 'won' || gameState === 'lost') {
+    if (e.key === 'r' || e.key === 'R') restartGame();
+    return;
+  }
+  keys[e.key.toLowerCase()] = true;
+  if (e.key === ' ' || e.key === 'e' || e.key === 'E') {
+    tryInteract();
+    e.preventDefault();
+  }
+  if (['ArrowLeft','ArrowRight','ArrowUp','ArrowDown',' ','w','a','s','d','W','A','S','D'].includes(e.key)) {
+    e.preventDefault();
+  }
+});
+window.addEventListener('keyup', (e) => {
+  keys[e.key.toLowerCase()] = false;
+});
+
+// Mouse look (pointer lock)
+const canvas = document.getElementById('game');
+canvas.addEventListener('click', () => {
+  ensureAudio();
+  if (gameState === 'playing' && !document.pointerLockElement) {
+    canvas.requestPointerLock?.();
+  }
+});
+document.addEventListener('mousemove', (e) => {
+  if (document.pointerLockElement === canvas) {
+    player.dir += e.movementX * MOUSE_SENS;
+  }
+});
+
+// Touch detection
+if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+  document.body.classList.add('touch');
+}
+
+// Touch joysticks
+function setupPad(padEl, stickEl, onUpdate) {
+  const state = { active: false, id: -1, cx: 0, cy: 0, dx: 0, dy: 0, r: 50 };
+  const reset = () => {
+    state.active = false; state.dx = state.dy = 0;
+    stickEl.style.transform = 'translate(0,0)';
+    onUpdate(0, 0);
+  };
+  const begin = (id, x, y) => {
+    const rect = padEl.getBoundingClientRect();
+    state.cx = rect.left + rect.width / 2;
+    state.cy = rect.top + rect.height / 2;
+    state.r = rect.width / 2 - 18;
+    state.active = true; state.id = id;
+    move(x, y);
+  };
+  const move = (x, y) => {
+    let dx = x - state.cx, dy = y - state.cy;
+    const m = Math.hypot(dx, dy);
+    if (m > state.r) { dx = dx * state.r / m; dy = dy * state.r / m; }
+    state.dx = dx; state.dy = dy;
+    stickEl.style.transform = `translate(${dx}px,${dy}px)`;
+    onUpdate(dx / state.r, dy / state.r);
+  };
+  padEl.addEventListener('touchstart', (e) => {
+    const t = e.changedTouches[0];
+    begin(t.identifier, t.clientX, t.clientY);
+    e.preventDefault();
+  }, { passive: false });
+  padEl.addEventListener('touchmove', (e) => {
+    for (const t of e.changedTouches) {
+      if (t.identifier === state.id) { move(t.clientX, t.clientY); }
+    }
+    e.preventDefault();
+  }, { passive: false });
+  const end = (e) => {
+    for (const t of e.changedTouches) {
+      if (t.identifier === state.id) { reset(); }
+    }
+    e.preventDefault();
+  };
+  padEl.addEventListener('touchend', end, { passive: false });
+  padEl.addEventListener('touchcancel', end, { passive: false });
+}
+let touchMove = { x: 0, y: 0 };
+let touchLook = { x: 0, y: 0 };
+setupPad(
+  document.getElementById('pad-move'),
+  document.getElementById('stick-move'),
+  (nx, ny) => { touchMove.x = nx; touchMove.y = ny; },
+);
+setupPad(
+  document.getElementById('pad-look'),
+  document.getElementById('stick-look'),
+  (nx, ny) => { touchLook.x = nx; touchLook.y = ny; },
+);
+document.getElementById('btn-action').addEventListener('touchstart', (e) => {
+  ensureAudio();
+  if (gameState === 'title') { startGame(); }
+  else if (gameState === 'playing') { tryInteract(); }
+  e.preventDefault();
+}, { passive: false });
+
+// ============================================================
+// COLLISION / MOVEMENT
+// ============================================================
+// Move along axes independently so we slide along walls.
+// When the cell directly ahead is an open door, we gently nudge the player
+// toward the door's perpendicular center so they don't snag the door frame.
+function tryMove(dx, dy) {
+  const r = PLAYER_RADIUS;
+
+  if (dx !== 0) {
+    const lead = (player.x + dx) + Math.sign(dx) * r;
+    const cx = lead | 0, cy = player.y | 0;
+    const t = tileAt(cx, cy);
+    // door-channel snap: pull y toward cy + 0.5 when entering an open door
+    if (isDoorTile(t)) {
+      const d = doors[cx+','+cy];
+      if (d && d.open >= 0.5) {
+        const target = cy + 0.5;
+        const diff = target - player.y;
+        if (Math.abs(diff) < DOOR_SNAP_RANGE) {
+          const step = Math.min(Math.abs(diff), Math.abs(dx) * 1.5);
+          player.y += Math.sign(diff) * step;
+        }
+      }
+    }
+    const nx = player.x + dx;
+    if (canStandAt(nx, player.y)) {
+      player.x = nx;
+    }
+  }
+
+  if (dy !== 0) {
+    const lead = (player.y + dy) + Math.sign(dy) * r;
+    const cx = player.x | 0, cy = lead | 0;
+    const t = tileAt(cx, cy);
+    if (isDoorTile(t)) {
+      const d = doors[cx+','+cy];
+      if (d && d.open >= 0.5) {
+        const target = cx + 0.5;
+        const diff = target - player.x;
+        if (Math.abs(diff) < DOOR_SNAP_RANGE) {
+          const step = Math.min(Math.abs(diff), Math.abs(dy) * 1.5);
+          player.x += Math.sign(diff) * step;
+        }
+      }
+    }
+    const ny = player.y + dy;
+    if (canStandAt(player.x, ny)) {
+      player.y = ny;
+    }
+  }
+}
+
+function canStandAt(x, y) {
+  const r = PLAYER_RADIUS;
+  return !isSolid((x - r) | 0, (y - r) | 0) &&
+         !isSolid((x + r) | 0, (y - r) | 0) &&
+         !isSolid((x - r) | 0, (y + r) | 0) &&
+         !isSolid((x + r) | 0, (y + r) | 0);
+}
+
+let stepCooldown = 0;
+// Apply input to motion state. Called every frame.
+function updateInput(dt) {
+  let mx = 0, my = 0, turn = 0;
+
+  // keyboard
+  if (keys['w'] || keys['arrowup']) my += 1;
+  if (keys['s']) my -= 1;
+  if (keys['a']) mx -= 1;
+  if (keys['d']) mx += 1;
+  if (keys['arrowleft']) turn -= 1;
+  if (keys['arrowright']) turn += 1;
+  if (keys['arrowdown']) my -= 1;
+
+  // touch
+  if (Math.abs(touchMove.x) + Math.abs(touchMove.y) > 0.05) {
+    mx = touchMove.x; my = -touchMove.y;
+  }
+  if (Math.abs(touchLook.x) > 0.05) {
+    turn += touchLook.x;
+  }
+
+  // normalize movement vector so diagonals aren't faster
+  const m = Math.hypot(mx, my);
+  if (m > 1) { mx /= m; my /= m; }
+
+  player.dir += turn * TURN_SPEED * dt;
+
+  const cosD = Math.cos(player.dir);
+  const sinD = Math.sin(player.dir);
+  const fwd = my * MOVE_SPEED * dt;
+  const str = mx * MOVE_SPEED * dt;
+  const dx = cosD * fwd + Math.cos(player.dir + Math.PI / 2) * str;
+  const dy = sinD * fwd + Math.sin(player.dir + Math.PI / 2) * str;
+  tryMove(dx, dy);
+
+  // teleport door handling: if standing on a teleport tile, relocate.
+  player.teleportCooldown = Math.max(0, player.teleportCooldown - dt);
+  const cx = player.x | 0, cy = player.y | 0;
+  const key = cx + ',' + cy;
+  if (player.teleportCooldown <= 0 && teleports[key] && doors[key] && doors[key].open >= 0.5) {
+    const tp = teleports[key];
+    if (nodesRestored >= (tp.activeMin || 0) && nodesRestored <= (tp.activeMax || 99)) {
+      player.x = tp.tx; player.y = tp.ty;
+      player.dir = tp.dir;
+      player.teleportCooldown = 0.9;
+      SFX.teleport();
+      pushLog("...");
+      pushLog(tp.message || "YOU DID NOT MOVE. THE FACILITY MOVED.");
+    }
+  }
+
+  // Footsteps: emit a soft step sound at a fixed cadence while moving.
+  const moving = (Math.abs(mx) + Math.abs(my)) > 0.05;
+  if (moving) {
+    stepCooldown -= dt;
+    if (stepCooldown <= 0) { SFX.step(); stepCooldown = 0.36; }
+  } else {
+    stepCooldown = 0;
+  }
+}
+
+// ============================================================
+// RAYCASTING RENDERER
+// ============================================================
+const ctx = canvas.getContext('2d');
+let zBuffer = new Float32Array(RENDER_W);
+
+function fitCanvas() {
+  // Internal pixel resolution stays fixed; CSS scales it up.
+  canvas.width = RENDER_W;
+  canvas.height = RENDER_H;
+}
+fitCanvas();
+window.addEventListener('resize', fitCanvas);
+
+function renderWorld() {
+  // 1) clear with floor + ceiling
+  ctx.fillStyle = CEIL_COLOR;
+  ctx.fillRect(0, 0, RENDER_W, RENDER_H / 2);
+  ctx.fillStyle = FLOOR_COLOR;
+  ctx.fillRect(0, RENDER_H / 2, RENDER_W, RENDER_H / 2);
+
+  // subtle horizon band
+  ctx.fillStyle = SKY_BAND;
+  ctx.fillRect(0, RENDER_H / 2 - 1, RENDER_W, 2);
+
+  // 2) cast a ray per screen column, DDA grid traversal.
+  for (let col = 0; col < RENDER_W; col++) {
+    // ray angle for this column
+    const camX = (col / RENDER_W) * 2 - 1;       // [-1, 1]
+    const rayAng = player.dir + Math.atan(camX * Math.tan(HALF_FOV));
+    const rdx = Math.cos(rayAng);
+    const rdy = Math.sin(rayAng);
+
+    let mapX = player.x | 0, mapY = player.y | 0;
+    const deltaDX = Math.abs(1 / rdx);
+    const deltaDY = Math.abs(1 / rdy);
+    let stepX, stepY;
+    let sideDX, sideDY;
+    if (rdx < 0) { stepX = -1; sideDX = (player.x - mapX) * deltaDX; }
+    else         { stepX =  1; sideDX = (mapX + 1 - player.x) * deltaDX; }
+    if (rdy < 0) { stepY = -1; sideDY = (player.y - mapY) * deltaDY; }
+    else         { stepY =  1; sideDY = (mapY + 1 - player.y) * deltaDY; }
+
+    let hit = 0, side = 0, tile = 0;
+    let dist = 0;
+    let safety = 64;
+    while (!hit && safety-- > 0) {
+      if (sideDX < sideDY) { sideDX += deltaDX; mapX += stepX; side = 0; }
+      else                 { sideDY += deltaDY; mapY += stepY; side = 1; }
+      tile = tileAt(mapX, mapY);
+      if (tile === T.EMPTY) continue;
+      if (tile === T.DOOR || tile === T.LOCKED || tile === T.TELEPORT || tile === T.EXIT) {
+        const d = doors[mapX+','+mapY];
+        if (d && d.open >= 0.9) continue; // fully open door, ray passes through
+        hit = 1;
+      } else {
+        hit = 1;
+      }
+    }
+    if (!hit) {
+      zBuffer[col] = 999;
+      continue;
+    }
+    dist = (side === 0)
+      ? (sideDX - deltaDX)
+      : (sideDY - deltaDY);
+    if (dist < 0.0001) dist = 0.0001;
+    zBuffer[col] = dist;
+
+    // wall slice height
+    const lineH = Math.min(RENDER_H * 4, RENDER_H / dist);
+    const drawStart = (RENDER_H - lineH) / 2 | 0;
+
+    // door columns are drawn slightly recessed for animation: shrink by openness.
+    let openSlide = 0;
+    if (tile === T.DOOR || tile === T.LOCKED || tile === T.TELEPORT || tile === T.EXIT) {
+      const d = doors[mapX+','+mapY];
+      if (d) openSlide = d.open;
+    }
+    const visibleH = lineH * (1 - openSlide);
+    const visibleStart = drawStart + (lineH - visibleH);
+
+    // pick color, dim by distance
+    const col2 = WALL_COLORS[tile] || WALL_COLORS[1];
+    const base = (side === 0) ? col2.ns : col2.ew;
+    const fog = Math.max(0.18, 1 - dist * 0.085);
+    ctx.fillStyle = applyFog(base, fog);
+
+    if (visibleH > 0) {
+      ctx.fillRect(col, visibleStart | 0, 1, (visibleH + 1) | 0);
+
+      // Door decoration: top + bottom trim and a centered indicator light.
+      // Makes doors look like doors instead of just coloured wall slices.
+      if (isDoorTile(tile)) {
+        const trim = DOOR_TRIM[tile]   || '#aaffbb';
+        const lit  = DOOR_LIGHT[tile]  || '#e8ffe8';
+        const trimH = Math.max(1, (visibleH * 0.07) | 0);
+        ctx.fillStyle = applyFog(trim, fog);
+        ctx.fillRect(col, visibleStart | 0, 1, trimH);
+        ctx.fillRect(col, ((visibleStart + visibleH) | 0) - trimH, 1, trimH);
+
+        // wallX: where along this wall face the ray hit (0..1)
+        let wallX = (side === 0)
+          ? (player.y + dist * Math.sin(rayAng))
+          : (player.x + dist * Math.cos(rayAng));
+        wallX -= Math.floor(wallX);
+        if (wallX > 0.43 && wallX < 0.57) {
+          // pulse for locked / exit doors so they read as "alarmed"
+          let lk = 1;
+          if (tile === T.LOCKED)    lk = 0.55 + 0.45 * Math.sin(performance.now() * 0.008);
+          else if (tile === T.EXIT) lk = 0.65 + 0.35 * Math.sin(performance.now() * 0.005);
+          const lh = Math.max(2, (visibleH * 0.22) | 0);
+          const ly = (visibleStart + (visibleH - lh) / 2) | 0;
+          ctx.fillStyle = applyFog(lit, Math.min(1, fog * lk + 0.12));
+          ctx.fillRect(col, ly, 1, lh);
+        }
+      }
+    }
+  }
+}
+
+// Apply a brightness factor to a hex color string ("#rrggbb").
+function applyFog(hex, k) {
+  const v = hex.length === 7 ? hex : '#7fff9c';
+  const r = Math.floor(parseInt(v.substr(1,2),16) * k);
+  const g = Math.floor(parseInt(v.substr(3,2),16) * k);
+  const b = Math.floor(parseInt(v.substr(5,2),16) * k);
+  return 'rgb('+r+','+g+','+b+')';
+}
+
+// ============================================================
+// SPRITE RENDERER (billboards)
+// ============================================================
+// Pre-rendered offscreen sprites by entity kind.
+const SPRITES = {};
+function buildSprites() {
+  function make(w, h, draw) {
+    const c = document.createElement('canvas');
+    c.width = w; c.height = h;
+    const x = c.getContext('2d');
+    draw(x, w, h);
+    return c;
+  }
+  // KEY: chunky amber key
+  SPRITES.key = make(32, 32, (x) => {
+    x.fillStyle = '#ffb14a';
+    x.fillRect(8, 13, 14, 5);
+    x.fillRect(20, 18, 2, 4);
+    x.fillRect(23, 18, 2, 4);
+    x.fillStyle = '#ffd66a';
+    x.fillRect(7, 11, 5, 9);
+    x.fillStyle = '#000';
+    x.fillRect(9, 14, 2, 3);
+  });
+  // HEALTH: green med pack with cross
+  SPRITES.health = make(32, 32, (x) => {
+    x.fillStyle = '#1a3a22';
+    x.fillRect(8, 8, 16, 18);
+    x.fillStyle = '#7fff9c';
+    x.fillRect(9, 9, 14, 16);
+    x.fillStyle = '#0a1a10';
+    x.fillRect(14, 11, 4, 12);
+    x.fillRect(11, 14, 10, 6);
+  });
+  // LOG: amber data slate
+  SPRITES.log = make(32, 32, (x) => {
+    x.fillStyle = '#3a2a10';
+    x.fillRect(7, 6, 18, 22);
+    x.fillStyle = '#ffb14a';
+    x.fillRect(8, 7, 16, 20);
+    x.fillStyle = '#3a2a10';
+    for (let i = 0; i < 6; i++) x.fillRect(10, 10 + i * 3, 12, 1);
+  });
+  // NODE active: pulsing green pillar with cross
+  SPRITES.nodeActive = make(48, 64, (x) => {
+    x.fillStyle = '#0a1a10';
+    x.fillRect(14, 8, 20, 50);
+    x.fillStyle = '#3a8a4a';
+    x.fillRect(15, 9, 18, 48);
+    x.fillStyle = '#7fff9c';
+    x.fillRect(20, 14, 8, 38);
+    x.fillStyle = '#aaffbb';
+    x.fillRect(22, 16, 4, 34);
+    // base
+    x.fillStyle = '#1a3a22';
+    x.fillRect(10, 56, 28, 6);
+    // glyph
+    x.fillStyle = '#ffb14a';
+    x.fillRect(22, 28, 4, 14);
+    x.fillRect(18, 32, 12, 4);
+  });
+  // NODE restored: dim amber pillar
+  SPRITES.nodeDone = make(48, 64, (x) => {
+    x.fillStyle = '#0a1a10';
+    x.fillRect(14, 8, 20, 50);
+    x.fillStyle = '#3a2a10';
+    x.fillRect(15, 9, 18, 48);
+    x.fillStyle = '#6a4a18';
+    x.fillRect(20, 14, 8, 38);
+    x.fillStyle = '#1a3a22';
+    x.fillRect(10, 56, 28, 6);
+  });
+  // ANOMALY: tall thin distorted humanoid silhouette
+  SPRITES.anomaly = make(48, 80, (x) => {
+    x.fillStyle = '#0a1a10';
+    // head
+    x.fillRect(20, 8, 8, 10);
+    // body
+    x.fillRect(18, 18, 12, 26);
+    // arms
+    x.fillRect(12, 22, 6, 22);
+    x.fillRect(30, 22, 6, 22);
+    // legs
+    x.fillRect(18, 44, 5, 28);
+    x.fillRect(25, 44, 5, 28);
+    // glow eyes
+    x.fillStyle = '#ffb14a';
+    x.fillRect(21, 11, 2, 2);
+    x.fillRect(25, 11, 2, 2);
+    // green flicker outline
+    x.strokeStyle = '#7fff9c';
+    x.lineWidth = 1;
+    x.strokeRect(18.5, 18.5, 11, 25);
+  });
+}
+buildSprites();
+
+// Optional asset override: if the user drops PNGs into ./assets/ next to
+// this HTML file, they replace the procedural sprites at runtime. The file
+// stays self-contained — missing files just fall back to procedural art.
+//   assets/key.png         32x32  (alpha)
+//   assets/health.png      32x32
+//   assets/log.png         32x32
+//   assets/node-active.png 48x64
+//   assets/node-done.png   48x64
+//   assets/anomaly.png     48x80
+const ASSET_PATHS = {
+  key: 'assets/key.png',
+  health: 'assets/health.png',
+  log: 'assets/log.png',
+  nodeActive: 'assets/node-active.png',
+  nodeDone: 'assets/node-done.png',
+  anomaly: 'assets/anomaly.png',
+};
+function loadOptionalAssets() {
+  for (const [name, path] of Object.entries(ASSET_PATHS)) {
+    const img = new Image();
+    img.onload = () => { SPRITES[name] = img; };
+    img.onerror = () => { /* keep procedural fallback silently */ };
+    img.src = path;
+  }
+}
+loadOptionalAssets();
+
+function renderSprites() {
+  // sort by distance descending
+  const visible = [];
+  for (const e of entities) {
+    if (!entityIsActive(e)) continue;
+    if (e.kind === 'node' && e.restored) {
+      // still render but as 'done'
+    }
+    const dx = e.x - player.x;
+    const dy = e.y - player.y;
+    const d2 = dx*dx + dy*dy;
+    if (d2 > SPRITE_DRAW_DIST * SPRITE_DRAW_DIST) continue;
+    visible.push({ e, d2 });
+  }
+  visible.sort((a, b) => b.d2 - a.d2);
+
+  const cosD = Math.cos(-player.dir);
+  const sinD = Math.sin(-player.dir);
+
+  for (const item of visible) {
+    const e = item.e;
+    const dx = e.x - player.x;
+    const dy = e.y - player.y;
+    // transform to camera space
+    const tx = dx * cosD - dy * sinD;
+    const ty = dx * sinD + dy * cosD;
+    if (tx <= 0.05) continue;  // behind camera
+
+    // perspective project
+    const screenX = (RENDER_W / 2) * (1 + ty / (tx * Math.tan(HALF_FOV)));
+    const spriteH = Math.abs(RENDER_H / tx);
+    let spriteW = spriteH * 0.75;
+    let spriteRatio = 0.75;
+    let img;
+    let yOff = 0; // vertical offset from horizon (nodes are tall, items lower)
+    switch (e.kind) {
+      case 'key':    img = SPRITES.key; spriteRatio = 1.0; yOff = spriteH * 0.18; break;
+      case 'health': img = SPRITES.health; spriteRatio = 1.0; yOff = spriteH * 0.18; break;
+      case 'log':    img = SPRITES.log; spriteRatio = 1.0; yOff = spriteH * 0.18; break;
+      case 'node':   img = e.restored ? SPRITES.nodeDone : SPRITES.nodeActive;
+                     spriteRatio = 0.75; yOff = -spriteH * 0.10; break;
+      case 'anomaly':img = SPRITES.anomaly; spriteRatio = 0.6; yOff = -spriteH * 0.10; break;
+      default: continue;
+    }
+    // recompute width from chosen aspect ratio
+    spriteW = spriteH * spriteRatio;
+
+    const drawStartY = ((RENDER_H - spriteH) / 2 + yOff) | 0;
+    const drawStartX = (screenX - spriteW / 2) | 0;
+    const drawEndX   = (screenX + spriteW / 2) | 0;
+
+    // pulse glow for active nodes
+    let dimK = 1;
+    if (e.kind === 'node' && !e.restored) {
+      dimK = 0.85 + 0.15 * Math.sin(performance.now() * 0.005);
+    }
+
+    // draw column-by-column with z-buffer test
+    for (let sx = drawStartX; sx < drawEndX; sx++) {
+      if (sx < 0 || sx >= RENDER_W) continue;
+      if (tx >= zBuffer[sx]) continue;
+      const texX = ((sx - drawStartX) * img.width / (drawEndX - drawStartX)) | 0;
+      ctx.globalAlpha = dimK;
+      ctx.drawImage(img, texX, 0, 1, img.height, sx, drawStartY, 1, spriteH | 0);
+      ctx.globalAlpha = 1;
+    }
+  }
+}
+
+// ============================================================
+// INTERACTIONS
+// ============================================================
+let activeInteract = null; // entity or 'door' currently in look range
+let promptText = '';
+
+// Pick the closest interactable in front of the player.
+function findInteract() {
+  const reach = INTERACT_DIST;
+  const px = player.x, py = player.y;
+  const fx = Math.cos(player.dir), fy = Math.sin(player.dir);
+
+  // 1) door directly in front (check up to reach distance)
+  for (let s = 0.3; s < reach; s += 0.25) {
+    const cx = (px + fx * s) | 0;
+    const cy = (py + fy * s) | 0;
+    const t = tileAt(cx, cy);
+    if (t === T.DOOR || t === T.LOCKED || t === T.TELEPORT || t === T.EXIT) {
+      return { kind: 'door', x: cx, y: cy };
+    }
+    if (t !== T.EMPTY) break; // hit a wall, stop scanning
+  }
+
+  // 2) nearby entity in front cone
+  let best = null, bestD = reach * reach;
+  for (const e of entities) {
+    if (!entityIsActive(e)) continue;
+    if (e.kind === 'anomaly') continue;
+    const dx = e.x - px, dy = e.y - py;
+    const d2 = dx*dx + dy*dy;
+    if (d2 > bestD) continue;
+    const dot = (dx * fx + dy * fy) / Math.sqrt(d2);
+    if (dot < 0.4) continue;     // not in front cone
+    bestD = d2;
+    best = e;
+  }
+  return best ? { kind: 'entity', entity: best } : null;
+}
+
+function tryInteract() {
+  if (!activeInteract) return;
+  if (activeInteract.kind === 'door') {
+    const k = activeInteract.x + ',' + activeInteract.y;
+    const d = doors[k];
+    if (!d) return;
+    if (d.locked && d.kind === 'locked') {
+      if (keysHeld > 0) {
+        d.locked = false;
+        d.opening = true;
+        keysHeld--;
+        SFX.doorOpen();
+        pushLog("ACCESS GRANTED. KEY CONSUMED.");
+      } else {
+        SFX.doorLocked();
+        pushLog("LOCKED. ACCESS KEY REQUIRED.");
+      }
+      return;
+    }
+    if (d.locked && d.kind === 'exit') {
+      SFX.doorLocked();
+      pushLog("EXIT SEALED. RESTORE ALL NODES TO PROCEED.");
+      return;
+    }
+    d.opening = !d.opening;       // toggle (open / close)
+    if (d.opening) SFX.doorOpen(); else SFX.doorClose();
+    return;
+  }
+  // entity
+  const e = activeInteract.entity;
+  if (e.kind === 'key') {
+    collectPickup(e);
+  } else if (e.kind === 'health') {
+    collectPickup(e);
+  } else if (e.kind === 'log') {
+    e.alive = false;
+    const text = LOG_TEXTS[e.logId] || "[CORRUPTED FRAGMENT]";
+    SFX.log();
+    pushLog("DATAPAD: " + text);
+  } else if (e.kind === 'node') {
+    if (e.restored) { pushLog("NODE ALREADY RESTORED."); return; }
+    if (e.nodeId !== nodesRestored) {
+      SFX.doorLocked();
+      pushLog("NODE " + (e.nodeId + 1) + " REJECTED. RESTORE NODE " + (nodesRestored + 1) + " FIRST.");
+      return;
+    }
+    e.restored = true;
+    nodesRestored++;
+    corruption = Math.max(0, corruption - CORRUPT_LOSS_NODE);
+    SFX.nodeRestore();
+    applyMutation(e.nodeId);
+  }
+}
+
+function collectPickup(e) {
+  if (!entityIsActive(e)) return;
+  if (e.kind === 'key') {
+    e.alive = false;
+    keysHeld++;
+    SFX.pickupKey();
+    pushLog("ACCESS KEY ACQUIRED.");
+  } else if (e.kind === 'health') {
+    e.alive = false;
+    const amount = e.amount || 35;
+    player.hp = Math.min(100, player.hp + amount);
+    SFX.pickupHeal();
+    pushLog("MED-PATCH APPLIED. +" + amount + " HP.");
+  }
+}
+
+function checkAutoPickups() {
+  for (const e of entities) {
+    if (!entityIsActive(e)) continue;
+    if (e.kind !== 'key' && e.kind !== 'health') continue;
+    const dx = e.x - player.x;
+    const dy = e.y - player.y;
+    if (dx * dx + dy * dy < 0.52 * 0.52) collectPickup(e);
+  }
+}
+
+function applyMutation(nodeId) {
+  const m = MUTATIONS[mutationStage] || MUTATIONS[nodeId];
+  if (!m) return;
+  for (const c of m.changes) {
+    if (c.kind === 'tile') {
+      setTile(c.x, c.y, c.tile);
+    } else if (c.kind === 'rect') {
+      carveRect(c.x, c.y, c.w, c.h);
+    } else if (c.kind === 'door') {
+      addDoor(c);
+    } else if (c.kind === 'spawn') {
+      spawnEntity(c.id);
+    }
+  }
+  pushLog(m.desc);
+  setObjective(m.objective || "ALL NODES RESTORED :: PROCEED TO EXIT");
+
+  mutationStage++;
+}
+
+// ============================================================
+// MUTATION / TIME UPDATES
+// ============================================================
+function updateDoors(dt) {
+  for (const k of Object.keys(doors)) {
+    const d = doors[k];
+    if (d.opening && d.open < 1) d.open = Math.min(1, d.open + dt / DOOR_OPEN_TIME);
+    else if (!d.opening && d.open > 0) d.open = Math.max(0, d.open - dt / DOOR_OPEN_TIME);
+  }
+}
+
+function updateAnomalies(dt) {
+  let anyClose = false;
+  for (const e of entities) {
+    if (e.kind !== 'anomaly' || !entityIsActive(e)) continue;
+    const dx = player.x - e.x;
+    const dy = player.y - e.y;
+    const d = Math.hypot(dx, dy);
+    e.wanderTimer -= dt;
+    if (d < 6) {
+      // pursue if line is short; otherwise meander
+      if (e.wanderTimer <= 0) { e.wanderTimer = 0.4; e.wanderDir = Math.atan2(dy, dx); }
+    } else {
+      if (e.wanderTimer <= 0) { e.wanderTimer = 1.2 + Math.random(); e.wanderDir = Math.random() * Math.PI * 2; }
+    }
+    const nx = e.x + Math.cos(e.wanderDir) * ANOMALY_SPEED * dt;
+    const ny = e.y + Math.sin(e.wanderDir) * ANOMALY_SPEED * dt;
+    if (!isSolid(nx | 0, ny | 0)) { e.x = nx; e.y = ny; }
+    else { e.wanderTimer = 0; }   // pick new direction next tick
+
+    if (d < 0.55) {
+      anyClose = true;
+      e.hurtCool -= dt;
+      if (e.hurtCool <= 0) {
+        player.hp -= ANOMALY_HURT;
+        e.hurtCool = 1.0;
+        SFX.hurt();
+        pushLog("CONTACT! HP -" + ANOMALY_HURT);
+      }
+    }
+    // corruption rises faster when an anomaly is within line-of-sight range
+    if (d < 4) anyClose = true;
+  }
+  // corruption update
+  corruption += (anyClose ? CORRUPT_GAIN_NEAR : CORRUPT_GAIN) * dt;
+  if (corruption > 100) corruption = 100;
+}
+
+// ============================================================
+// HUD
+// ============================================================
+const hpVal     = document.getElementById('hp-val');
+const hpFill    = document.getElementById('hp-fill');
+const keyVal    = document.getElementById('key-val');
+const nodesVal  = document.getElementById('nodes-val');
+const corruptVal = document.getElementById('corrupt-val');
+const corruptFill = document.getElementById('corrupt-fill');
+const objectiveEl = document.getElementById('objective');
+const logFeedEl   = document.getElementById('log-feed');
+const promptEl    = document.getElementById('prompt');
+
+let objectiveText = "OBJECTIVE: RESTORE THREE CORRUPTED NODES";
+function setObjective(t) {
+  objectiveText = "OBJECTIVE: " + t;
+  objectiveEl.textContent = objectiveText;
+}
+function pushLog(s) {
+  logMessages.push(s);
+  // keep last 3 lines
+  if (logMessages.length > 3) logMessages.shift();
+  logTimer = 6;
+  logFeedEl.textContent = "> " + logMessages.join("\n> ");
+}
+function updateHUD() {
+  hpVal.textContent = Math.max(0, Math.round(player.hp));
+  hpFill.style.width = Math.max(0, player.hp) + '%';
+  keyVal.textContent = keysHeld;
+  nodesVal.textContent = nodesRestored;
+  corruptVal.textContent = Math.round(corruption);
+  corruptFill.style.width = corruption + '%';
+
+  // prompt for currently-aimed interactable
+  if (activeInteract) {
+    if (activeInteract.kind === 'door') {
+      const d = doors[activeInteract.x+','+activeInteract.y];
+      if (d) {
+        if (d.kind === 'locked' && d.locked) promptText = "[E] UNLOCK DOOR";
+        else if (d.kind === 'exit' && d.locked) promptText = "[E] EXIT (SEALED)";
+        else if (d.open >= 0.9) promptText = "[E] CLOSE";
+        else promptText = "[E] OPEN";
+      }
+    } else {
+      const e = activeInteract.entity;
+      promptText = ({
+        key: "[E] PICK UP KEY",
+        health: "[E] APPLY MED-PATCH",
+        log: "[E] READ DATAPAD",
+        node: e.restored ? "[E] NODE RESTORED" : "[E] RESTORE NODE",
+      })[e.kind] || '';
+    }
+    promptEl.textContent = promptText;
+    promptEl.classList.add('show');
+  } else {
+    promptEl.classList.remove('show');
+  }
+}
+
+// ============================================================
+// GAME LOOP
+// ============================================================
+let lastTime = 0;
+function loop(t) {
+  const dt = Math.min(0.05, (t - lastTime) / 1000 || 0);
+  lastTime = t;
+
+  if (gameState === 'playing') {
+    updateInput(dt);
+    checkAutoPickups();
+    updateDoors(dt);
+    updateAnomalies(dt);
+    activeInteract = findInteract();
+    checkExit();
+    if (player.hp <= 0) endGame(false);
+  }
+
+  renderWorld();
+  if (gameState !== 'title') renderSprites();
+  updateHUD();
+  drawCorruptionFX();
+
+  requestAnimationFrame(loop);
+}
+
+// Subtle full-screen tint that intensifies with corruption.
+function drawCorruptionFX() {
+  if (corruption < 5) return;
+  const k = corruption / 100;
+  ctx.globalAlpha = 0.10 + 0.20 * k;
+  ctx.fillStyle = `rgb(${(80*k)|0},${(20*k)|0},${(40*k)|0})`;
+  ctx.fillRect(0, 0, RENDER_W, RENDER_H);
+  ctx.globalAlpha = 1;
+  // glitch lines when corruption is very high
+  if (k > 0.7 && Math.random() < 0.18) {
+    const y = (Math.random() * RENDER_H) | 0;
+    ctx.fillStyle = '#ffb14a';
+    ctx.fillRect(0, y, RENDER_W, 1);
+  }
+}
+
+function checkExit() {
+  // standing on the exit door cell while it's open ends the game.
+  for (const k of Object.keys(doors)) {
+    if (doors[k].kind !== 'exit') continue;
+    if (doors[k].locked) continue;
+    if (doors[k].open < 0.85) continue;
+    const [sx, sy] = k.split(',').map(Number);
+    const dx = player.x - (sx + 0.5);
+    const dy = player.y - (sy + 0.5);
+    if (dx*dx + dy*dy < 0.6) endGame(true);
+  }
+}
+
+function startGame() {
+  document.getElementById('title').style.display = 'none';
+  initWorld();
+  gameState = 'playing';
+}
+function restartGame() {
+  document.getElementById('end').style.display = 'none';
+  initWorld();
+  gameState = 'playing';
+}
+function endGame(won) {
+  if (gameState !== 'playing') return;
+  gameState = won ? 'won' : 'lost';
+  const ov = document.getElementById('end');
+  document.getElementById('end-title').textContent = won ? 'EXIT REACHED' : 'CONNECTION LOST';
+  document.getElementById('end-text').textContent = won
+    ? "AXIOM-7 logs the maintenance run as complete.\nSomething inside the facility logs you as still present.\nThe terminal cannot tell which record is correct."
+    : "Your vital signs flatlined inside Sector 7.\nThe facility quietly redacts the file.";
+  ov.style.display = 'flex';
+  if (won) SFX.exitWin(); else SFX.death();
+  if (document.pointerLockElement === canvas) document.exitPointerLock?.();
+}
+
+initWorld();
+gameState = 'title';
+requestAnimationFrame(loop);
+
+})();
+</script>
+</body>
+</html>
