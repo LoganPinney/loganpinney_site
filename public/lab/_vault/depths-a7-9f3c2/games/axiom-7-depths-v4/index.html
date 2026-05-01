@@ -422,7 +422,7 @@ const TURN_SPEED = 2.4;           // radians per second
 const MOUSE_SENS = 0.0024;
 const PLAYER_RADIUS = 0.17;       // collision radius (smaller = easier doorway clearance)
 const DOOR_SNAP_RANGE = 0.56;     // perpendicular pull-to-center range when entering open door
-const DOOR_COLLISION_OPEN = 0.55; // player can pass once a door is visibly open enough
+const DOOR_COLLISION_OPEN = 0.45; // player can pass once a door is visibly open enough
 const INTERACT_DIST = 1.15;       // how close to interact
 const DOOR_OPEN_TIME = 0.7;       // sec to open
 const SPRITE_DRAW_DIST = 14;
@@ -687,7 +687,7 @@ function blocksPlayerAt(cx, cy) {
   if (t === T.EMPTY) return false;
   if (isDoorTile(t)) {
     const d = doors[cx+','+cy];
-    if (d && d.open >= DOOR_COLLISION_OPEN) return false;
+    if (d && !d.locked && (d.opening || d.open >= DOOR_COLLISION_OPEN)) return false;
     if (cx === (player.x | 0) && cy === (player.y | 0)) return false;
     return true;
   }
@@ -713,7 +713,7 @@ function nudgeTowardDoorCenter(axis, delta) {
   if (!isDoorTile(t)) return;
 
   const d = doors[cx+','+cy];
-  if (!d || d.open < 0.2) return;
+  if (!d || d.locked || (!d.opening && d.open < 0.2)) return;
 
   const target = axis === 'x' ? cy + 0.5 : cx + 0.5;
   const current = axis === 'x' ? player.y : player.x;
@@ -744,7 +744,7 @@ window.addEventListener('keydown', (e) => {
     return;
   }
   keys[e.key.toLowerCase()] = true;
-  if (e.key === ' ' || e.key === 'e' || e.key === 'E') {
+  if ((e.key === ' ' || e.key === 'e' || e.key === 'E') && !e.repeat) {
     tryInteract();
     e.preventDefault();
   }
@@ -1294,6 +1294,7 @@ function tryInteract() {
       if (keysHeld > 0) {
         d.locked = false;
         d.opening = true;
+        d.open = Math.max(d.open, DOOR_COLLISION_OPEN);
         keysHeld--;
         SFX.doorOpen();
         pushLog("ACCESS GRANTED. KEY CONSUMED.");
@@ -1309,6 +1310,7 @@ function tryInteract() {
       return;
     }
     d.opening = !d.opening;       // toggle (open / close)
+    if (d.opening) d.open = Math.max(d.open, DOOR_COLLISION_OPEN);
     if (d.opening) SFX.doorOpen(); else SFX.doorClose();
     return;
   }
@@ -1373,7 +1375,7 @@ function applyMutation(nodeId) {
 function updateDoors(dt) {
   for (const k of Object.keys(doors)) {
     const d = doors[k];
-    if (d.opening && d.open < 1) d.open = Math.min(1, d.open + dt / DOOR_OPEN_TIME);
+    if (d.opening && d.open < 1) d.open = Math.min(1, Math.max(d.open, DOOR_COLLISION_OPEN) + dt / DOOR_OPEN_TIME);
     else if (!d.opening && d.open > 0) d.open = Math.max(0, d.open - dt / DOOR_OPEN_TIME);
   }
 }
