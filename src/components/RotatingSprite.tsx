@@ -26,8 +26,8 @@ type RotatingSpriteStyle = CSSProperties & {
 }
 
 export default function RotatingSprite({
-  src = '/sprites/cyborg-demon-rotation.png',
-  frameCount = 16,
+  src = '/sprites/cyborg_walk.png',
+  frameCount = 8,
   frameWidth = 256,
   frameHeight = 256,
   durationMs = 1200,

@@ -226,7 +226,7 @@ html[data-scanlines="true"] body::before {
   animation: portrait-dot-pulse 1.6s ease-in-out infinite;
 }
 
-/* --- Rotating sprite sheet turntable --- */
+/* --- Sprite sheet animation stage --- */
 .rotating-sprite-stage {
   display: grid;
   place-items: end center;

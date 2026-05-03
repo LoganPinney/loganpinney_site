@@ -191,21 +191,21 @@ export default function AboutPage() {
           get in touch <span aria-hidden>→</span>
         </Link>
       </section>
-      {/* Sprite turntable test */}
+      {/* Sprite walk-cycle test */}
       <section className="mt-16">
         <RotatingSprite
-          src="/sprites/cyborg-demon-rotation.png"
-          frameCount={16}
+          src="/sprites/cyborg_walk.png"
+          frameCount={8}
           frameWidth={256}
           frameHeight={256}
-          durationMs={1200}
+          durationMs={900}
           scale={2}
         />
         <p
           className="mt-4 text-center font-mono text-xs"
           style={{ color: 'var(--text-dim)' }}
         >
-          Sprite-sheet turntable test — 16 directional frames
+          Sprite-sheet walk cycle test - 8 animation frames
         </p>
       </section>
     </div>
