@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { siteConfig } from '@/config/site.config'
 import AnimatedPortrait from '@/components/AnimatedPortrait'
+import RotatingSprite from '@/components/RotatingSprite'
 
 export const metadata: Metadata = {
   title: 'About',
@@ -189,6 +190,23 @@ export default function AboutPage() {
         >
           get in touch <span aria-hidden>→</span>
         </Link>
+      </section>
+      {/* Sprite turntable test */}
+      <section className="mt-16">
+        <RotatingSprite
+          src="/sprites/cyborg-demon-rotation.png"
+          frameCount={16}
+          frameWidth={256}
+          frameHeight={256}
+          durationMs={1200}
+          scale={2}
+        />
+        <p
+          className="mt-4 text-center font-mono text-xs"
+          style={{ color: 'var(--text-dim)' }}
+        >
+          Sprite-sheet turntable test — 16 directional frames
+        </p>
       </section>
     </div>
   )
