@@ -9,7 +9,8 @@ const config: IConfig = {
     '/admin/*',                      // any paths you don’t want indexed
     '/drafts/*',
     '/lab',
-    '/lab/*'
+    '/lab/*',
+    '/sprites'
   ],
   robotsTxtOptions: {
     additionalSitemaps: [

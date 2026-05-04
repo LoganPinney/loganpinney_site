@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Sprite Animator — Demo</title>
+<link rel="stylesheet" href="sprite-widget.css" />
+<style>
+  html, body {
+    margin: 0;
+    background: #0a0806;
+    min-height: 100%;
+  }
+  body {
+    padding: 40px 24px 80px;
+    font-family: "JetBrains Mono", ui-monospace, Menlo, monospace;
+    color: #c8b89a;
+  }
+  .page-title {
+    max-width: 1200px;
+    margin: 0 auto 20px;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #8a7560;
+  }
+  .page-title b { color: #d8a040; }
+  .docs {
+    max-width: 1200px;
+    margin: 32px auto 0;
+    padding: 20px 24px;
+    background: #1c1612;
+    border: 1px solid #3a2a1c;
+    font-size: 12px;
+    line-height: 1.7;
+  }
+  .docs h3 {
+    margin: 0 0 8px;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #d8a040;
+  }
+  .docs code, .docs pre {
+    background: #0a0806;
+    color: #b8d090;
+    border: 1px solid #2a201c;
+    padding: 2px 6px;
+    font-family: inherit;
+    font-size: 11px;
+  }
+  .docs pre {
+    padding: 12px 14px;
+    overflow-x: auto;
+    white-space: pre;
+  }
+  .docs p { margin: 8px 0; color: #a89880; }
+</style>
+</head>
+<body>
+  <div class="page-title">demo · <b>sprite animator widget</b> · drop into any page</div>
+
+  <div id="widget"></div>
+
+  <div class="docs">
+    <h3>Add another sprite later</h3>
+    <p>1. Drop the PNG into <code>sprite-widget/sprites/</code></p>
+    <p>2. Add a new entry to the <code>sprites</code> array below — that's it.</p>
+<pre>SpriteAnimator.mount("#widget", {
+  sprites: [
+    { id: "beholder", label: "Beholder",
+      src: "sprites/BEHOLDER.png",
+      frames: 8, frameWidth: 256, frameHeight: 256, fps: 8 },
+
+    // future additions:
+    // { id: "wraith", label: "Wraith",
+    //   src: "sprites/WRAITH.png",
+    //   frames: 6, frameWidth: 128, frameHeight: 128, fps: 10 },
+  ],
+  defaultId: "beholder"
+});</pre>
+    <p>The dropdown at the top of the widget appears automatically and lets visitors switch sprites. You can also call <code>widget.addSprite(...)</code> at runtime.</p>
+  </div>
+
+  <script src="sprite-widget.js"></script>
+  <script>
+    SpriteAnimator.mount("#widget", {
+      sprites: [
+        {
+          id: "beholder",
+          label: "Beholder",
+          src: "sprites/BEHOLDER.png",
+          frames: 8,
+          frameWidth: 256,
+          frameHeight: 256,
+          fps: 8
+        }
+        // add more entries here as you build them
+      ],
+      defaultId: "beholder"
+    });
+  </script>
+</body>
+</html>
