@@ -194,7 +194,7 @@ export default function AboutPage() {
       {/* Sprite walk-cycle test */}
       <section className="mt-16">
         <RotatingSprite
-          src="/sprites/cyborg_walk.png"
+          src="/sprites/BEHOLDER.png"
           frameCount={8}
           frameWidth={256}
           frameHeight={256}
