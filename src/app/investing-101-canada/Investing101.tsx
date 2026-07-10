@@ -1,6 +1,7 @@
 'use client'
 
 import { ChangeEvent, useEffect, useMemo, useState } from 'react'
+import Image from 'next/image'
 import styles from './investing-101.module.css'
 
 const disclaimer =
@@ -186,15 +187,14 @@ export default function Investing101() {
             </div>
             <p className={styles.heroNote}><Icon>✦</Icon> Built for Canadians who want clarity, not pressure.</p>
           </div>
-          <div className={styles.heroArt} aria-label="A simple illustration showing growth over time">
-            <div className={styles.sun} />
-            <div className={styles.hillOne} />
-            <div className={styles.hillTwo} />
-            <div className={styles.path} />
-            <div className={styles.stepOne}><span>Now</span></div>
-            <div className={styles.stepTwo}><span>Plan</span></div>
-            <div className={styles.stepThree}><span>Grow</span></div>
-            <div className={styles.artLabel}>Small steps<br />add up.</div>
+          <div className={styles.heroArt}>
+            <Image
+              src="/investing-101/dollar-hill-hero.png"
+              alt="A dollar sign moving up a green hill"
+              fill
+              priority
+              sizes="(max-width: 850px) 100vw, 48vw"
+            />
           </div>
         </section>
 
