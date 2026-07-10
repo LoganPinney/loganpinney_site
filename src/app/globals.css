@@ -40,6 +40,16 @@ body {
   position: relative;
 }
 
+/* The educational investing offshoot intentionally uses an independent, calm visual system. */
+body.investing-101-mode {
+  background: #fff;
+}
+
+body.investing-101-mode > div > a[aria-label*='home'],
+body.investing-101-mode > div > footer {
+  display: none;
+}
+
 /* CRT-style scanlines overlay — toggle via data-scanlines on <html> */
 html[data-scanlines="true"] body::before {
   content: "";
