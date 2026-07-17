@@ -1,5 +1,10 @@
 import Link from 'next/link'
+import type { Metadata } from 'next'
 import { siteConfig } from '@/config/site.config'
+
+export const metadata: Metadata = {
+  alternates: { canonical: '/' },
+}
 
 const glowText = siteConfig.effects.glowText ? 'glow-text' : ''
 const blinkCursor = siteConfig.effects.blinkingCursor
@@ -19,7 +24,8 @@ export default function HomePage() {
               className="relative inline-flex rounded-full h-2 w-2"
               style={{
                 background: 'var(--accent)',
-                boxShadow: '0 0 6px var(--accent-glow), 0 0 12px var(--accent-glow)',
+                boxShadow:
+                  '0 0 6px var(--accent-glow), 0 0 12px var(--accent-glow)',
               }}
             />
           </span>
@@ -52,7 +58,10 @@ export default function HomePage() {
           {siteConfig.identity.title}
         </p>
 
-        <p className="font-mono text-xs mb-8" style={{ color: 'var(--text-faint)' }}>
+        <p
+          className="font-mono text-xs mb-8"
+          style={{ color: 'var(--text-faint)' }}
+        >
           {siteConfig.identity.currentLine}
         </p>
 
@@ -80,7 +89,10 @@ export default function HomePage() {
       </section>
 
       {/* FEATURED CASE STUDY */}
-      <section className="py-16" style={{ borderTop: '1px solid var(--border)' }}>
+      <section
+        className="py-16"
+        style={{ borderTop: '1px solid var(--border)' }}
+      >
         <div className="mb-8">
           <h2
             className={`font-mono text-xs uppercase tracking-widest mb-8 ${glowText}`}
@@ -89,9 +101,7 @@ export default function HomePage() {
             {'// featured case study'}
           </h2>
 
-          <div
-  className="rounded-md border border-[var(--border)] bg-[var(--bg-card)] p-6 transition-colors duration-200 hover:border-[var(--accent)] sm:p-8"
->
+          <div className="rounded-md border border-[var(--border)] bg-[var(--bg-card)] p-6 transition-colors duration-200 hover:border-[var(--accent)] sm:p-8">
             <div className="mb-4 flex flex-wrap gap-2">
               {[
                 '400–1,200 participants per event',
@@ -103,7 +113,8 @@ export default function HomePage() {
                   key={item}
                   className="rounded border px-2.5 py-1 font-mono text-[11px]"
                   style={{
-                    borderColor: 'color-mix(in srgb, var(--accent) 30%, transparent)',
+                    borderColor:
+                      'color-mix(in srgb, var(--accent) 30%, transparent)',
                     color: 'var(--accent)',
                   }}
                 >
@@ -116,31 +127,41 @@ export default function HomePage() {
               Event Staffing Automation
             </h3>
 
-            <p className="mb-5 max-w-3xl leading-relaxed" style={{ color: '#ccc' }}>
-              Rebuilt manual staffing and event operations workflows into a validated
-              automation pipeline using Google Sheets, Apps Script, Workato, Airtable,
-              and delivery logging.
+            <p
+              className="mb-5 max-w-3xl leading-relaxed"
+              style={{ color: '#ccc' }}
+            >
+              Rebuilt manual staffing and event operations workflows into a
+              validated automation pipeline using Google Sheets, Apps Script,
+              Workato, Airtable, and delivery logging.
             </p>
 
-            <p className="mb-6 max-w-3xl text-sm leading-relaxed" style={{ color: 'var(--text-dim)' }}>
-              The workflow supports event operations involving hundreds of participants
-              per event, reducing coordination overhead by replacing fragile manual
-              steps with structured data, queue states, validation, and recoverable sync
-              paths.
+            <p
+              className="mb-6 max-w-3xl text-sm leading-relaxed"
+              style={{ color: 'var(--text-dim)' }}
+            >
+              The workflow supports event operations involving hundreds of
+              participants per event, reducing coordination overhead by
+              replacing fragile manual steps with structured data, queue states,
+              validation, and recoverable sync paths.
             </p>
 
             <Link
-  href="/contact"
-  className="btn-glow inline-flex items-center gap-2 rounded px-4 py-2 font-mono text-xs"
->
-  architecture walkthrough available upon request <span aria-hidden>→</span>
-</Link>
+              href="/contact"
+              className="btn-glow inline-flex items-center gap-2 rounded px-4 py-2 font-mono text-xs"
+            >
+              architecture walkthrough available upon request{' '}
+              <span aria-hidden>→</span>
+            </Link>
           </div>
         </div>
       </section>
 
       {/* SELECTED WORK */}
-      <section className="py-16" style={{ borderTop: '1px solid var(--border)' }}>
+      <section
+        className="py-16"
+        style={{ borderTop: '1px solid var(--border)' }}
+      >
         <div className="flex items-baseline justify-between mb-8">
           <h2
             className={`font-mono text-xs uppercase tracking-widest ${glowText}`}
@@ -165,7 +186,10 @@ export default function HomePage() {
       </section>
 
       {/* STACK */}
-      <section className="py-16" style={{ borderTop: '1px solid var(--border)' }}>
+      <section
+        className="py-16"
+        style={{ borderTop: '1px solid var(--border)' }}
+      >
         <h2
           className={`font-mono text-xs uppercase tracking-widest mb-8 ${glowText}`}
           style={{ color: 'var(--accent)' }}
@@ -176,16 +200,23 @@ export default function HomePage() {
         <div className="space-y-6">
           <StackRow label="platforms" items={siteConfig.stack.platforms} />
           <StackRow label="languages" items={siteConfig.stack.languages} />
-          <StackRow label="integrations" items={siteConfig.stack.integrations} />
+          <StackRow
+            label="integrations"
+            items={siteConfig.stack.integrations}
+          />
           <StackRow label="focus" items={siteConfig.stack.focus} accent />
         </div>
       </section>
 
       {/* CTA */}
-      <section className="py-20" style={{ borderTop: '1px solid var(--border)' }}>
+      <section
+        className="py-20"
+        style={{ borderTop: '1px solid var(--border)' }}
+      >
         <div className="max-w-2xl">
           <h2 className="text-3xl sm:text-4xl font-medium text-white mb-4 tracking-tight">
-            If your operations rely on spreadsheets, manual workarounds, or fragile automations, the system is already failing.
+            If your operations rely on spreadsheets, manual workarounds, or
+            fragile automations, the system is already failing.
             <span className="block mt-8">
               I fix the structure underneath it.
             </span>
@@ -194,8 +225,12 @@ export default function HomePage() {
             </span>
           </h2>
 
-          <p className="mb-8 leading-relaxed" style={{ color: 'var(--text-dim)' }}>
-            I take on a limited number of contracts where the problems are real and the system matters.
+          <p
+            className="mb-8 leading-relaxed"
+            style={{ color: 'var(--text-dim)' }}
+          >
+            I take on a limited number of contracts where the problems are real
+            and the system matters.
           </p>
 
           <Link
@@ -228,9 +263,7 @@ function WorkCard({
   cta: string
 }) {
   return (
-    <article
-  className="rounded-md border border-[var(--border)] bg-[var(--bg-card)] p-5 transition-colors duration-200 hover:border-[var(--accent)]"
->
+    <article className="rounded-md border border-[var(--border)] bg-[var(--bg-card)] p-5 transition-colors duration-200 hover:border-[var(--accent)]">
       <div className="flex items-center justify-between mb-3">
         <span
           className="font-mono text-[10px] uppercase tracking-widest"
@@ -238,14 +271,20 @@ function WorkCard({
         >
           {tag}
         </span>
-        <span className="font-mono text-[10px]" style={{ color: 'var(--text-faint)' }}>
+        <span
+          className="font-mono text-[10px]"
+          style={{ color: 'var(--text-faint)' }}
+        >
           {period}
         </span>
       </div>
 
       <h3 className="text-white font-medium mb-2">{title}</h3>
 
-      <p className="text-sm leading-relaxed" style={{ color: 'var(--text-dim)' }}>
+      <p
+        className="text-sm leading-relaxed"
+        style={{ color: 'var(--text-dim)' }}
+      >
         {body}
       </p>
 

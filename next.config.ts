@@ -4,6 +4,21 @@ const depthsPath = "/lab/_vault/depths-a7-9f3c2";
 
 const nextConfig: NextConfig = {
   skipTrailingSlashRedirect: true,
+  async headers() {
+    return [
+      {
+        source: "/(.*)",
+        headers: [
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          {
+            key: "Permissions-Policy",
+            value: "camera=(), microphone=(), geolocation=()",
+          },
+        ],
+      },
+    ];
+  },
   async redirects() {
     return [
       {

@@ -8,7 +8,7 @@ export default function CornerLogo() {
   return (
     <Link
       href="/"
-      aria-label={`${siteConfig.identity.name} — home`}
+      aria-label="logan.pinney — home"
       className="fixed top-5 left-6 z-50 font-mono text-[13px] font-medium tracking-tight hover:opacity-90 transition"
       style={{ color: 'var(--text)' }}
     >

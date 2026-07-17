@@ -20,7 +20,7 @@ const jetbrainsMono = JetBrains_Mono({
 })
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://loganpinney.com'),
+  metadataBase: new URL('https://www.loganpinney.com'),
   title: {
     default: `${siteConfig.identity.name} — ${siteConfig.identity.title}`,
     template: `%s — ${siteConfig.identity.name}`,
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     title: `${siteConfig.identity.name} — ${siteConfig.identity.title}`,
     description:
       'Data systems architect designing automation, integrations, and operational data infrastructure.',
-    url: 'https://loganpinney.com',
+    url: 'https://www.loganpinney.com',
     siteName: 'loganpinney.com',
     locale: 'en_US',
     type: 'website',

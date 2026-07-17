@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   title: 'Work',
   description:
     'Selected projects in data systems architecture, automation, and real-time 3D education.',
+  alternates: { canonical: '/work' },
 }
 
 const glow = siteConfig.effects.glowText ? 'glow-text' : ''
@@ -24,9 +25,14 @@ const projects = [
       'Staffing / player data collection & automation with fillable forms and validation',
       'Budget tracking, room blocks, ticketing flows',
     ],
-    stack: ['Airtable', 'Workato', 'Google Apps Script', 'Google Workspace', 'Webhooks'],
-    note:
-      'Currently extending this practice into a part-time contract with Riot Games.',
+    stack: [
+      'Airtable',
+      'Workato',
+      'Google Apps Script',
+      'Google Workspace',
+      'Webhooks',
+    ],
+    note: 'Currently extending this practice into a part-time contract with Riot Games.',
     cta: 'company site',
   },
   {
@@ -94,9 +100,13 @@ export default function WorkPage() {
           Selected work
         </h1>
 
-        <p className="max-w-2xl leading-relaxed" style={{ color: 'var(--text-dim)' }}>
-          A focused look at the projects and contracts where I&apos;ve built or rebuilt
-          operational systems — from data automation to real-time 3D education.
+        <p
+          className="max-w-2xl leading-relaxed"
+          style={{ color: 'var(--text-dim)' }}
+        >
+          A focused look at the projects and contracts where I&apos;ve built or
+          rebuilt operational systems — from data automation to real-time 3D
+          education.
         </p>
       </header>
 
@@ -149,7 +159,10 @@ export default function WorkPage() {
                   {p.context}
                 </p>
 
-                <ul className="space-y-1.5 mb-5 text-sm" style={{ color: 'var(--text-dim)' }}>
+                <ul
+                  className="space-y-1.5 mb-5 text-sm"
+                  style={{ color: 'var(--text-dim)' }}
+                >
                   {p.work.map((w) => (
                     <li key={w} className="flex gap-2">
                       <span style={{ color: 'var(--accent)' }} aria-hidden>
@@ -207,7 +220,10 @@ export default function WorkPage() {
         ))}
       </div>
 
-      <div className="mt-16 pt-10" style={{ borderTop: '1px solid var(--border)' }}>
+      <div
+        className="mt-16 pt-10"
+        style={{ borderTop: '1px solid var(--border)' }}
+      >
         <Link
           href="/contact"
           className="btn-glow inline-flex items-center gap-2 font-mono text-sm font-medium px-5 py-2.5 rounded"

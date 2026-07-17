@@ -49,16 +49,16 @@ I rebuild the structure underneath: data models, validation, orchestration, perm
     // Text
     text: '#e8e8e8',
     textDim: '#888888',
-    textFaint: '#555555',
+    textFaint: '#888888',
   },
 
   // ─── Visual effects ───────────────────────────────────────
   effects: {
-    scanlines: true,        // CRT-style horizontal scanlines overlay
-    glowText: true,         // text-shadow glow on accent text
-    glowButtons: true,      // hover glow on primary buttons
-    blinkingCursor: true,   // blinking _ after your name
-    cardHoverGlow: true,    // cards get a glow halo on hover
+    scanlines: true, // CRT-style horizontal scanlines overlay
+    glowText: true, // text-shadow glow on accent text
+    glowButtons: true, // hover glow on primary buttons
+    blinkingCursor: true, // blinking _ after your name
+    cardHoverGlow: true, // cards get a glow halo on hover
   },
 
   // ─── Navigation ────────────────────────────────────────────
@@ -100,14 +100,19 @@ I rebuild the structure underneath: data models, validation, orchestration, perm
       body: 'QA on 50+ production-ready asset kits used in world-building for games, film, and virtual production.',
       period: 'ongoing',
       href: 'https://kitbash3d.com/collections',
-    cta: 'asset collection →',
+      cta: 'asset collection →',
     },
   ],
 
   // ─── Stack (homepage tags) ─────────────────────────────────
   stack: {
     platforms: ['Airtable', 'Workato', 'Google Workspace', 'BigQuery'],
-    languages: ['Python', 'JavaScript / TypeScript', 'SQL', 'Google Apps Script'],
+    languages: [
+      'Python',
+      'JavaScript / TypeScript',
+      'SQL',
+      'Google Apps Script',
+    ],
     integrations: ['REST APIs', 'Webhooks', 'OAuth flows', 'ETL orchestration'],
     focus: [
       'workflow automation',
@@ -120,8 +125,14 @@ I rebuild the structure underneath: data models, validation, orchestration, perm
   // ─── Terminal (hero animated block) ────────────────────────
   terminal: [
     { cmd: 'whoami', out: 'operator rebuilding broken systems' },
-    { cmd: 'cat focus.txt', out: 'workflow automation · integrations · governance' },
-    { cmd: 'cat outcomes.txt', out: 'validated workflows · audit trails · fewer manual handoffs' },
+    {
+      cmd: 'cat focus.txt',
+      out: 'workflow automation · integrations · governance',
+    },
+    {
+      cmd: 'cat outcomes.txt',
+      out: 'validated workflows · audit trails · fewer manual handoffs',
+    },
     { cmd: 'echo $status', out: 'selective contract availability' },
   ],
 

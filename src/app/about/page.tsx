@@ -2,12 +2,12 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { siteConfig } from '@/config/site.config'
 import AnimatedPortrait from '@/components/AnimatedPortrait'
-import RotatingSprite from '@/components/RotatingSprite'
 
 export const metadata: Metadata = {
   title: 'About',
   description:
     'Logan Pinney — data systems architect. Background, credentials, and how I approach building reliable operational systems.',
+  alternates: { canonical: '/about' },
 }
 
 const glow = siteConfig.effects.glowText ? 'glow-text' : ''
@@ -48,7 +48,8 @@ const credentials = [
   },
   {
     role: 'Ambassador and QA, KitBash3D',
-    detail: 'QA on 50 plus 3D model production asset kits used for games and film.',
+    detail:
+      'QA on 50 plus 3D model production asset kits used for games and film.',
   },
   {
     role: "B.Sc. Computer Science, Queen's University",
@@ -86,30 +87,34 @@ export default function AboutPage() {
         </div>
 
         <div className="space-y-5">
-          <p>I rebuild operational systems that break under real world pressure.</p>
-
           <p>
-            Most teams do not have a tooling problem. They have a structure problem.
-            Bad schemas, unclear ownership, and fragile automations turn workflows
-            into liabilities.
+            I rebuild operational systems that break under real world pressure.
           </p>
 
           <p>
-            I fix that at the foundation. Data models, orchestration, validation,
-            permissions, and failure handling. Systems that run reliably at scale.
+            Most teams do not have a tooling problem. They have a structure
+            problem. Bad schemas, unclear ownership, and fragile automations
+            turn workflows into liabilities.
           </p>
 
           <p>
-            Earlier in my career, I worked in clinical respiratory and anesthesia environments where process,
-            handoff, documentation, and failure handling mattered in real time.
-            That experience still shapes how I design operational systems: clear ownership, clean escalation paths,
-            and no hidden failure states.
+            I fix that at the foundation. Data models, orchestration,
+            validation, permissions, and failure handling. Systems that run
+            reliably at scale.
+          </p>
+
+          <p>
+            Earlier in my career, I worked in clinical respiratory and
+            anesthesia environments where process, handoff, documentation, and
+            failure handling mattered in real time. That experience still shapes
+            how I design operational systems: clear ownership, clean escalation
+            paths, and no hidden failure states.
           </p>
 
           <p>
             Today I apply that same thinking to operations. Events, compliance,
-            staffing, and data infrastructure. Rebuilding automation pipelines and
-            operational workflows to reduce man hours and friction.
+            staffing, and data infrastructure. Rebuilding automation pipelines
+            and operational workflows to reduce man hours and friction.
           </p>
         </div>
 
@@ -183,30 +188,16 @@ export default function AboutPage() {
       </section>
 
       {/* CTA */}
-      <section className="pt-10" style={{ borderTop: '1px solid var(--border)' }}>
+      <section
+        className="pt-10"
+        style={{ borderTop: '1px solid var(--border)' }}
+      >
         <Link
           href="/contact"
           className="btn-glow inline-flex items-center gap-2 font-mono text-sm font-medium px-5 py-2.5 rounded"
         >
           get in touch <span aria-hidden>→</span>
         </Link>
-      </section>
-      {/* Sprite walk-cycle test */}
-      <section className="mt-16">
-        <RotatingSprite
-          src="/sprites/BEHOLDER.png"
-          frameCount={8}
-          frameWidth={256}
-          frameHeight={256}
-          durationMs={900}
-          scale={2}
-        />
-        <p
-          className="mt-4 text-center font-mono text-xs"
-          style={{ color: 'var(--text-dim)' }}
-        >
-          Sprite-sheet walk cycle test - 8 animation frames
-        </p>
       </section>
     </div>
   )

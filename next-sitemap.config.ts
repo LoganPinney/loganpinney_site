@@ -1,22 +1,18 @@
 import type { IConfig } from 'next-sitemap';
 
 const config: IConfig = {
-  siteUrl: 'https://loganpinney.com', // your production URL
-  generateRobotsTxt: true,           // creates robots.txt
-  changefreq: 'weekly',              // default change frequency
-  priority: 0.7,                     // default priority
+  siteUrl: 'https://www.loganpinney.com',
+  generateRobotsTxt: true,
+  generateIndexSitemap: false,
+  changefreq: 'weekly',
+  priority: 0.7,
   exclude: [
-    '/admin/*',                      // any paths you don’t want indexed
+    '/admin/*', // any paths you don’t want indexed
     '/drafts/*',
     '/lab',
     '/lab/*',
-    '/sprites'
+    '/sprites',
   ],
-  robotsTxtOptions: {
-    additionalSitemaps: [
-      'https://loganpinney.com/sitemap.xml', // extra sitemap chunks
-    ],
-  },
 };
 
 export default config;

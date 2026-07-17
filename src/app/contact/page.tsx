@@ -5,11 +5,11 @@ export const metadata: Metadata = {
   title: 'Contact',
   description:
     'Get in touch with Logan Pinney about data systems, automation, or contract work.',
+  alternates: { canonical: '/contact' },
 }
 
 const glow = siteConfig.effects.glowText ? 'glow-text' : ''
 
-// TODO: Replace with your actual Formspree form ID
 const FORMSPREE_ID = 'xpzgkdqb'
 
 export default function ContactPage() {
@@ -32,9 +32,9 @@ export default function ContactPage() {
           Let&apos;s talk.
         </h1>
         <p className="leading-relaxed" style={{ color: 'var(--text-dim)' }}>
-          Send the problem, the context, and what needs to change.
-          If your workflow is brittle, manual, unclear, or failing under real pressure, I want to hear about it.
-          If email is easier, reach me directly at{' '}
+          Send the problem, the context, and what needs to change. If your
+          workflow is brittle, manual, unclear, or failing under real pressure,
+          I want to hear about it. If email is easier, reach me directly at{' '}
           <a
             href={`mailto:${siteConfig.identity.email}`}
             className="underline hover:no-underline"
@@ -125,7 +125,12 @@ export default function ContactPage() {
         </div>
 
         {/* honeypot */}
-        <input type="text" name="_gotcha" style={{ display: 'none' }} tabIndex={-1} />
+        <input
+          type="text"
+          name="_gotcha"
+          style={{ display: 'none' }}
+          tabIndex={-1}
+        />
 
         <button
           type="submit"
