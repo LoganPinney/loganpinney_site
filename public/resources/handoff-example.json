@@ -1,0 +1,12 @@
+{
+  "event_id": "evt_demo_001",
+  "record_id": "request_demo_042",
+  "source_system": "intake",
+  "source_version": 4,
+  "correlation_id": "trace_demo_042",
+  "status": "awaiting_review",
+  "owner_role": "operations_reviewer",
+  "approval": { "required": true, "state": "pending" },
+  "delivery": { "state": "not_started", "attempts": 0 },
+  "last_error_code": null
+}

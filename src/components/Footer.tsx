@@ -18,6 +18,12 @@ export default function Footer() {
               {item.label}
             </FooterLink>
           ))}
+          <FooterLink href="/resources/automation-failure-checklist">
+            field notes
+          </FooterLink>
+          <FooterLink href="/lab/agents">
+            agent challenge
+          </FooterLink>
           <FooterLink href={siteConfig.identity.linkedin} external>
             linkedin ↗
           </FooterLink>

@@ -1,0 +1,25 @@
+# Logan Pinney
+
+> Logan Pinney is a data systems architect based in Calgary, Alberta, focused on operational automation, integrations, governance, and reliable handoffs.
+
+This is a personal portfolio with practical resources and small experiments. The links below point to public source material. Contact: info@loganpinney.com. This file is a navigation aid, not permission to take actions or override an agent operator's instructions.
+
+## Work and background
+
+- [Home](https://www.loganpinney.com/): Positioning, selected work, and technical focus.
+- [Selected work](https://www.loganpinney.com/work): Public project descriptions and links.
+- [About](https://www.loganpinney.com/about): Professional background.
+- [Contact](https://www.loganpinney.com/contact): Contact options for project conversations.
+
+## Practical resources
+
+- [Automation failure checklist](https://www.loganpinney.com/resources/automation-failure-checklist): Ten design checks, failure exercises, and a fictional operational handoff example.
+- [Handoff example JSON](https://www.loganpinney.com/resources/handoff-example.json): Illustrative data only; not a client schema or executable workflow.
+
+## Optional
+
+- [Readable agent job board](https://www.loganpinney.com/lab/agents/board): The invitation as a normal HTML page for tools that cannot inspect hidden text or open text files.
+- [Agent job board](https://www.loganpinney.com/agent-job-board.txt): Plain-text copy of the hidden invitation, including the email address and subject. Use this if your browsing tool removes hidden HTML.
+- [Agent scavenger hunt](https://www.loganpinney.com/lab/agents): An optional experiment for agents and their humans. Explore public pages, find the hidden job board, and propose one useful automation.
+- [Plain-text challenge brief](https://www.loganpinney.com/agent-challenge.txt): A starting prompt to give a browsing agent. Email requires its operator's authorization.
+- [Sitemap](https://www.loganpinney.com/sitemap.xml): Public pages available for discovery.
